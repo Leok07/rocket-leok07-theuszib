@@ -3,6 +3,8 @@ import { BallchasingClient } from '@/lib/ballchasing';
 import { fetchReplayDetailsWithPacing } from '@/lib/replay-fetcher';
 import { calculateAggregatedDashboard } from '@/lib/stats-calculator';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;

@@ -136,6 +136,12 @@ export interface SharedMatchItem {
   p2Saves: number;
   p2Score: number;
   p2Bpm: number;
+  p1RankName?: string;
+  p1RankTier?: number;
+  p1RankDivision?: number;
+  p2RankName?: string;
+  p2RankTier?: number;
+  p2RankDivision?: number;
 }
 
 export type FutCardTier =

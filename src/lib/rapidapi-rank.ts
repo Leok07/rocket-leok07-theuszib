@@ -8,7 +8,6 @@ interface RapidApiRankCacheEntry {
 const rankCache = new Map<string, RapidApiRankCacheEntry>();
 const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes cache to avoid rate limits
 
-const DEFAULT_API_KEY = '9d9bc21862mshd4b1f1e6a0295b3p187138jsn20f40dd8a929';
 const RAPIDAPI_HOST = 'rocket-league1.p.rapidapi.com';
 
 /**
@@ -32,7 +31,7 @@ export async function fetchRapidApi2v2Rank(
   platform: string,
   forceRefresh = false
 ): Promise<CareerRankInfo | null> {
-  const apiKey = process.env.RAPIDAPI_KEY || DEFAULT_API_KEY;
+  const apiKey = process.env.RAPIDAPI_KEY;
   const platformSlug = getPlatformSlug(platform);
   const cacheKey = `${platformSlug}:${playerName.toLowerCase()}`;
   const now = Date.now();

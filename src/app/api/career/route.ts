@@ -15,7 +15,11 @@ export async function GET(request: NextRequest) {
       fetchPlayerBallchasingCareerStats(PLAYER_1.name, PLAYER_1.platform, PLAYER_1.platformLabel, forceRefresh),
       fetchPlayerBallchasingCareerStats(PLAYER_2.name, PLAYER_2.platform, PLAYER_2.platformLabel, forceRefresh),
       fetchRapidApi2v2Rank(PLAYER_1.name, PLAYER_1.platform, forceRefresh),
-      fetchRapidApi2v2Rank(PLAYER_2.name, PLAYER_2.platform, forceRefresh),
+      fetchRapidApi2v2Rank(
+        PLAYER_2.platformId.includes(':') ? PLAYER_2.platformId.split(':')[1] : PLAYER_2.name,
+        PLAYER_2.platform,
+        forceRefresh
+      ),
     ]);
 
     if (p1Rank) {

@@ -6,6 +6,7 @@ import { PLAYER_1, PLAYER_2 } from '@/lib/constants';
 import { ReplaySummary } from '@/types/ballchasing';
 import { SharedMatchItem } from '@/types/dashboard';
 import { formatDate } from '@/lib/utils';
+import { getBallchasingTierLabel } from '@/lib/stats/rank-tiers';
 
 export const dynamic = 'force-dynamic';
 
@@ -156,6 +157,17 @@ export async function GET(request: NextRequest) {
         const opponentGoals = p1Data.isBlue ? orangeGoals : blueGoals;
         const result: 'win' | 'loss' = teamGoals > opponentGoals ? 'win' : 'loss';
 
+        const p1RankMeta = getBallchasingTierLabel(
+          p1Data.player.rank?.tier,
+          p1Data.player.rank?.division,
+          p1Data.player.rank?.name
+        );
+        const p2RankMeta = getBallchasingTierLabel(
+          p2Data.player.rank?.tier,
+          p2Data.player.rank?.division,
+          p2Data.player.rank?.name
+        );
+
         sharedMatches.push({
           id: r.id,
           date: r.date,
@@ -177,6 +189,12 @@ export async function GET(request: NextRequest) {
           p2Saves: p2Data.player.stats?.core?.saves || 0,
           p2Score: p2Data.player.stats?.core?.score || p2Data.player.score || 0,
           p2Bpm: Math.round(p2Data.player.stats?.boost?.bpm || 0),
+          p1RankName: p1RankMeta?.name || p1Data.player.rank?.name,
+          p1RankTier: p1Data.player.rank?.tier,
+          p1RankDivision: p1Data.player.rank?.division,
+          p2RankName: p2RankMeta?.name || p2Data.player.rank?.name,
+          p2RankTier: p2Data.player.rank?.tier,
+          p2RankDivision: p2Data.player.rank?.division,
         });
       }
     }
