@@ -206,6 +206,13 @@ export default function Home() {
 
         {!isLoading && (
           <>
+            {/* Cards EA FC Ultimate Dupla - NOBRE HERO DECK */}
+            <FutCardsSection
+              player1={player1}
+              player2={player2}
+              sharedMatches={sharedMatches}
+            />
+
             {/* RLRating 3.0 Indice Composto de Performance */}
             <RLRatingBox player1={player1} player2={player2} />
 
@@ -603,9 +610,6 @@ export default function Home() {
 
             {/* Contribuicao Proporcional do Time (Graficos Donut Widescreen) */}
             <TeamContributionChart player1={player1} player2={player2} />
-
-            {/* Cards EA FC Ultimate Dupla */}
-            <FutCardsSection player1={player1} player2={player2} />
 
             {/* Evolucao Temporal & Tendencias (Widescreen PC) */}
             <TrendChart

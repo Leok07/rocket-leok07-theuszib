@@ -1,18 +1,19 @@
 'use client';
 
 import React from 'react';
-import { AggregatedPlayerDashboard } from '@/types/dashboard';
+import { AggregatedPlayerDashboard, SharedMatchItem } from '@/types/dashboard';
 import { PlayerCardFUT } from '@/components/PlayerCardFUT';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { PLAYER_1, PLAYER_2 } from '@/lib/constants';
-import { Trophy, HelpCircle, Target, Shield, Flame, Zap, Award, Crown, Sparkles } from 'lucide-react';
+import { Trophy, HelpCircle, Target, Shield, Flame, Zap, Award, Crown, Sparkles, Link2 } from 'lucide-react';
 
 interface FutCardsSectionProps {
   player1: AggregatedPlayerDashboard;
   player2: AggregatedPlayerDashboard;
+  sharedMatches?: SharedMatchItem[];
 }
 
-export function FutCardsSection({ player1, player2 }: FutCardsSectionProps) {
+export function FutCardsSection({ player1, player2, sharedMatches }: FutCardsSectionProps) {
   const p1Fut = player1.futStats;
   const p2Fut = player2.futStats;
 
@@ -22,6 +23,14 @@ export function FutCardsSection({ player1, player2 }: FutCardsSectionProps) {
 
   const p1MatchesCount = p1Fut.recentMatchesCount || 10;
   const p2MatchesCount = p2Fut.recentMatchesCount || 10;
+
+  // Duo shared metrics
+  const duoMatchesCount = sharedMatches?.length || Math.max(p1MatchesCount, p2MatchesCount);
+  const duoWins = sharedMatches ? sharedMatches.filter((m) => m.result === 'win').length : 0;
+  const duoWinRate = sharedMatches && duoMatchesCount > 0
+    ? Math.round((duoWins / duoMatchesCount) * 100)
+    : Math.round(((p1Fut.recentWinRate || 0) + (p2Fut.recentWinRate || 0)) / 2);
+  const duoGoals = (p1Fut.recentGoals || 0) + (p2Fut.recentGoals || 0);
 
   const p1Leader = {
     pac: p1Fut.pac > p2Fut.pac,
@@ -44,46 +53,105 @@ export function FutCardsSection({ player1, player2 }: FutCardsSectionProps) {
   };
 
   return (
-    <Card className="p-4 sm:p-5 border-[#2c3245] bg-[#0c0e14]">
+    <Card className="p-4 sm:p-5 border-[#2c3245] bg-[#0c0e14] shadow-2xl">
       {/* Section Header */}
       <CardHeader className="pb-3 mb-4 border-b border-[#232736]/80">
         <div className="flex items-center justify-between w-full">
           <CardTitle className="text-xs sm:text-sm">
             <Trophy className="w-4 h-4 text-amber-400" />
-            <span>Cards EA FC Ultimate • TOTW & Forma Recente</span>
+            <span>Cards EA FC Ultimate • Hero Deck & Quimica da Dupla</span>
           </CardTitle>
 
           <span className="text-[10px] font-black uppercase tracking-widest bg-amber-950/40 text-amber-400 border border-amber-800/60 px-2.5 py-0.5 rounded-full">
-            ÚLTIMOS 20 JOGOS
+            FORMA {duoMatchesCount} JOGOS
           </span>
         </div>
         <p className="text-[11px] text-zinc-400 mt-1">
-          Cartas dinâmicas estilo FUT com OVR focado em finalização e defesa, bônus direto de passe/playmaking, bônus de MVP e títulos de honra.
+          Cards 3D interativos com formato oficial de escudo EA FC, silhuetas de Octane e Fennec, selos de Química e inspeção tática em tempo real.
         </p>
       </CardHeader>
 
       <CardContent>
-        {/* Two Cards Side-by-Side (Desktop) / Stacked (Mobile) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center justify-center my-2">
+        {/* Duo Chemistry Hyperlink Hub & Cards Layout */}
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-5 my-3">
           {/* Player 1 Card (Leok07) */}
-          <div>
+          <div className="w-full lg:w-[325px] flex justify-center">
             <PlayerCardFUT
               playerName={player1.playerName}
               platformLabel={PLAYER_1.platformLabel}
               stats={p1Fut}
               teamTheme="blue"
               leaderStats={p1Leader}
+              dashboard={player1}
+              carModel="octane"
             />
           </div>
 
+          {/* Center: Duo Chemistry Hyperlink Hub */}
+          <div className="flex flex-col items-center justify-center px-2 py-2 max-w-[250px] w-full text-center shrink-0">
+            {/* Upper Connection Cable (Desktop Widescreen) */}
+            <div className="hidden lg:flex items-center justify-center w-full mb-3">
+              <div className="h-[2px] w-14 bg-gradient-to-r from-sky-400 via-emerald-400 to-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+              <div className="w-3 h-3 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,1)] border-2 border-[#0c0e14] animate-pulse" />
+              <div className="h-[2px] w-14 bg-gradient-to-r from-emerald-400 via-emerald-400 to-orange-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+            </div>
+
+            {/* Central Synergy Crest Shield */}
+            <div className="w-full bg-gradient-to-b from-emerald-950/80 via-[#0e1713] to-emerald-950/80 border border-emerald-500/50 rounded-2xl p-3.5 shadow-[0_0_30px_rgba(16,185,129,0.25)] backdrop-blur-md">
+              <div className="flex items-center justify-center gap-1.5 text-emerald-300 mb-1">
+                <Link2 className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-[10px] font-black tracking-widest uppercase">
+                  HYPERLINK VERDE
+                </span>
+              </div>
+              <div className="text-xl font-black text-white font-mono tracking-tight">
+                100% QUÍMICA
+              </div>
+              <div className="text-[9px] text-emerald-400 font-extrabold uppercase tracking-wider mt-0.5">
+                BRASIL • DUPLA COMPETITIVA
+              </div>
+
+              <div className="my-2.5 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent" />
+
+              {/* Duo Sinergy Telemetry Breakdown */}
+              <div className="space-y-1.5 text-left text-[10px]">
+                <div className="flex items-center justify-between gap-2 bg-black/50 px-2.5 py-1 rounded border border-white/5">
+                  <span className="text-zinc-400 font-medium">Gols Juntos:</span>
+                  <span className="font-mono font-black text-amber-300">{duoGoals} gols</span>
+                </div>
+                <div className="flex items-center justify-between gap-2 bg-black/50 px-2.5 py-1 rounded border border-white/5">
+                  <span className="text-zinc-400 font-medium">Win Rate Dupla:</span>
+                  <span className="font-mono font-black text-emerald-400">{duoWinRate}% WR</span>
+                </div>
+                <div className="flex items-center justify-between gap-2 bg-black/50 px-2.5 py-1 rounded border border-white/5">
+                  <span className="text-zinc-400 font-medium">Sessão Sincronizada:</span>
+                  <span className="font-mono font-black text-sky-300">{duoMatchesCount} partidas</span>
+                </div>
+              </div>
+
+              <div className="mt-2.5 pt-2 border-t border-emerald-500/20 text-[8px] text-zinc-400 font-mono tracking-widest uppercase">
+                OCTANE • FENNEC
+              </div>
+            </div>
+
+            {/* Lower Connection Cable (Desktop Widescreen) */}
+            <div className="hidden lg:flex items-center justify-center w-full mt-3">
+              <div className="h-[2px] w-14 bg-gradient-to-r from-sky-400 via-emerald-400 to-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+              <div className="w-3 h-3 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,1)] border-2 border-[#0c0e14] animate-pulse" />
+              <div className="h-[2px] w-14 bg-gradient-to-r from-emerald-400 via-emerald-400 to-orange-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+            </div>
+          </div>
+
           {/* Player 2 Card (Theuszrib) */}
-          <div>
+          <div className="w-full lg:w-[325px] flex justify-center">
             <PlayerCardFUT
               playerName={player2.playerName}
               platformLabel={PLAYER_2.platformLabel}
               stats={p2Fut}
               teamTheme="orange"
               leaderStats={p2Leader}
+              dashboard={player2}
+              carModel="fennec"
             />
           </div>
         </div>

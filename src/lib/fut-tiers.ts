@@ -16,6 +16,9 @@ export interface TierStyleConfig {
   nameplateBorder: string;
   editionBadge: string;
   accentGradient: string;
+  foilGlow?: string;
+  shieldBorderGradient?: string;
+  auraColor?: string;
 }
 
 export const TIER_STYLES: Record<FutCardTier, TierStyleConfig> = {
@@ -36,6 +39,9 @@ export const TIER_STYLES: Record<FutCardTier, TierStyleConfig> = {
     nameplateBorder: 'border-[#fbbf24]/40 bg-gradient-to-r from-amber-950/50 via-stone-950/80 to-amber-950/50',
     editionBadge: 'bg-amber-950/90 border-amber-400/80 text-amber-200',
     accentGradient: 'from-amber-400 via-yellow-200 to-amber-500',
+    foilGlow: 'rgba(245, 158, 11, 0.45)',
+    shieldBorderGradient: 'from-[#fbbf24] via-[#fef08a] to-[#d97706]',
+    auraColor: 'rgba(245, 158, 11, 0.35)',
   },
 
   // 2. ICON HYBRID (Icon Élite - Holográfico + Ouro Real)
@@ -55,6 +61,9 @@ export const TIER_STYLES: Record<FutCardTier, TierStyleConfig> = {
     nameplateBorder: 'border-[#fde047]/40 bg-gradient-to-r from-indigo-950/60 via-slate-950/80 to-amber-950/60',
     editionBadge: 'bg-yellow-950/90 border-yellow-400/80 text-yellow-200',
     accentGradient: 'from-yellow-300 via-white to-yellow-400',
+    foilGlow: 'rgba(250, 204, 21, 0.45)',
+    shieldBorderGradient: 'from-[#fde047] via-[#ffffff] to-[#ca8a04]',
+    auraColor: 'rgba(250, 204, 21, 0.3)',
   },
 
   // 3. ICON (RLCS Icon Lendário Puro)
@@ -74,6 +83,9 @@ export const TIER_STYLES: Record<FutCardTier, TierStyleConfig> = {
     nameplateBorder: 'border-white/30 bg-gradient-to-r from-slate-900/70 via-slate-950/90 to-slate-900/70',
     editionBadge: 'bg-slate-800/90 border-white/50 text-white',
     accentGradient: 'from-slate-200 via-white to-slate-300',
+    foilGlow: 'rgba(255, 255, 255, 0.4)',
+    shieldBorderGradient: 'from-[#ffffff] via-[#cbd5e1] to-[#64748b]',
+    auraColor: 'rgba(255, 255, 255, 0.25)',
   },
 
   // 4. TWO-WAY TITAN (Híbrido Striker + Guardian: Carmesim e Esmeralda Neon)
@@ -93,6 +105,9 @@ export const TIER_STYLES: Record<FutCardTier, TierStyleConfig> = {
     nameplateBorder: 'border-emerald-400/40 bg-gradient-to-r from-rose-950/60 via-stone-950/80 to-emerald-950/60',
     editionBadge: 'bg-emerald-950/90 border-emerald-400/80 text-emerald-200',
     accentGradient: 'from-rose-400 via-white to-emerald-400',
+    foilGlow: 'rgba(52, 211, 153, 0.4)',
+    shieldBorderGradient: 'from-[#34d399] via-[#ffffff] to-[#f43f5e]',
+    auraColor: 'rgba(52, 211, 153, 0.3)',
   },
 
   // 5. APEX PREDATOR (Híbrido Speedster + Enforcer: Violeta e Âmbar)
@@ -112,6 +127,9 @@ export const TIER_STYLES: Record<FutCardTier, TierStyleConfig> = {
     nameplateBorder: 'border-orange-400/40 bg-gradient-to-r from-purple-950/60 via-stone-950/80 to-orange-950/60',
     editionBadge: 'bg-orange-950/90 border-orange-400/80 text-orange-200',
     accentGradient: 'from-purple-400 via-amber-300 to-orange-400',
+    foilGlow: 'rgba(251, 146, 60, 0.4)',
+    shieldBorderGradient: 'from-[#fb923c] via-[#f3e8ff] to-[#a855f7]',
+    auraColor: 'rgba(251, 146, 60, 0.3)',
   },
 
   // 6. TOTW STRIKER (Híbrido TOTW + Striker: Ouro Imperial e Carmesim)
@@ -302,6 +320,9 @@ export const TIER_STYLES: Record<FutCardTier, TierStyleConfig> = {
     nameplateBorder: 'border-cyan-300/40 bg-gradient-to-r from-cyan-950/60 via-stone-950/80 to-cyan-950/60',
     editionBadge: 'bg-cyan-950/90 border-cyan-300/70 text-cyan-100',
     accentGradient: 'from-cyan-300 via-sky-100 to-cyan-400',
+    foilGlow: 'rgba(103, 232, 249, 0.35)',
+    shieldBorderGradient: 'from-[#67e8f9] via-[#e0f2fe] to-[#0284c7]',
+    auraColor: 'rgba(103, 232, 249, 0.28)',
   },
 
   // 16. GOLD (Ouro Raro 76 - 85 OVR)
@@ -321,6 +342,9 @@ export const TIER_STYLES: Record<FutCardTier, TierStyleConfig> = {
     nameplateBorder: 'border-[#f59e0b]/35 bg-gradient-to-r from-amber-950/50 via-stone-950/80 to-amber-950/50',
     editionBadge: 'bg-amber-950/70 border-amber-400/40 text-amber-200',
     accentGradient: 'from-amber-400 via-yellow-200 to-amber-500',
+    foilGlow: 'rgba(245, 158, 11, 0.3)',
+    shieldBorderGradient: 'from-[#f59e0b] via-[#fef3c7] to-[#b45309]',
+    auraColor: 'rgba(245, 158, 11, 0.25)',
   },
 
   // 17. SILVER (Prata Rara 65 - 75 OVR)
@@ -340,6 +364,9 @@ export const TIER_STYLES: Record<FutCardTier, TierStyleConfig> = {
     nameplateBorder: 'border-[#94a3b8]/30 bg-gradient-to-r from-slate-900/50 via-stone-950/80 to-slate-900/50',
     editionBadge: 'bg-slate-900/70 border-slate-400/40 text-slate-200',
     accentGradient: 'from-slate-300 via-white to-slate-400',
+    foilGlow: 'rgba(148, 163, 184, 0.25)',
+    shieldBorderGradient: 'from-[#94a3b8] via-[#f1f5f9] to-[#475569]',
+    auraColor: 'rgba(148, 163, 184, 0.2)',
   },
 
   // 18. BRONZE (Bronze < 65 OVR)
@@ -359,5 +386,8 @@ export const TIER_STYLES: Record<FutCardTier, TierStyleConfig> = {
     nameplateBorder: 'border-[#b45309]/25 bg-gradient-to-r from-amber-950/40 via-stone-950/80 to-amber-950/40',
     editionBadge: 'bg-amber-950/60 border-amber-600/40 text-amber-300',
     accentGradient: 'from-amber-600 via-amber-400 to-amber-700',
+    foilGlow: 'rgba(180, 83, 9, 0.2)',
+    shieldBorderGradient: 'from-[#b45309] via-[#fed7aa] to-[#78350f]',
+    auraColor: 'rgba(180, 83, 9, 0.15)',
   },
 };
