@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
 
       // Query Player 2 (Theuszrib / theusrib on PSN)
       const resP2 = await client
-        .listReplays({ playerId: PLAYER_2.platformId, playlist, count: 50, noCache: forceRefresh })
+        .listReplays({ playerName: PLAYER_2.name, playlist, count: 50, noCache: forceRefresh })
         .catch(() => ({ count: 0, list: [] }));
 
       for (const r of resP2.list || []) {
@@ -157,16 +157,24 @@ export async function GET(request: NextRequest) {
         const opponentGoals = p1Data.isBlue ? orangeGoals : blueGoals;
         const result: 'win' | 'loss' = teamGoals > opponentGoals ? 'win' : 'loss';
 
+        const fallbackRank = r.min_rank || r.max_rank;
+        const p1RankSource = p1Data.player.rank || fallbackRank;
+        const p2RankSource = p2Data.player.rank || fallbackRank;
+
         const p1RankMeta = getBallchasingTierLabel(
-          p1Data.player.rank?.tier,
-          p1Data.player.rank?.division,
-          p1Data.player.rank?.name
+          p1RankSource?.tier,
+          p1RankSource?.division,
+          p1RankSource?.name
         );
         const p2RankMeta = getBallchasingTierLabel(
-          p2Data.player.rank?.tier,
-          p2Data.player.rank?.division,
-          p2Data.player.rank?.name
+          p2RankSource?.tier,
+          p2RankSource?.division,
+          p2RankSource?.name
         );
+
+        const isRankedMatch = r.playlist_id === 'ranked-doubles' ||
+          (r.playlist_name && r.playlist_name.toLowerCase().includes('ranked'));
+        const defaultRankLabel = isRankedMatch ? '2v2 Competitivo' : '2v2 Casual';
 
         sharedMatches.push({
           id: r.id,
@@ -189,12 +197,12 @@ export async function GET(request: NextRequest) {
           p2Saves: p2Data.player.stats?.core?.saves || 0,
           p2Score: p2Data.player.stats?.core?.score || p2Data.player.score || 0,
           p2Bpm: Math.round(p2Data.player.stats?.boost?.bpm || 0),
-          p1RankName: p1RankMeta?.name || p1Data.player.rank?.name,
-          p1RankTier: p1Data.player.rank?.tier,
-          p1RankDivision: p1Data.player.rank?.division,
-          p2RankName: p2RankMeta?.name || p2Data.player.rank?.name,
-          p2RankTier: p2Data.player.rank?.tier,
-          p2RankDivision: p2Data.player.rank?.division,
+          p1RankName: p1RankMeta?.name || defaultRankLabel,
+          p1RankTier: p1RankMeta?.tierNumber || p1RankSource?.tier,
+          p1RankDivision: p1RankSource?.division,
+          p2RankName: p2RankMeta?.name || defaultRankLabel,
+          p2RankTier: p2RankMeta?.tierNumber || p2RankSource?.tier,
+          p2RankDivision: p2RankSource?.division,
         });
       }
     }

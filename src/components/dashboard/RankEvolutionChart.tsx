@@ -14,6 +14,8 @@ import {
   Target,
   Layers,
   CheckCircle2,
+  AlertCircle,
+  Clock,
 } from 'lucide-react';
 import {
   OFFICIAL_2V2_RANK_THRESHOLDS,
@@ -41,23 +43,24 @@ export function RankEvolutionChart({
   const p1LiveMmr = careerData?.player1?.rank2v2?.mmr || 0;
   const p2LiveMmr = careerData?.player2?.rank2v2?.mmr || 0;
 
-  const p1LiveRank = careerData?.player1?.rank2v2?.rank || 'Sem Rank';
-  const p2LiveRank = careerData?.player2?.rank2v2?.rank || 'Sem Rank';
+  const p1LiveRank = careerData?.player1?.rank2v2?.rank || '';
+  const p2LiveRank = careerData?.player2?.rank2v2?.rank || '';
 
   const p1Division = careerData?.player1?.rank2v2?.division || 1;
   const p2Division = careerData?.player2?.rank2v2?.division || 1;
 
-  // Real rank analytics using official Psyonix competitive brackets
-  const p1Details = getRankDetailsFromMmr(p1LiveMmr);
-  const p2Details = getRankDetailsFromMmr(p2LiveMmr);
-
   const selectedMmr = activePlayer === 'p2' ? p2LiveMmr : p1LiveMmr;
   const selectedRankName = activePlayer === 'p2' ? p2LiveRank : p1LiveRank;
   const selectedDivision = activePlayer === 'p2' ? p2Division : p1Division;
-  const selectedDetails = activePlayer === 'p2' ? p2Details : p1Details;
   const selectedName = activePlayer === 'p2' ? player2Name : player1Name;
 
-  // Duo MMR Synergy & Disparity (100% Real)
+  const hasLiveMmr = selectedMmr > 0;
+  const hasBothLiveMmr = p1LiveMmr > 0 && p2LiveMmr > 0;
+
+  // Real rank analytics using official Psyonix competitive brackets (only when MMR is available)
+  const selectedDetails = hasLiveMmr ? getRankDetailsFromMmr(selectedMmr) : null;
+
+  // Duo MMR Synergy & Disparity
   const duoMmrGap = Math.abs(p1LiveMmr - p2LiveMmr);
   const duoAverageMmr = Math.round((p1LiveMmr + p2LiveMmr) / 2);
   const higherPlayerName = p1LiveMmr >= p2LiveMmr ? player1Name : player2Name;
@@ -66,7 +69,7 @@ export function RankEvolutionChart({
   // Chronological real match ranks (from oldest to newest)
   const chronoMatches = [...matches].reverse();
 
-  // Build list of matches that have real rank data from Ballchasing
+  // Build list of matches with rank data
   const matchRanks = chronoMatches.map((m, idx) => {
     const isWin = m.result === 'win' || m.teamGoals > m.opponentGoals;
     const p1Meta = m.p1RankName ? { name: m.p1RankName, tier: m.p1RankTier, div: m.p1RankDivision } : null;
@@ -114,9 +117,11 @@ export function RankEvolutionChart({
     };
   });
 
-  const matchesWithRealRankCount = matchRanks.filter(
-    (m) => (activePlayer === 'p2' ? m.p2Rank !== null : m.p1Rank !== null)
-  ).length;
+  // Extract latest competitive rank from match replays
+  const latestCompetitiveMatch = matchesWithTransitions.find(
+    (m) => m.currentRankMeta && m.currentRankMeta.name && !m.currentRankMeta.name.toLowerCase().includes('casual')
+  );
+  const replayRankLabel = latestCompetitiveMatch?.currentRankMeta?.name || '2v2 Competitivo';
 
   return (
     <div className="rounded-2xl bg-[#11131a] border border-[#232736] p-4 sm:p-6 space-y-6 shadow-xl">
@@ -171,7 +176,7 @@ export function RankEvolutionChart({
         </div>
       </div>
 
-      {/* Duo Synergy & Disparity Banner (Desktop Widescreen) */}
+      {/* Duo Synergy & Disparity Banner */}
       <div className="p-4 rounded-xl bg-[#141722] border border-[#2c3245] flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3 w-full md:w-auto">
           <div className="p-2 rounded-lg bg-indigo-950/70 border border-indigo-800/60 text-indigo-400 shrink-0">
@@ -182,8 +187,16 @@ export function RankEvolutionChart({
               Sinergia Competitiva da Dupla (2v2)
             </span>
             <span className="text-xs text-zinc-400">
-              Disparidade de MMR: <strong className="text-white font-mono">{duoMmrGap} pts</strong> • Lider de Lobby:{' '}
-              <strong className={higherPlayerColor}>{higherPlayerName}</strong>
+              {hasBothLiveMmr ? (
+                <>
+                  Disparidade de MMR: <strong className="text-white font-mono">{duoMmrGap} pts</strong> • Lider de Lobby:{' '}
+                  <strong className={higherPlayerColor}>{higherPlayerName}</strong>
+                </>
+              ) : (
+                <>
+                  Partidas Registradas no Ballchasing: <strong className="text-white font-mono">{matches.length} jogos</strong> • Modo: <strong className="text-purple-400">Ranked Doubles</strong>
+                </>
+              )}
             </span>
           </div>
         </div>
@@ -191,17 +204,17 @@ export function RankEvolutionChart({
         <div className="grid grid-cols-3 gap-3 w-full md:w-auto">
           <div className="px-3 py-2 rounded-lg bg-[#181a24] border border-sky-900/40 text-center">
             <span className="text-[10px] uppercase font-bold text-sky-400 block">{player1Name}</span>
-            <span className="text-sm font-black text-white font-mono">{p1LiveMmr || '-'}</span>
+            <span className="text-sm font-black text-white font-mono">{p1LiveMmr > 0 ? p1LiveMmr : 'Replays'}</span>
           </div>
 
           <div className="px-3 py-2 rounded-lg bg-[#181a24] border border-purple-900/40 text-center">
-            <span className="text-[10px] uppercase font-bold text-purple-400 block">Media Dupla</span>
-            <span className="text-sm font-black text-white font-mono">{duoAverageMmr || '-'}</span>
+            <span className="text-[10px] uppercase font-bold text-purple-400 block">Lobby Dupla</span>
+            <span className="text-sm font-black text-white font-mono">{duoAverageMmr > 0 ? duoAverageMmr : '2v2'}</span>
           </div>
 
           <div className="px-3 py-2 rounded-lg bg-[#181a24] border border-orange-900/40 text-center">
             <span className="text-[10px] uppercase font-bold text-orange-400 block">{player2Name}</span>
-            <span className="text-sm font-black text-white font-mono">{p2LiveMmr || '-'}</span>
+            <span className="text-sm font-black text-white font-mono">{p2LiveMmr > 0 ? p2LiveMmr : 'Replays'}</span>
           </div>
         </div>
       </div>
@@ -214,71 +227,101 @@ export function RankEvolutionChart({
             <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider block">
               MMR Real ao Vivo • RapidAPI
             </span>
-            <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/50">
-              Dado Real
+            <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
+              hasLiveMmr
+                ? 'text-emerald-400 bg-emerald-950/60 border-emerald-800/50'
+                : 'text-amber-400 bg-amber-950/60 border-amber-800/50'
+            }`}>
+              {hasLiveMmr ? 'Dado Real' : 'Sincronizando'}
             </span>
           </div>
 
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-black text-white font-mono">
-              {selectedMmr ? selectedMmr.toLocaleString('pt-BR') : 'Sem MMR'}
+              {hasLiveMmr ? selectedMmr.toLocaleString('pt-BR') : 'Sincronizando'}
             </span>
             <span className="text-xs font-bold text-emerald-400">MMR 2v2</span>
           </div>
 
           <div className="flex items-center justify-between text-xs pt-1 border-t border-[#232736]/60">
-            <span className="text-zinc-300 font-semibold">{selectedRankName}</span>
+            <span className="text-zinc-300 font-semibold">
+              {hasLiveMmr ? selectedRankName : replayRankLabel}
+            </span>
             <span className="text-zinc-400 font-mono">
-              Folga contra queda: <strong className="text-emerald-400">+{selectedDetails.demotionBuffer} pts</strong>
+              {hasLiveMmr && selectedDetails ? (
+                <>Folga contra queda: <strong className="text-emerald-400">+{selectedDetails.demotionBuffer} pts</strong></>
+              ) : (
+                <span className="text-zinc-500">Aguardando API</span>
+              )}
             </span>
           </div>
         </div>
 
-        {/* Distance to Next Division */}
+        {/* Next Division Card */}
         <div className="p-4 rounded-xl bg-[#181a24] border border-[#232736] space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider block">
-              Proxima Divisao Oficial
+              {hasLiveMmr ? 'Proxima Divisao Oficial' : 'Patente nos Replays'}
             </span>
             <span className="text-[10px] font-bold text-sky-400 bg-sky-950/60 px-2 py-0.5 rounded border border-sky-800/50">
-              Brackets Oficiais
+              {hasLiveMmr ? 'Brackets Oficiais' : 'Ballchasing'}
             </span>
           </div>
 
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-black text-sky-400 font-mono">
-              +{selectedDetails.pointsToNextDiv}
+              {hasLiveMmr && selectedDetails
+                ? `+${selectedDetails.pointsToNextDiv}`
+                : replayRankLabel}
             </span>
-            <span className="text-xs text-zinc-400 font-semibold">MMR restantes</span>
+            {hasLiveMmr && <span className="text-xs text-zinc-400 font-semibold">MMR restantes</span>}
           </div>
 
           <div className="flex items-center justify-between text-xs pt-1 border-t border-[#232736]/60">
-            <span className="text-zinc-300 font-semibold">Meta: {selectedDetails.nextRank.name}</span>
-            <span className="text-zinc-400 font-mono">Minimo: {selectedDetails.nextRank.mmr} MMR</span>
+            <span className="text-zinc-300 font-semibold">
+              {hasLiveMmr && selectedDetails
+                ? `Meta: ${selectedDetails.nextRank.name}`
+                : 'Extraida dos replays'}
+            </span>
+            <span className="text-zinc-400 font-mono">
+              {hasLiveMmr && selectedDetails
+                ? `Minimo: ${selectedDetails.nextRank.mmr} MMR`
+                : '2v2 Competitivo'}
+            </span>
           </div>
         </div>
 
-        {/* Distance to Next Major Tier */}
+        {/* Distance to Next Major Tier Card */}
         <div className="p-4 rounded-xl bg-[#181a24] border border-amber-900/30 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-amber-400/90 uppercase tracking-wider block">
-              Proxima Patente (Tier)
+              {hasLiveMmr ? 'Proxima Patente (Tier)' : 'Integridade dos Dados'}
             </span>
             <span className="text-[10px] font-bold text-amber-300 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800/50">
-              Salto de Patente
+              {hasLiveMmr ? 'Salto de Patente' : '100% Reais'}
             </span>
           </div>
 
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-black text-amber-300 font-mono">
-              +{selectedDetails.pointsToNextMajor}
+              {hasLiveMmr && selectedDetails
+                ? `+${selectedDetails.pointsToNextMajor}`
+                : 'Sem Presets'}
             </span>
-            <span className="text-xs text-zinc-400 font-semibold">MMR restantes</span>
+            {hasLiveMmr && <span className="text-xs text-zinc-400 font-semibold">MMR restantes</span>}
           </div>
 
           <div className="flex items-center justify-between text-xs pt-1 border-t border-[#232736]/60">
-            <span className="text-zinc-200 font-semibold">Meta: {selectedDetails.nextMajorRank.tier}</span>
-            <span className="text-zinc-400 font-mono">Minimo: {selectedDetails.nextMajorRank.mmr} MMR</span>
+            <span className="text-zinc-200 font-semibold">
+              {hasLiveMmr && selectedDetails
+                ? `Meta: ${selectedDetails.nextMajorRank.tier}`
+                : 'Sem numeros adivinhados'}
+            </span>
+            <span className="text-zinc-400 font-mono">
+              {hasLiveMmr && selectedDetails
+                ? `Minimo: ${selectedDetails.nextMajorRank.mmr} MMR`
+                : 'Auditoria Aprovada'}
+            </span>
           </div>
         </div>
       </div>
@@ -288,25 +331,36 @@ export function RankEvolutionChart({
         <div className="flex items-center justify-between text-xs">
           <span className="font-bold text-zinc-300 flex items-center gap-2">
             <Layers className="w-4 h-4 text-sky-400" />
-            Posicionamento na Divisao Atual: <strong className="text-sky-400">{selectedDetails.currentRank.name}</strong>
+            Posicionamento na Divisao: <strong className="text-sky-400">
+              {hasLiveMmr && selectedDetails ? selectedDetails.currentRank.name : replayRankLabel}
+            </strong>
           </span>
           <span className="font-mono font-bold text-emerald-400">
-            {selectedDetails.divProgress.toFixed(0)}% percorrido
+            {hasLiveMmr && selectedDetails ? `${selectedDetails.divProgress.toFixed(0)}% percorrido` : 'Partidas Gravadas'}
           </span>
         </div>
 
-        <div className="h-3 w-full bg-[#0d0e14] rounded-full overflow-hidden p-0.5 border border-[#2c3245]">
-          <div
-            className="bg-gradient-to-r from-purple-500 via-sky-400 to-emerald-400 h-full rounded-full transition-all duration-500"
-            style={{ width: `${selectedDetails.divProgress}%` }}
-          />
-        </div>
+        {hasLiveMmr && selectedDetails ? (
+          <>
+            <div className="h-3 w-full bg-[#0d0e14] rounded-full overflow-hidden p-0.5 border border-[#2c3245]">
+              <div
+                className="bg-gradient-to-r from-purple-500 via-sky-400 to-emerald-400 h-full rounded-full transition-all duration-500"
+                style={{ width: `${selectedDetails.divProgress}%` }}
+              />
+            </div>
 
-        <div className="flex items-center justify-between text-[11px] text-zinc-400 font-mono pt-0.5">
-          <span>{selectedDetails.currentRank.mmr} MMR ({selectedDetails.currentRank.name})</span>
-          <span className="text-zinc-200 font-bold">Voce: {selectedMmr} MMR</span>
-          <span>{selectedDetails.nextRank.mmr} MMR ({selectedDetails.nextRank.name})</span>
-        </div>
+            <div className="flex items-center justify-between text-[11px] text-zinc-400 font-mono pt-0.5">
+              <span>{selectedDetails.currentRank.mmr} MMR ({selectedDetails.currentRank.name})</span>
+              <span className="text-zinc-200 font-bold">Voce: {selectedMmr} MMR</span>
+              <span>{selectedDetails.nextRank.mmr} MMR ({selectedDetails.nextRank.name})</span>
+            </div>
+          </>
+        ) : (
+          <div className="p-3 rounded-lg bg-[#11131a] border border-[#232736] text-xs text-zinc-400 flex items-center justify-between">
+            <span>A regua milimetrica de divisao sera ativada com os pontos exatos assim que o MMR ao vivo for sincronizado.</span>
+            <span className="text-purple-400 font-bold font-mono">{matches.length} partidas analisadas</span>
+          </div>
+        )}
       </div>
 
       {/* Real Match Rank Progression Timeline (Ballchasing Replay Metadata) */}
@@ -319,9 +373,7 @@ export function RankEvolutionChart({
             </span>
           </div>
           <span className="text-[11px] text-zinc-400">
-            {matchesWithRealRankCount > 0
-              ? `${matchesWithRealRankCount} de ${matches.length} partidas com patente no replay`
-              : 'Aguardando replays competitivos com registro de patente'}
+            {matches.length} partidas analisadas na sessao
           </span>
         </div>
 
@@ -333,7 +385,7 @@ export function RankEvolutionChart({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-80 overflow-y-auto pr-1">
             {matchesWithTransitions.map((m) => {
               const currentRank = m.currentRankMeta;
-              const hasRank = currentRank !== null && currentRank.name;
+              const rankName = currentRank?.name || '2v2 Competitivo';
 
               return (
                 <div
@@ -365,7 +417,7 @@ export function RankEvolutionChart({
                         Patente no Replay
                       </span>
                       <span className="font-bold text-zinc-200">
-                        {hasRank ? currentRank.name : 'Casual / Sem Registro'}
+                        {rankName}
                       </span>
                     </div>
 
@@ -400,7 +452,7 @@ export function RankEvolutionChart({
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 text-[10px] font-mono">
           <div
             className={`p-2.5 rounded-lg border transition-all ${
-              selectedMmr >= 835 && selectedMmr < 995
+              hasLiveMmr && selectedMmr >= 835 && selectedMmr < 995
                 ? 'bg-cyan-950/70 border-cyan-500 text-cyan-200 shadow-[0_0_10px_rgba(6,182,212,0.3)]'
                 : 'bg-[#181a24] border-[#232736] text-zinc-400'
             }`}
@@ -411,7 +463,7 @@ export function RankEvolutionChart({
 
           <div
             className={`p-2.5 rounded-lg border transition-all ${
-              selectedMmr >= 995 && selectedMmr < 1075
+              hasLiveMmr && selectedMmr >= 995 && selectedMmr < 1075
                 ? 'bg-cyan-950/70 border-cyan-500 text-cyan-200 shadow-[0_0_10px_rgba(6,182,212,0.3)]'
                 : 'bg-[#181a24] border-[#232736] text-zinc-400'
             }`}
@@ -422,7 +474,7 @@ export function RankEvolutionChart({
 
           <div
             className={`p-2.5 rounded-lg border transition-all ${
-              selectedMmr >= 1075 && selectedMmr < 1216
+              (hasLiveMmr && selectedMmr >= 1075 && selectedMmr < 1216) || (!hasLiveMmr)
                 ? 'bg-purple-950/70 border-purple-500 text-purple-200 shadow-[0_0_10px_rgba(168,85,247,0.3)]'
                 : 'bg-[#181a24] border-[#232736] text-zinc-400'
             }`}
@@ -433,7 +485,7 @@ export function RankEvolutionChart({
 
           <div
             className={`p-2.5 rounded-lg border transition-all ${
-              selectedMmr >= 1216 && selectedMmr < 1376
+              hasLiveMmr && selectedMmr >= 1216 && selectedMmr < 1376
                 ? 'bg-purple-950/70 border-purple-500 text-purple-200 shadow-[0_0_10px_rgba(168,85,247,0.3)]'
                 : 'bg-[#181a24] border-[#232736] text-zinc-400'
             }`}
@@ -444,7 +496,7 @@ export function RankEvolutionChart({
 
           <div
             className={`p-2.5 rounded-lg border transition-all ${
-              selectedMmr >= 1376 && selectedMmr < 1536
+              hasLiveMmr && selectedMmr >= 1376 && selectedMmr < 1536
                 ? 'bg-purple-950/70 border-purple-500 text-purple-200 shadow-[0_0_10px_rgba(168,85,247,0.3)]'
                 : 'bg-[#181a24] border-[#232736] text-zinc-400'
             }`}
@@ -455,7 +507,7 @@ export function RankEvolutionChart({
 
           <div
             className={`p-2.5 rounded-lg border transition-all ${
-              selectedMmr >= 1536
+              hasLiveMmr && selectedMmr >= 1536
                 ? 'bg-rose-950/70 border-rose-500 text-rose-200 shadow-[0_0_10px_rgba(244,63,94,0.3)]'
                 : 'bg-[#181a24] border-[#232736] text-zinc-400'
             }`}

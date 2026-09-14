@@ -43,15 +43,33 @@ export async function fetchPlayerBallchasingCareerStats(
     const client = new BallchasingClient();
 
     // Query replays for player from Ballchasing API
-    const listParams = isPlayer1
-      ? { playerName: playerConfig.name, count: 50, noCache: forceRefresh }
-      : { playerId: playerConfig.platformId, count: 50, noCache: forceRefresh };
+    // If player 2 (console) has no direct uploads, query duo replays uploaded by player 1 (PC)
+    let replays: ReplaySummary[] = [];
 
-    const replayRes = await client
-      .listReplays(listParams)
+    // 1. Try querying by player name (e.g. 'Leok07' or 'Theuszrib')
+    const primaryRes = await client
+      .listReplays({ playerName: playerConfig.name, count: 50, noCache: forceRefresh })
       .catch(() => ({ count: 0, list: [] as ReplaySummary[] }));
 
-    const replays = replayRes.list || [];
+    replays = primaryRes.list || [];
+
+    // 2. If no replays found and it's player 2, try alternate search name 'theusrib'
+    if (!isPlayer1 && replays.length === 0) {
+      const altRes = await client
+        .listReplays({ playerName: 'theusrib', count: 50, noCache: forceRefresh })
+        .catch(() => ({ count: 0, list: [] as ReplaySummary[] }));
+      replays = altRes.list || [];
+    }
+
+    // 3. If still no replays found (because console players don't upload replays directly),
+    // query replays uploaded by Player 1 (Leok07) where Theuszrib played together!
+    if (!isPlayer1 && replays.length === 0) {
+      const duoRes = await client
+        .listReplays({ playerName: PLAYER_1.name, count: 50, noCache: forceRefresh })
+        .catch(() => ({ count: 0, list: [] as ReplaySummary[] }));
+      replays = duoRes.list || [];
+    }
+
     const replayIds = replays.map((r) => r.id).filter(Boolean);
 
     // Fetch full telemetry for matches
