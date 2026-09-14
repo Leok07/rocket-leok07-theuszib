@@ -31,4 +31,3 @@ jobs:
         run: npm run build
         env:
           BALLCHASING_API_KEY: ${{ secrets.BALLCHASING_API_KEY }}
-          RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}

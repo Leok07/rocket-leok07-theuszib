@@ -225,37 +225,69 @@ export function FutCardsSection({ player1, player2 }: FutCardsSectionProps) {
             <span>Guia de Raridades e Atributos FUT Rocket League:</span>
           </div>
 
-          {/* Rarity Tags Grid (10 Tiers & Hybrid Cards) */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 mb-3 text-[10px]">
-            <div className="p-1.5 rounded bg-gradient-to-r from-amber-950/40 to-yellow-950/20 border border-amber-500/40 text-amber-300 font-bold text-center">
-              G.O.A.T. (OVR 94+ & 3+ MVPs)
+          {/* Rarity Tags Grid: Harmonious Hybrid Blends, Modifiers, and Base Tiers */}
+          <div className="space-y-2 mb-3">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+              Edições Míticas & Mesclas Visuais Híbridas:
             </div>
-            <div className="p-1.5 rounded bg-gradient-to-r from-yellow-950/50 via-slate-900/60 to-yellow-950/50 border border-yellow-400/50 text-yellow-200 font-bold text-center">
-              ICON TOTW (Lenda + 3x MVP)
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px]">
+              <div className="p-2 rounded bg-gradient-to-r from-amber-950/60 to-stone-950/80 border border-amber-500/50 text-amber-300 font-bold text-center">
+                G.O.A.T. SUPREMO (OVR 94+ & 3x MVP)
+              </div>
+              <div className="p-2 rounded bg-gradient-to-r from-slate-900/70 via-indigo-950/80 to-amber-950/60 border border-yellow-400/50 text-yellow-200 font-bold text-center">
+                ICON ÉLITE (Icon 91+ & Modifier Ativo)
+              </div>
+              <div className="p-2 rounded bg-gradient-to-r from-rose-950/60 via-stone-950/80 to-emerald-950/60 border border-emerald-400/50 text-emerald-300 font-bold text-center">
+                TWO-WAY TITAN (Striker + Guardian)
+              </div>
+              <div className="p-2 rounded bg-gradient-to-r from-purple-950/60 via-stone-950/80 to-orange-950/60 border border-orange-400/50 text-orange-300 font-bold text-center">
+                APEX PREDATOR (Speedster + Enforcer)
+              </div>
             </div>
-            <div className="p-1.5 rounded bg-gradient-to-r from-fuchsia-950/50 via-amber-950/40 to-fuchsia-950/50 border border-fuchsia-400/50 text-fuchsia-200 font-bold text-center">
-              ICON HERO (Lenda + Heroi)
+
+            <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 pt-1">
+              Edições TOTW Híbridas & Especialistas:
             </div>
-            <div className="p-1.5 rounded bg-gradient-to-r from-zinc-800/60 to-zinc-900/40 border border-zinc-400/40 text-zinc-200 font-bold text-center">
-              RLCS ICON (OVR 90+)
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 text-[10px]">
+              <div className="p-1.5 rounded bg-gradient-to-r from-yellow-950/50 to-rose-950/50 border border-rose-400/50 text-rose-300 font-bold text-center">
+                TOTW STRIKER
+              </div>
+              <div className="p-1.5 rounded bg-gradient-to-r from-yellow-950/50 to-emerald-950/50 border border-emerald-400/50 text-emerald-300 font-bold text-center">
+                TOTW GUARDIAN
+              </div>
+              <div className="p-1.5 rounded bg-gradient-to-r from-yellow-950/50 to-cyan-950/50 border border-cyan-400/50 text-cyan-300 font-bold text-center">
+                TOTW PLAYMAKER
+              </div>
+              <div className="p-1.5 rounded bg-[#101033] border border-indigo-400/50 text-indigo-300 font-bold text-center">
+                VELOZ SUPERSÔNICO
+              </div>
+              <div className="p-1.5 rounded bg-[#291307] border border-orange-500/50 text-orange-300 font-bold text-center">
+                DEMOLIDOR TÁTICO
+              </div>
+              <div className="p-1.5 rounded bg-yellow-950/50 border border-yellow-500/50 text-yellow-300 font-bold text-center">
+                TOTW IN-FORM
+              </div>
             </div>
-            <div className="p-1.5 rounded bg-gradient-to-r from-purple-950/50 via-amber-950/30 to-purple-950/50 border border-purple-400/50 text-purple-200 font-bold text-center">
-              HERO TOTW (Heroi + 3x MVP)
+
+            <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 pt-1">
+              Patentes Base Oficiais:
             </div>
-            <div className="p-1.5 rounded bg-gradient-to-r from-purple-950/50 to-purple-900/20 border border-purple-500/40 text-purple-300 font-bold text-center">
-              HEROI (OVR 85+ & 3+ MVPs)
-            </div>
-            <div className="p-1.5 rounded bg-gradient-to-r from-yellow-950/50 to-amber-900/20 border border-yellow-500/40 text-yellow-300 font-bold text-center">
-              TOTW (3 MVPs Seguidos)
-            </div>
-            <div className="p-1.5 rounded bg-[#2a1c05] border border-amber-500/40 text-amber-300 font-bold text-center">
-              OURO RARO (OVR 76+)
-            </div>
-            <div className="p-1.5 rounded bg-[#181f2c] border border-slate-400/40 text-slate-300 font-bold text-center">
-              PRATA RARA (OVR 65+)
-            </div>
-            <div className="p-1.5 rounded bg-[#201108] border border-amber-700/40 text-amber-400 font-bold text-center">
-              BRONZE (OVR &lt; 65)
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-[10px]">
+              <div className="p-1.5 rounded bg-slate-800/60 border border-white/50 text-white font-bold text-center">
+                RLCS ICON (91+)
+              </div>
+              <div className="p-1.5 rounded bg-[#0b1c2e] border border-cyan-400/50 text-cyan-200 font-bold text-center">
+                DIAMANTE RARO (86-90)
+              </div>
+              <div className="p-1.5 rounded bg-[#2e1d05] border border-amber-500/40 text-amber-300 font-bold text-center">
+                OURO RARO (76-85)
+              </div>
+              <div className="p-1.5 rounded bg-[#1a2130] border border-slate-400/40 text-slate-300 font-bold text-center">
+                PRATA RARA (65-75)
+              </div>
+              <div className="p-1.5 rounded bg-[#221209] border border-amber-700/40 text-amber-400 font-bold text-center">
+                BRONZE (&lt;65)
+              </div>
             </div>
           </div>
 

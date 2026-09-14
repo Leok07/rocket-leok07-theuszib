@@ -34,8 +34,8 @@ const ContributionDonut: React.FC<ContributionItemProps> = ({
   const p2Pct = total > 0 ? 100 - p1Pct : 50;
 
   const data = [
-    { name: p1Name, value: p1Value || 0.001, color: '#38bdf8' }, // sky-400
-    { name: p2Name, value: p2Value || 0.001, color: '#fb923c' }, // orange-400
+    { name: p1Name, value: p1Value || 0.001, realValue: p1Value, color: '#38bdf8' }, // sky-400
+    { name: p2Name, value: p2Value || 0.001, realValue: p2Value, color: '#fb923c' }, // orange-400
   ];
 
   return (
@@ -73,10 +73,11 @@ const ContributionDonut: React.FC<ContributionItemProps> = ({
                 content={({ active, payload }) => {
                   if (active && payload && payload.length) {
                     const item = payload[0];
+                    const realVal = (item.payload as any)?.realValue ?? (item.value === 0.001 ? 0 : item.value);
                     return (
                       <div className="bg-[#11131a] border border-[#232736] px-2 py-1 rounded text-[11px] text-white shadow-lg">
                         <span className="font-bold">{item.name}: </span>
-                        <span>{item.value} ({Math.round(((item.value as number) / (total || 1)) * 100)}%)</span>
+                        <span>{realVal} ({Math.round(((realVal as number) / (total || 1)) * 100)}%)</span>
                       </div>
                     );
                   }

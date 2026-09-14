@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import {
@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts';
-import { MatchHistoryItem } from '@/types/dashboard';
+import { MatchHistoryItem, SharedMatchItem } from '@/types/dashboard';
 import { TrendingUp, Target, Shield, Zap, Award } from 'lucide-react';
 
 interface TrendSectionProps {
@@ -19,6 +19,7 @@ interface TrendSectionProps {
   player2History: MatchHistoryItem[];
   player1Name: string;
   player2Name: string;
+  sharedMatches?: SharedMatchItem[];
 }
 
 type MetricKey = 'goals' | 'saves' | 'bpm' | 'score';
@@ -42,29 +43,56 @@ export function TrendChart({
   player2History,
   player1Name,
   player2Name,
+  sharedMatches,
 }: TrendSectionProps) {
   const [activeMetric, setActiveMetric] = useState<MetricKey>('goals');
 
-  // Reverse so games appear chronologically (Game 1 -> Game N)
+  const useShared = !!(sharedMatches && sharedMatches.length > 0);
+  const chronoShared = useShared ? [...sharedMatches].reverse() : [];
   const p1Chrono = [...player1History].reverse();
   const p2Chrono = [...player2History].reverse();
-  const totalGames = Math.max(p1Chrono.length, p2Chrono.length);
+  const totalGames = useShared ? chronoShared.length : Math.max(p1Chrono.length, p2Chrono.length);
 
   if (totalGames === 0) {
     return null;
   }
 
-  const chartData = Array.from({ length: totalGames }, (_, i) => {
-    const p1Match = p1Chrono[i];
-    const p2Match = p2Chrono[i];
-    return {
-      game: `J${i + 1}`,
-      [player1Name]: p1Match ? p1Match[activeMetric] : 0,
-      [player2Name]: p2Match ? p2Match[activeMetric] : 0,
-      map: p1Match?.mapName || p2Match?.mapName || 'Arena',
-      resultP1: p1Match?.result === 'win' ? 'Vitória' : 'Derrota',
-    };
-  });
+  const chartData = useShared
+    ? chronoShared.map((m, i) => {
+        let p1Val = 0;
+        let p2Val = 0;
+        if (activeMetric === 'goals') {
+          p1Val = m.p1Goals;
+          p2Val = m.p2Goals;
+        } else if (activeMetric === 'saves') {
+          p1Val = m.p1Saves;
+          p2Val = m.p2Saves;
+        } else if (activeMetric === 'bpm') {
+          p1Val = m.p1Bpm;
+          p2Val = m.p2Bpm;
+        } else if (activeMetric === 'score') {
+          p1Val = m.p1Score;
+          p2Val = m.p2Score;
+        }
+        return {
+          game: `J${i + 1}`,
+          [player1Name]: p1Val,
+          [player2Name]: p2Val,
+          map: m.mapName || 'Arena',
+          resultP1: m.result === 'win' ? 'Vitória' : 'Derrota',
+        };
+      })
+    : Array.from({ length: totalGames }, (_, i) => {
+        const p1Match = p1Chrono[i];
+        const p2Match = p2Chrono[i];
+        return {
+          game: `J${i + 1}`,
+          [player1Name]: p1Match ? p1Match[activeMetric] : 0,
+          [player2Name]: p2Match ? p2Match[activeMetric] : 0,
+          map: p1Match?.mapName || p2Match?.mapName || 'Arena',
+          resultP1: p1Match?.result === 'win' ? 'Vitória' : 'Derrota',
+        };
+      });
 
   const currentConfig = METRICS.find((m) => m.key === activeMetric) || METRICS[0];
   const IconComponent = currentConfig.icon;

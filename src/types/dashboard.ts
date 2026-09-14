@@ -148,17 +148,28 @@ export type FutCardTier =
   | 'bronze'
   | 'silver'
   | 'gold'
-  | 'totw'
-  | 'hero'
-  | 'totw_hero'
+  | 'diamond'
   | 'icon'
-  | 'icon_totw'
-  | 'icon_hero'
+  | 'totw'
+  | 'guardian'
+  | 'striker'
+  | 'playmaker'
+  | 'enforcer'
+  | 'speedster'
+  | 'totw_guardian'
+  | 'totw_striker'
+  | 'totw_playmaker'
+  | 'two_way_titan'
+  | 'apex_predator'
+  | 'icon_hybrid'
   | 'goat';
 
 export interface FutCardStats {
   ovr: number;
   tier: FutCardTier;
+  editionTitle: string;
+  editionRarity: string;
+  isHybrid: boolean;
   position: 'ATA' | 'DEF';
   positionLabel: string; // 'Ataque', 'Defensor'
   pac: number; // Pace / Speed
@@ -171,9 +182,7 @@ export interface FutCardStats {
   streakType: 'win' | 'loss' | 'neutral';
   recentWinRate: number;
   recentMatchesCount: number;
-  nickname: string;
-  nicknameCategory?: string;
-  isNegativeNickname?: boolean;
+  activePerks: Array<{ label: string; value: string; color: string }>;
   recentGoals: number;
   recentAssists: number;
   recentSaves: number;

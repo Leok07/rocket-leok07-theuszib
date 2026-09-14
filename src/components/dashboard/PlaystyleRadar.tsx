@@ -34,8 +34,8 @@ export function PlaystyleRadar({
   }, []);
 
   const chartData = useMemo(() => {
-    return (radar1 || []).map((item, idx) => {
-      const comp = radar2?.[idx];
+    return (radar1 || []).map((item) => {
+      const comp = (radar2 || []).find((r) => r.axis === item.axis);
       return {
         axis: item.axis,
         p1: item.value,

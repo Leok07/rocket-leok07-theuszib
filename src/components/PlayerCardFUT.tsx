@@ -44,8 +44,10 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
     streakType,
     recentWinRate,
     recentMatchesCount,
-    nickname,
-    isNegativeNickname,
+    editionTitle,
+    editionRarity,
+    isHybrid,
+    activePerks = [],
     recentMvpStreak,
   } = stats;
 
@@ -61,7 +63,9 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
       )}
       {/* Outer EA FC Card Shell */}
       <div
-        className={`relative overflow-hidden rounded-[24px] border-[2px] ${currentTierStyles.outerBorder} ${currentTierStyles.borderGlow} bg-gradient-to-b ${currentTierStyles.cardBg} p-3.5 sm:p-4 text-white shadow-2xl backdrop-blur-xl`}
+        className={`relative overflow-hidden rounded-[24px] border-[2px] ${currentTierStyles.outerBorder} ${currentTierStyles.borderGlow} ${
+          isHybrid ? 'ring-1 ring-amber-300/40 shadow-[0_0_40px_rgba(251,191,36,0.3)]' : ''
+        } bg-gradient-to-b ${currentTierStyles.cardBg} p-3.5 sm:p-4 text-white shadow-2xl backdrop-blur-xl`}
       >
         {/* Subtle Inner Bevel Inset Ring */}
         <div
@@ -158,19 +162,25 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
           >
             {playerName}
           </h2>
-          {nickname && (
-            <div className="mt-1 flex items-center justify-center">
-              {isNegativeNickname ? (
-                <span className="inline-flex items-center gap-1 text-[9px] font-black px-2 py-0.5 rounded bg-rose-950/90 border border-rose-600/60 text-rose-300 uppercase tracking-wide">
-                  <ShieldAlert className="w-3 h-3 text-rose-400" />
-                  {nickname}
+
+          <div className="mt-1 flex items-center justify-center gap-1.5 flex-wrap">
+            <span className={`inline-flex items-center gap-1 text-[9px] font-black px-2 py-0.5 rounded border uppercase tracking-wider ${currentTierStyles.editionBadge}`}>
+              <Sparkles className="w-3 h-3" />
+              {editionTitle || currentTierStyles.tierLabel}
+            </span>
+          </div>
+
+          {/* Active Performance Perks */}
+          {activePerks && activePerks.length > 0 && (
+            <div className="mt-1.5 flex items-center justify-center gap-1 flex-wrap">
+              {activePerks.slice(0, 3).map((perk, i) => (
+                <span
+                  key={i}
+                  className={`text-[8px] font-black px-1.5 py-0.5 rounded border uppercase tracking-tight ${perk.color}`}
+                >
+                  {perk.label}: {perk.value}
                 </span>
-              ) : (
-                <span className={`inline-flex items-center gap-1 text-[9px] font-black px-2 py-0.5 rounded border uppercase tracking-wider ${currentTierStyles.nicknameBadge}`}>
-                  <Sparkles className="w-3 h-3 text-amber-400" />
-                  &quot;{nickname}&quot;
-                </span>
-              )}
+              ))}
             </div>
           )}
         </div>
@@ -358,7 +368,7 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
         {/* Card Footer: Clean, fully visible and properly spaced */}
         <div className="relative z-10 mt-2.5 pt-2 border-t border-white/10 flex items-center justify-between text-[9px] text-zinc-400 font-bold tracking-widest uppercase">
           <span>FORMA {matchCountDisplay} JOGOS</span>
-          <span className="font-mono text-zinc-300">RLCS PRO CARD</span>
+          <span className="font-mono text-zinc-300">{editionRarity ? `${editionRarity} • RLCS` : 'RLCS PRO CARD'}</span>
         </div>
       </div>
     </div>

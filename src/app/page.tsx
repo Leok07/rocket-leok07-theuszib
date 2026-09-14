@@ -613,6 +613,7 @@ export default function Home() {
               player2History={player2.matchHistory}
               player1Name={player1.playerName}
               player2Name={player2.playerName}
+              sharedMatches={sharedMatches}
             />
           </>
         )}

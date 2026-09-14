@@ -53,39 +53,78 @@ export const PASSING_BONUS_CONFIG = {
 };
 
 // Maximum total bonus that can be added to the base OVR across all direct match bonuses
-export const MAX_TOTAL_OVR_BONUS = 2.5;
+export const MAX_TOTAL_OVR_BONUS = 3.0;
 
-// Champion 1 (C1) Benchmarks for 5-minute normalized play (Calibrated for Competitive 2v2)
-export const C1_BENCHMARKS = {
+// Grand Champion 3 (GC3) Benchmarks for 5-minute normalized play
+// Calibrated so that an elite GC3 (1850+ MMR) achieves 99 OVR
+// Champion 1 (1075 MMR) naturally sits at 84 - 88 OVR base (reaching 89-93 on hot streaks)
+export const GC3_BENCHMARKS = {
   pac: {
-    speed: { min: 950, mid: 1220, max: 1380 },
-    supersonic: { min: 1.0, mid: 4.0, max: 8.0 },
-    boostSpeed: { min: 12.0, mid: 25.0, max: 38.0 },
-    slowSpeed: { best: 45.0, mid: 60.0, worst: 75.0 },
+    speed: { min: 1050, mid: 1300, max: 1460 },
+    supersonic: { min: 2.0, mid: 7.5, max: 16.0 },
+    boostSpeed: { min: 15.0, mid: 28.0, max: 45.0 },
+    slowSpeed: { best: 36.0, mid: 52.0, worst: 70.0 },
   },
   sho: {
-    goals5min: { min: 0.10, mid: 0.70, max: 1.50 },
-    shots5min: { min: 0.30, mid: 1.80, max: 3.50 },
-    accuracy: { min: 10.0, mid: 30.0, max: 48.0 },
+    goals5min: { min: 0.15, mid: 0.90, max: 1.80 },
+    shots5min: { min: 0.70, mid: 2.40, max: 4.50 },
+    accuracy: { min: 15.0, mid: 36.0, max: 54.0 },
   },
   pas: {
-    assists5min: { min: 0.0, mid: 0.40, max: 0.95 },
-    behindBall: { min: 30.0, mid: 48.0, max: 65.0 },
+    assists5min: { min: 0.10, mid: 0.55, max: 1.25 },
+    behindBall: { min: 32.0, mid: 50.0, max: 68.0 },
   },
   dri: {
-    highAir: { min: 0.3, mid: 1.3, max: 2.8 },
-    lowAir: { min: 18.0, mid: 30.0, max: 44.0 },
-    powerslides5min: { min: 8.0, mid: 20.0, max: 38.0 },
+    highAir: { min: 0.4, mid: 2.0, max: 4.5 },
+    lowAir: { min: 20.0, mid: 34.0, max: 48.0 },
+    powerslides5min: { min: 10.0, mid: 26.0, max: 50.0 },
   },
   def: {
-    saves5min: { min: 0.20, mid: 1.20, max: 2.50 },
-    behindBall: { min: 30.0, mid: 48.0, max: 65.0 },
+    saves5min: { min: 0.25, mid: 1.30, max: 2.70 },
+    behindBall: { min: 32.0, mid: 50.0, max: 68.0 },
   },
   phy: {
-    smallPads5min: { min: 18.0, mid: 34.0, max: 52.0 },
-    bpm: { min: 160, mid: 230, max: 310 },
-    stolenBig5min: { min: 0.2, mid: 1.5, max: 3.8 },
-    zeroBoostTime5min: { best: 3.0, mid: 9.0, worst: 20.0 },
+    smallPads5min: { min: 20.0, mid: 38.0, max: 62.0 },
+    bpm: { min: 180, mid: 290, max: 410 },
+    stolenBig5min: { min: 0.3, mid: 1.8, max: 4.5 },
+    zeroBoostTime5min: { best: 2.0, mid: 7.0, worst: 16.0 },
+  },
+};
+
+// Backwards compatibility alias
+export const C1_BENCHMARKS = GC3_BENCHMARKS;
+
+// Modifiers / Perks thresholds (accessible across all skill levels)
+export const MODIFIER_THRESHOLDS = {
+  totw: {
+    minWinStreak: 3,
+    minWinRate: 70,
+    minMvps: 2,
+  },
+  guardian: {
+    minSavesPerMatch: 1.8,
+    minDefScore: 84,
+  },
+  striker: {
+    minGoalsPerMatch: 1.3,
+    minAccuracy: 40.0,
+    minShoScore: 84,
+  },
+  playmaker: {
+    minAssistsPerMatch: 0.7,
+    minPasScore: 82,
+  },
+  enforcer: {
+    minDemosPerMatch: 1.2,
+    minBpm: 300,
+  },
+  speedster: {
+    minSupersonicPct: 7.5,
+    minSpeed: 1280,
+  },
+  goat: {
+    minOvr: 94,
+    mvpStreak: 3,
   },
 };
 

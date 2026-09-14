@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import { SharedMatchItem } from '@/types/dashboard';
@@ -39,7 +39,7 @@ export function RankEvolutionChart({
 }: RankEvolutionChartProps) {
   const [activePlayer, setActivePlayer] = useState<'p1' | 'p2' | 'both'>('p1');
 
-  // Real MMR extracted directly from RapidAPI live rank service
+  // Real MMR extracted from replay rank metadata
   const p1LiveMmr = careerData?.player1?.rank2v2?.mmr || 0;
   const p2LiveMmr = careerData?.player2?.rank2v2?.mmr || 0;
 
@@ -136,7 +136,7 @@ export function RankEvolutionChart({
               Classificacao Competitiva & Elo Real (2v2)
             </h3>
             <p className="text-xs text-zinc-400">
-              Metricas 100% reais de MMR ao vivo via RapidAPI e patentes oficiais registradas nos replays do Ballchasing
+              Metricas 100% reais de MMR e patentes oficiais registradas nos replays do Ballchasing
             </p>
           </div>
         </div>
@@ -225,7 +225,7 @@ export function RankEvolutionChart({
         <div className="p-4 rounded-xl bg-[#181a24] border border-[#232736] space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider block">
-              MMR Real ao Vivo • RapidAPI
+              MMR Real Registrado • Ballchasing
             </span>
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
               hasLiveMmr
@@ -251,7 +251,7 @@ export function RankEvolutionChart({
               {hasLiveMmr && selectedDetails ? (
                 <>Folga contra queda: <strong className="text-emerald-400">+{selectedDetails.demotionBuffer} pts</strong></>
               ) : (
-                <span className="text-zinc-500">Aguardando API</span>
+                <span className="text-zinc-500">Sem registro de MMR</span>
               )}
             </span>
           </div>
@@ -357,7 +357,7 @@ export function RankEvolutionChart({
           </>
         ) : (
           <div className="p-3 rounded-lg bg-[#11131a] border border-[#232736] text-xs text-zinc-400 flex items-center justify-between">
-            <span>A regua milimetrica de divisao sera ativada com os pontos exatos assim que o MMR ao vivo for sincronizado.</span>
+            <span>A regua milimetrica de divisao e ativada quando o MMR estiver registrado nos replays.</span>
             <span className="text-purple-400 font-bold font-mono">{matches.length} partidas analisadas</span>
           </div>
         )}

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchPlayerBallchasingCareerStats } from '@/lib/ballchasing-career';
-import { fetchRapidApi2v2Rank } from '@/lib/rapidapi-rank';
 import { PLAYER_1, PLAYER_2 } from '@/lib/constants';
 import { CareerComparisonData } from '@/types/career';
 
@@ -11,23 +10,10 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const forceRefresh = searchParams.get('refresh') === 'true';
 
-    const [p1Career, p2Career, p1Rank, p2Rank] = await Promise.all([
+    const [p1Career, p2Career] = await Promise.all([
       fetchPlayerBallchasingCareerStats(PLAYER_1.name, PLAYER_1.platform, PLAYER_1.platformLabel, forceRefresh),
       fetchPlayerBallchasingCareerStats(PLAYER_2.name, PLAYER_2.platform, PLAYER_2.platformLabel, forceRefresh),
-      fetchRapidApi2v2Rank(PLAYER_1.name, PLAYER_1.platform, forceRefresh),
-      fetchRapidApi2v2Rank(
-        PLAYER_2.platformId.includes(':') ? PLAYER_2.platformId.split(':')[1] : PLAYER_2.name,
-        PLAYER_2.platform,
-        forceRefresh
-      ),
     ]);
-
-    if (p1Rank) {
-      p1Career.rank2v2 = p1Rank;
-    }
-    if (p2Rank) {
-      p2Career.rank2v2 = p2Rank;
-    }
 
     const apiStatus = p1Career.apiStatus || p2Career.apiStatus || 'CONNECTED';
     const apiMessage = p1Career.apiMessage || p2Career.apiMessage || 'Sincronizado';

@@ -53,32 +53,32 @@ export function calculateRLRating(player: AggregatedPlayerDashboard): RLRatingRe
   const totalMatches = Math.max(s.totalMatches || 1, 1);
 
   // 1. Combate & Finalizacao (30%)
-  const gRatio = (s.goalsPerMatch || 0) / BENCHMARKS.combat.goalsPerMatch;
-  const shRatio = (s.shotsPerMatch || 0) / BENCHMARKS.combat.shotsPerMatch;
-  const accRatio = (s.shootingPercentage || 0) / BENCHMARKS.combat.shootingAccuracy;
+  const gRatio = (s.goalsPerMatch ?? 0) / BENCHMARKS.combat.goalsPerMatch;
+  const shRatio = (s.shotsPerMatch ?? 0) / BENCHMARKS.combat.shotsPerMatch;
+  const accRatio = (s.shootingPercentage ?? 0) / BENCHMARKS.combat.shootingAccuracy;
   const combatRating = Number(((gRatio * 0.50 + shRatio * 0.25 + accRatio * 0.25)).toFixed(2));
 
   // 2. Impacto & Decisao (25%)
-  const scoreRatio = (s.avgScore || 0) / BENCHMARKS.impact.scorePerMatch;
-  const mvpRatio = s.wins > 0 ? ((s.mvpCount || 0) / s.wins * 100) / BENCHMARKS.impact.mvpRate : 0.8;
-  const demoRatio = (d.avgInflicted || 0) / BENCHMARKS.impact.demosPerMatch;
+  const scoreRatio = (s.avgScore ?? 0) / BENCHMARKS.impact.scorePerMatch;
+  const mvpRatio = s.wins > 0 ? (((s.mvpCount ?? 0) / s.wins) * 100) / BENCHMARKS.impact.mvpRate : 0.8;
+  const demoRatio = (d.avgInflicted ?? 0) / BENCHMARKS.impact.demosPerMatch;
   const impactRating = Number(((scoreRatio * 0.40 + mvpRatio * 0.35 + demoRatio * 0.25)).toFixed(2));
 
   // 3. Solidez Defensiva (20%)
-  const svRatio = (s.savesPerMatch || 0) / BENCHMARKS.defense.savesPerMatch;
-  const behindRatio = (p.avgBehindBall || 60) / BENCHMARKS.defense.behindBallPct;
-  const defHalfRatio = (p.avgDefensiveHalf || 48) / BENCHMARKS.defense.defensiveHalfPct;
+  const svRatio = (s.savesPerMatch ?? 0) / BENCHMARKS.defense.savesPerMatch;
+  const behindRatio = (p.avgBehindBall ?? 60) / BENCHMARKS.defense.behindBallPct;
+  const defHalfRatio = (p.avgDefensiveHalf ?? 48) / BENCHMARKS.defense.defensiveHalfPct;
   const defenseRating = Number(((svRatio * 0.55 + behindRatio * 0.25 + defHalfRatio * 0.20)).toFixed(2));
 
   // 4. Criacao & Suporte (15%)
-  const aRatio = (s.assistsPerMatch || 0) / BENCHMARKS.support.assistsPerMatch;
-  const offThirdRatio = (p.avgOffensiveThird || 28) / BENCHMARKS.support.offensiveThirdPct;
+  const aRatio = (s.assistsPerMatch ?? 0) / BENCHMARKS.support.assistsPerMatch;
+  const offThirdRatio = (p.avgOffensiveThird ?? 28) / BENCHMARKS.support.offensiveThirdPct;
   const supportRating = Number(((aRatio * 0.60 + offThirdRatio * 0.40)).toFixed(2));
 
   // 5. Eficiencia & Movimento (10%)
-  const spdRatio = (m.avgSpeed || 1200) / BENCHMARKS.efficiency.speed;
-  const superRatio = (m.avgSupersonicPercent || 4.5) / BENCHMARKS.efficiency.supersonicPct;
-  const zeroBoostPenalty = Math.max(0.5, 1.15 - ((b.avgZeroBoostPercent || 8) / BENCHMARKS.efficiency.zeroBoostPctMax) * 0.3);
+  const spdRatio = (m.avgSpeed ?? 1200) / BENCHMARKS.efficiency.speed;
+  const superRatio = (m.avgSupersonicPercent ?? 4.5) / BENCHMARKS.efficiency.supersonicPct;
+  const zeroBoostPenalty = Math.max(0.5, 1.15 - ((b.avgZeroBoostPercent ?? 8) / BENCHMARKS.efficiency.zeroBoostPctMax) * 0.3);
   const efficiencyRating = Number(((spdRatio * 0.40 + superRatio * 0.30 + zeroBoostPenalty * 0.30)).toFixed(2));
 
   // Composite RLRating 3.0 Formula

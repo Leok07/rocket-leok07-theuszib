@@ -103,6 +103,17 @@ export async function fetchPlayerBallchasingCareerStats(
         } else {
           if (pData.player.mvp) mvps++;
         }
+
+        // Capture official competitive rank from replay metadata
+        if (latestRankName === 'Sem Rank') {
+          const rankObj = pData.player.rank || r.min_rank || r.max_rank;
+          if (rankObj?.name) {
+            latestRankName = rankObj.name;
+            latestDivision = rankObj.division !== undefined && rankObj.division !== null
+              ? (rankObj.division <= 3 ? rankObj.division + 1 : rankObj.division)
+              : 1;
+          }
+        }
       }
     }
   } catch (err: any) {
@@ -140,6 +151,12 @@ export async function fetchPlayerBallchasingCareerStats(
     isMockFallback: false,
     apiStatus: 'BALLCHASING_ARCHIVE',
     apiMessage: 'Estatisticas 100% reais calculadas a partir dos replays do Ballchasing.',
+    rank2v2: latestRankName !== 'Sem Rank' ? {
+      playlist: '2v2 Competitivo',
+      rank: latestRankName,
+      division: latestDivision,
+      mmr: 0,
+    } : undefined,
   };
 
   careerCache.set(cacheKey, { data: result, timestamp: Date.now() });

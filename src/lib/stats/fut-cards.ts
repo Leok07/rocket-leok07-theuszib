@@ -7,7 +7,6 @@ import {
   FutCardStats,
 } from '@/types/dashboard';
 import { FoundPlayerInMatch } from './player-matching';
-import { selectDeterministicNickname } from './nicknames';
 import {
   UNIFIED_OVR_WEIGHTS,
   DOMINANCE_WEIGHTS,
@@ -16,7 +15,8 @@ import {
   WIN_BONUS,
   PASSING_BONUS_CONFIG,
   MAX_TOTAL_OVR_BONUS,
-  C1_BENCHMARKS,
+  GC3_BENCHMARKS,
+  MODIFIER_THRESHOLDS,
   MOMENTUM_CONFIG,
 } from './tuning-constants';
 import { clamp, safeDiv, piecewiseLinearScale, inversePiecewiseLinearScale } from '@/lib/utils';
@@ -233,39 +233,39 @@ export function calculateFutCardStats(
   // --- 6 CHAMPION 1 PIECEWISE CALIBRATED PILARS (50 a 99) ---
 
   // 1. PAC (Pace / Ritmo: 50 - 99) - Speed, supersonic transitions & boost velocity
-  const scoreSpeed = piecewiseLinearScale(spd, C1_BENCHMARKS.pac.speed.min, C1_BENCHMARKS.pac.speed.mid, C1_BENCHMARKS.pac.speed.max);
-  const scoreSupersonic = piecewiseLinearScale(superPct, C1_BENCHMARKS.pac.supersonic.min, C1_BENCHMARKS.pac.supersonic.mid, C1_BENCHMARKS.pac.supersonic.max);
-  const scoreBoostSpd = piecewiseLinearScale(boostSpd, C1_BENCHMARKS.pac.boostSpeed.min, C1_BENCHMARKS.pac.boostSpeed.mid, C1_BENCHMARKS.pac.boostSpeed.max);
-  const scoreSlow = inversePiecewiseLinearScale(slowSpeed, C1_BENCHMARKS.pac.slowSpeed.best, C1_BENCHMARKS.pac.slowSpeed.mid, C1_BENCHMARKS.pac.slowSpeed.worst);
+  const scoreSpeed = piecewiseLinearScale(spd, GC3_BENCHMARKS.pac.speed.min, GC3_BENCHMARKS.pac.speed.mid, GC3_BENCHMARKS.pac.speed.max);
+  const scoreSupersonic = piecewiseLinearScale(superPct, GC3_BENCHMARKS.pac.supersonic.min, GC3_BENCHMARKS.pac.supersonic.mid, GC3_BENCHMARKS.pac.supersonic.max);
+  const scoreBoostSpd = piecewiseLinearScale(boostSpd, GC3_BENCHMARKS.pac.boostSpeed.min, GC3_BENCHMARKS.pac.boostSpeed.mid, GC3_BENCHMARKS.pac.boostSpeed.max);
+  const scoreSlow = inversePiecewiseLinearScale(slowSpeed, GC3_BENCHMARKS.pac.slowSpeed.best, GC3_BENCHMARKS.pac.slowSpeed.mid, GC3_BENCHMARKS.pac.slowSpeed.worst);
   const pac = Math.round(clamp((scoreSpeed * 0.35) + (scoreSupersonic * 0.30) + (scoreBoostSpd * 0.20) + (scoreSlow * 0.15) + (momentumBonus * 0.20), 50, 99));
 
   // 2. SHO (Shooting / Finalizacao: 50 - 99) - Gols, shots & accuracy (heavily rewarded for scoring difficulty)
-  const scoreGoals = piecewiseLinearScale(nGoals, C1_BENCHMARKS.sho.goals5min.min, C1_BENCHMARKS.sho.goals5min.mid, C1_BENCHMARKS.sho.goals5min.max);
-  const scoreShots = piecewiseLinearScale(nShots, C1_BENCHMARKS.sho.shots5min.min, C1_BENCHMARKS.sho.shots5min.mid, C1_BENCHMARKS.sho.shots5min.max);
-  const scoreAcc = piecewiseLinearScale(shootAcc, C1_BENCHMARKS.sho.accuracy.min, C1_BENCHMARKS.sho.accuracy.mid, C1_BENCHMARKS.sho.accuracy.max);
+  const scoreGoals = piecewiseLinearScale(nGoals, GC3_BENCHMARKS.sho.goals5min.min, GC3_BENCHMARKS.sho.goals5min.mid, GC3_BENCHMARKS.sho.goals5min.max);
+  const scoreShots = piecewiseLinearScale(nShots, GC3_BENCHMARKS.sho.shots5min.min, GC3_BENCHMARKS.sho.shots5min.mid, GC3_BENCHMARKS.sho.shots5min.max);
+  const scoreAcc = piecewiseLinearScale(shootAcc, GC3_BENCHMARKS.sho.accuracy.min, GC3_BENCHMARKS.sho.accuracy.mid, GC3_BENCHMARKS.sho.accuracy.max);
   const sho = Math.round(clamp((scoreGoals * 0.50) + (scoreShots * 0.20) + (scoreAcc * 0.30) + (momentumBonus * 0.20), 50, 99));
 
   // 3. PAS (Passing / Criacao: 50 - 99) - Assists & supporting positioning
-  const scoreAssists = piecewiseLinearScale(nAssists, C1_BENCHMARKS.pas.assists5min.min, C1_BENCHMARKS.pas.assists5min.mid, C1_BENCHMARKS.pas.assists5min.max);
-  const scoreBehind = piecewiseLinearScale(behindB, C1_BENCHMARKS.pas.behindBall.min, C1_BENCHMARKS.pas.behindBall.mid, C1_BENCHMARKS.pas.behindBall.max);
+  const scoreAssists = piecewiseLinearScale(nAssists, GC3_BENCHMARKS.pas.assists5min.min, GC3_BENCHMARKS.pas.assists5min.mid, GC3_BENCHMARKS.pas.assists5min.max);
+  const scoreBehind = piecewiseLinearScale(behindB, GC3_BENCHMARKS.pas.behindBall.min, GC3_BENCHMARKS.pas.behindBall.mid, GC3_BENCHMARKS.pas.behindBall.max);
   const pas = Math.round(clamp((scoreAssists * 0.65) + (scoreBehind * 0.35) + (momentumBonus * 0.20), 50, 99));
 
   // 4. DRI (Mechanics / Jogo Aereo & Controle: 50 - 99) - High/Low air aerial recoveries & powerslides
-  const scoreHighAir = piecewiseLinearScale(hAir, C1_BENCHMARKS.dri.highAir.min, C1_BENCHMARKS.dri.highAir.mid, C1_BENCHMARKS.dri.highAir.max);
-  const scoreLowAir = piecewiseLinearScale(lAir, C1_BENCHMARKS.dri.lowAir.min, C1_BENCHMARKS.dri.lowAir.mid, C1_BENCHMARKS.dri.lowAir.max);
-  const scorePowerslides = piecewiseLinearScale(pSlides, C1_BENCHMARKS.dri.powerslides5min.min, C1_BENCHMARKS.dri.powerslides5min.mid, C1_BENCHMARKS.dri.powerslides5min.max);
+  const scoreHighAir = piecewiseLinearScale(hAir, GC3_BENCHMARKS.dri.highAir.min, GC3_BENCHMARKS.dri.highAir.mid, GC3_BENCHMARKS.dri.highAir.max);
+  const scoreLowAir = piecewiseLinearScale(lAir, GC3_BENCHMARKS.dri.lowAir.min, GC3_BENCHMARKS.dri.lowAir.mid, GC3_BENCHMARKS.dri.lowAir.max);
+  const scorePowerslides = piecewiseLinearScale(pSlides, GC3_BENCHMARKS.dri.powerslides5min.min, GC3_BENCHMARKS.dri.powerslides5min.mid, GC3_BENCHMARKS.dri.powerslides5min.max);
   const dri = Math.round(clamp((scoreHighAir * 0.30) + (scoreLowAir * 0.40) + (scorePowerslides * 0.30) + (momentumBonus * 0.20), 50, 99));
 
   // 5. DEF (Defending / Defesa & Saves: 50 - 99) - Normalized 5-min saves & defensive third coverage
-  const scoreSaves = piecewiseLinearScale(nSaves, C1_BENCHMARKS.def.saves5min.min, C1_BENCHMARKS.def.saves5min.mid, C1_BENCHMARKS.def.saves5min.max);
-  const scoreDefBehind = piecewiseLinearScale(behindB, C1_BENCHMARKS.def.behindBall.min, C1_BENCHMARKS.def.behindBall.mid, C1_BENCHMARKS.def.behindBall.max);
+  const scoreSaves = piecewiseLinearScale(nSaves, GC3_BENCHMARKS.def.saves5min.min, GC3_BENCHMARKS.def.saves5min.mid, GC3_BENCHMARKS.def.saves5min.max);
+  const scoreDefBehind = piecewiseLinearScale(behindB, GC3_BENCHMARKS.def.behindBall.min, GC3_BENCHMARKS.def.behindBall.mid, GC3_BENCHMARKS.def.behindBall.max);
   const def = Math.round(clamp((scoreSaves * 0.70) + (scoreDefBehind * 0.30) + (momentumBonus * 0.20), 50, 99));
 
   // 6. PHY (Physicality / Boost & Pressao: 50 - 99) - Small pad routing, BPM, boost steals & low zero boost
-  const scoreSmallPads = piecewiseLinearScale(nSmallPads, C1_BENCHMARKS.phy.smallPads5min.min, C1_BENCHMARKS.phy.smallPads5min.mid, C1_BENCHMARKS.phy.smallPads5min.max);
-  const scoreBpm = piecewiseLinearScale(bpm, C1_BENCHMARKS.phy.bpm.min, C1_BENCHMARKS.phy.bpm.mid, C1_BENCHMARKS.phy.bpm.max);
-  const scoreStolen = piecewiseLinearScale(nStolen, C1_BENCHMARKS.phy.stolenBig5min.min, C1_BENCHMARKS.phy.stolenBig5min.mid, C1_BENCHMARKS.phy.stolenBig5min.max);
-  const scoreZeroB = inversePiecewiseLinearScale(zeroB, C1_BENCHMARKS.phy.zeroBoostTime5min.best, C1_BENCHMARKS.phy.zeroBoostTime5min.mid, C1_BENCHMARKS.phy.zeroBoostTime5min.worst);
+  const scoreSmallPads = piecewiseLinearScale(nSmallPads, GC3_BENCHMARKS.phy.smallPads5min.min, GC3_BENCHMARKS.phy.smallPads5min.mid, GC3_BENCHMARKS.phy.smallPads5min.max);
+  const scoreBpm = piecewiseLinearScale(bpm, GC3_BENCHMARKS.phy.bpm.min, GC3_BENCHMARKS.phy.bpm.mid, GC3_BENCHMARKS.phy.bpm.max);
+  const scoreStolen = piecewiseLinearScale(nStolen, GC3_BENCHMARKS.phy.stolenBig5min.min, GC3_BENCHMARKS.phy.stolenBig5min.mid, GC3_BENCHMARKS.phy.stolenBig5min.max);
+  const scoreZeroB = inversePiecewiseLinearScale(zeroB, GC3_BENCHMARKS.phy.zeroBoostTime5min.best, GC3_BENCHMARKS.phy.zeroBoostTime5min.mid, GC3_BENCHMARKS.phy.zeroBoostTime5min.worst);
   const phy = Math.round(clamp((scoreSmallPads * 0.35) + (scoreBpm * 0.30) + (scoreStolen * 0.20) + (scoreZeroB * 0.15) + (momentumBonus * 0.15), 50, 99));
 
   // Purely Visual Position Assignment (Does NOT alter OVR formula)
@@ -305,76 +305,203 @@ export function calculateFutCardStats(
   const totalBonuses = Math.min(MAX_TOTAL_OVR_BONUS, rawBonuses);
   let ovr = Math.round(clamp(blendedBaseOvr + totalBonuses, 50, 99));
 
-  // Strict MVP rule: Special variations (TOTW, TOTW Hero, Icon TOTW, GOAT) ONLY trigger on exact streak of 3 MVPs in the 3 most recent matches
-  const isMatchMvp = (m: FoundPlayerInMatch | undefined): boolean => {
-    if (!m) return false;
-    return !!(m.player.stats?.core?.mvp || m.player.mvp);
-  };
+  // 1. Check Modifiers (Performance Traits)
+  const isTotw =
+    (streakType === 'win' && streakCount >= MODIFIER_THRESHOLDS.totw.minWinStreak) ||
+    (recentWinRate >= MODIFIER_THRESHOLDS.totw.minWinRate && recentMvps >= MODIFIER_THRESHOLDS.totw.minMvps);
 
-  const has3ConsecutiveMvpsLast3 =
-    sortedMatches.length >= 3 &&
-    isMatchMvp(sortedMatches[0]) &&
-    isMatchMvp(sortedMatches[1]) &&
-    isMatchMvp(sortedMatches[2]);
+  const isGuardian =
+    avgSv >= MODIFIER_THRESHOLDS.guardian.minSavesPerMatch &&
+    def >= MODIFIER_THRESHOLDS.guardian.minDefScore;
 
-  const isLegendLevel = ovr >= 90;
+  const isStriker =
+    avgG >= MODIFIER_THRESHOLDS.striker.minGoalsPerMatch &&
+    sho >= MODIFIER_THRESHOLDS.striker.minShoScore;
 
-  let tier: FutCardStats['tier'] = 'gold';
+  const isPlaymaker =
+    avgA >= MODIFIER_THRESHOLDS.playmaker.minAssistsPerMatch &&
+    pas >= MODIFIER_THRESHOLDS.playmaker.minPasScore;
 
-  if (has3ConsecutiveMvpsLast3) {
-    if (ovr >= 94) {
-      tier = 'goat';
-    } else if (isLegendLevel) {
-      tier = 'icon_totw';
-    } else if (ovr >= 85) {
-      tier = 'totw_hero';
-    } else {
-      tier = 'totw';
-    }
-  } else {
-    // Normal non-MVP tiers based strictly on OVR rating
-    if (isLegendLevel) {
-      tier = 'icon';
-    } else if (ovr >= 85) {
-      tier = 'hero';
-    } else if (ovr >= 76) {
-      tier = 'gold';
-    } else if (ovr >= 65) {
-      tier = 'silver';
-    } else {
-      tier = 'bronze';
-    }
+  const isEnforcer =
+    dInf >= MODIFIER_THRESHOLDS.enforcer.minDemosPerMatch &&
+    bpm >= MODIFIER_THRESHOLDS.enforcer.minBpm;
+
+  const isSpeedster =
+    superPct >= MODIFIER_THRESHOLDS.speedster.minSupersonicPct &&
+    spd >= MODIFIER_THRESHOLDS.speedster.minSpeed;
+
+  const isGoat =
+    ovr >= MODIFIER_THRESHOLDS.goat.minOvr &&
+    recentMvpStreak >= MODIFIER_THRESHOLDS.goat.mvpStreak;
+
+  const isIcon = ovr >= 91;
+  const isDiamond = ovr >= 86 && ovr <= 90;
+  const isGold = ovr >= 76 && ovr <= 85;
+  const isSilver = ovr >= 65 && ovr <= 75;
+
+  // 2. Build Active Perks
+  const activePerks: Array<{ label: string; value: string; color: string }> = [];
+
+  if (isGuardian) {
+    activePerks.push({
+      label: 'GUARDIÃO',
+      value: `${avgSv.toFixed(1)} sv/j`,
+      color: 'text-emerald-400 bg-emerald-950/80 border-emerald-500/50',
+    });
   }
 
-  // Select Stable / Deterministic Nickname
-  const isGoat = tier === 'goat';
-  const playerName = matches[0]?.player?.name || fallbackSession.totalMatches > 0 ? 'Player' : 'Jogador';
-  const { nickname, category: nicknameCategory, isNegative: isNegativeNickname } = selectDeterministicNickname(playerName, {
-    ovr,
-    pac,
-    sho,
-    pas,
-    dri,
-    def,
-    phy,
-    avgG,
-    avgSv,
-    avgA,
-    avgSh,
-    shootAcc,
-    recentWinRate,
-    recentMvps,
-    dInf,
-    superPct,
-    avgScore: avgScoreVal,
-    position,
-    isGoat,
-    recentMatchesCount: recentMatches.length,
-  });
+  if (isStriker) {
+    activePerks.push({
+      label: 'ARTILHEIRO',
+      value: `${avgG.toFixed(1)} gols/j`,
+      color: 'text-rose-400 bg-rose-950/80 border-rose-500/50',
+    });
+  }
+
+  if (isPlaymaker) {
+    activePerks.push({
+      label: 'MAESTRO',
+      value: `${avgA.toFixed(1)} ast/j`,
+      color: 'text-cyan-400 bg-cyan-950/80 border-cyan-500/50',
+    });
+  }
+
+  if (isSpeedster) {
+    activePerks.push({
+      label: 'VELOZ',
+      value: `${superPct.toFixed(1)}% super`,
+      color: 'text-indigo-300 bg-indigo-950/80 border-indigo-500/50',
+    });
+  }
+
+  if (isEnforcer) {
+    activePerks.push({
+      label: 'DEMOLIDOR',
+      value: `${dInf.toFixed(1)} demos/j`,
+      color: 'text-orange-400 bg-orange-950/80 border-orange-500/50',
+    });
+  }
+
+  if (isTotw) {
+    activePerks.push({
+      label: 'ON FIRE',
+      value: streakCount > 0 ? `${streakCount}W streak` : `${recentWinRate}% WR`,
+      color: 'text-yellow-400 bg-yellow-950/80 border-yellow-500/50',
+    });
+  }
+
+  if (recentMvpStreak >= 2) {
+    activePerks.push({
+      label: 'MVP RUN',
+      value: `${recentMvpStreak}x MVP`,
+      color: 'text-amber-300 bg-amber-950/80 border-amber-500/50',
+    });
+  }
+
+  // 3. Determine Tier, Edition Title, and Harmonious Hybrid Blends
+  let tier: FutCardStats['tier'] = 'gold';
+  let editionTitle = 'OURO RARO';
+  let editionRarity = 'Raro';
+  let isHybrid = false;
+
+  if (isGoat) {
+    tier = 'goat';
+    editionTitle = 'G.O.A.T. SUPREMO';
+    editionRarity = 'Mítico 24k';
+    isHybrid = true;
+  } else if (isIcon && (isTotw || isStriker || isGuardian || isPlaymaker)) {
+    tier = 'icon_hybrid';
+    editionTitle = 'ICON ÉLITE IN-FORM';
+    editionRarity = 'Lendário Especial';
+    isHybrid = true;
+  } else if (isIcon) {
+    tier = 'icon';
+    editionTitle = 'RLCS ICON LENDÁRIO';
+    editionRarity = 'Lendário';
+    isHybrid = false;
+  } else if (isTotw && isStriker) {
+    tier = 'totw_striker';
+    editionTitle = 'TOTW STRIKER';
+    editionRarity = 'Edição Especial';
+    isHybrid = true;
+  } else if (isTotw && isGuardian) {
+    tier = 'totw_guardian';
+    editionTitle = 'TOTW GUARDIAN';
+    editionRarity = 'Edição Especial';
+    isHybrid = true;
+  } else if (isTotw && isPlaymaker) {
+    tier = 'totw_playmaker';
+    editionTitle = 'TOTW PLAYMAKER';
+    editionRarity = 'Edição Especial';
+    isHybrid = true;
+  } else if (isStriker && isGuardian) {
+    tier = 'two_way_titan';
+    editionTitle = 'TWO-WAY TITAN';
+    editionRarity = 'Titã Bivalente';
+    isHybrid = true;
+  } else if (isSpeedster && isEnforcer) {
+    tier = 'apex_predator';
+    editionTitle = 'APEX PREDATOR';
+    editionRarity = 'Predador do Ápice';
+    isHybrid = true;
+  } else if (isTotw) {
+    tier = 'totw';
+    editionTitle = 'TEAM OF THE WEEK';
+    editionRarity = 'In-Form';
+    isHybrid = false;
+  } else if (isStriker) {
+    tier = 'striker';
+    editionTitle = 'ARTILHEIRO NATO';
+    editionRarity = 'Especialista';
+    isHybrid = false;
+  } else if (isGuardian) {
+    tier = 'guardian';
+    editionTitle = 'GUARDIÃO DEFENSIVO';
+    editionRarity = 'Especialista';
+    isHybrid = false;
+  } else if (isPlaymaker) {
+    tier = 'playmaker';
+    editionTitle = 'MAESTRO CRIADOR';
+    editionRarity = 'Especialista';
+    isHybrid = false;
+  } else if (isEnforcer) {
+    tier = 'enforcer';
+    editionTitle = 'DEMOLIDOR TÁTICO';
+    editionRarity = 'Especialista';
+    isHybrid = false;
+  } else if (isSpeedster) {
+    tier = 'speedster';
+    editionTitle = 'VELOZ SUPERSÔNICO';
+    editionRarity = 'Especialista';
+    isHybrid = false;
+  } else if (isDiamond) {
+    tier = 'diamond';
+    editionTitle = 'DIAMANTE RARO';
+    editionRarity = 'Raro';
+    isHybrid = false;
+  } else if (isGold) {
+    tier = 'gold';
+    editionTitle = 'OURO RARO';
+    editionRarity = 'Raro';
+    isHybrid = false;
+  } else if (isSilver) {
+    tier = 'silver';
+    editionTitle = 'PRATA RARA';
+    editionRarity = 'Incomum';
+    isHybrid = false;
+  } else {
+    tier = 'bronze';
+    editionTitle = 'BRONZE';
+    editionRarity = 'Comum';
+    isHybrid = false;
+  }
 
   return {
     ovr,
     tier,
+    editionTitle,
+    editionRarity,
+    isHybrid,
     position,
     positionLabel,
     pac,
@@ -387,9 +514,7 @@ export function calculateFutCardStats(
     streakType,
     recentWinRate,
     recentMatchesCount: recentMatches.length,
-    nickname,
-    nicknameCategory,
-    isNegativeNickname,
+    activePerks,
     recentGoals,
     recentAssists,
     recentSaves,

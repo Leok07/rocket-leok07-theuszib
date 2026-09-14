@@ -1,4 +1,4 @@
-﻿import { ReplaySummary, Platform } from '@/types/ballchasing';
+import { ReplaySummary, Platform } from '@/types/ballchasing';
 import {
   AggregatedPlayerDashboard,
   SessionCoreSummary,
@@ -381,6 +381,9 @@ export function createEmptyDashboard(
     futStats: {
       ovr: 60,
       tier: 'bronze',
+      editionTitle: 'BRONZE',
+      editionRarity: 'Comum',
+      isHybrid: false,
       position: 'ATA',
       positionLabel: 'Ataque',
       pac: 60,
@@ -393,9 +396,7 @@ export function createEmptyDashboard(
       streakType: 'neutral',
       recentWinRate: 50,
       recentMatchesCount: 0,
-      nickname: 'Iniciante da Arena',
-      nicknameCategory: 'Inicial',
-      isNegativeNickname: false,
+      activePerks: [],
       recentGoals: 0,
       recentAssists: 0,
       recentSaves: 0,
