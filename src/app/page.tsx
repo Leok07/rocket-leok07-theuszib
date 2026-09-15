@@ -5,6 +5,7 @@ import { CompareHeader } from '@/components/CompareHeader';
 import { CompareSection } from '@/components/CompareSection';
 import { SharedMatchesList } from '@/components/SharedMatchesList';
 import { FutCardsSection } from '@/components/FutCardsSection';
+import { AICoachSection } from '@/components/dashboard/AICoachSection';
 import { PlaystyleRadar } from '@/components/dashboard/PlaystyleRadar';
 import { TrendChart } from '@/components/dashboard/TrendChart';
 import { CareerStatsBox } from '@/components/dashboard/CareerStatsBox';
@@ -207,6 +208,13 @@ export default function Home() {
           <>
             {/* Cards EA FC Ultimate Dupla - NOBRE HERO DECK */}
             <FutCardsSection
+              player1={player1}
+              player2={player2}
+              sharedMatches={sharedMatches}
+            />
+
+            {/* Centro Tatico de Inteligencia Artificial (Analise Persistente) */}
+            <AICoachSection
               player1={player1}
               player2={player2}
               sharedMatches={sharedMatches}

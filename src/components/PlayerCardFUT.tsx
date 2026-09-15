@@ -1,16 +1,14 @@
 'use client';
 
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { FutCardStats, AggregatedPlayerDashboard } from '@/types/dashboard';
 import { TIER_STYLES } from '@/lib/fut-tiers';
 import {
   Award,
   TrendingUp,
   TrendingDown,
-  Sparkles,
   Crown,
   Zap,
-  Info,
 } from 'lucide-react';
 
 export interface StatLeaderFlags {
@@ -106,18 +104,7 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
   stats,
   teamTheme,
   leaderStats,
-  dashboard,
 }: PlayerCardFUTProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState<{ x: number; y: number; glareX: number; glareY: number; isHovered: boolean }>({
-    x: 0,
-    y: 0,
-    glareX: 50,
-    glareY: 50,
-    isHovered: false,
-  });
-  const [inspectedStat, setInspectedStat] = useState<string | null>(null);
-
   const {
     ovr,
     tier = 'gold',
@@ -132,9 +119,7 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
     streakType,
     recentWinRate,
     recentMatchesCount,
-    editionTitle,
     editionRarity,
-    activePerks = [],
     recentMvpStreak,
     isProvisional,
   } = stats;
@@ -153,94 +138,13 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
     return platformLabel.toUpperCase();
   }, [platformLabel]);
 
-  // Mouse move handler for 3D parallax tilt & specular sheen
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-
-    const normX = (mouseX / rect.width) * 2 - 1;
-    const normY = (mouseY / rect.height) * 2 - 1;
-
-    const tiltX = -normY * 8;
-    const tiltY = normX * 8;
-    const glareX = (mouseX / rect.width) * 100;
-    const glareY = (mouseY / rect.height) * 100;
-
-    setTilt({ x: tiltX, y: tiltY, glareX, glareY, isHovered: true });
-  };
-
-  const handleMouseLeave = () => {
-    setTilt({ x: 0, y: 0, glareX: 50, glareY: 50, isHovered: false });
-  };
-
-  // Micro-attribute inspection definitions
-  const inspectionDetails: Record<string, { title: string; items: Array<{ label: string; value: string }> }> = {
-    PAC: {
-      title: 'Ritmo & Velocidade',
-      items: [
-        { label: 'Velocidade Media', value: dashboard ? `${dashboard.movement.avgSpeed.toLocaleString('pt-BR', { maximumFractionDigits: 0 })} uu/s` : '1.410 uu/s' },
-        { label: '% Supersonico', value: dashboard ? `${(dashboard.movement.avgSupersonicPercent * 100).toFixed(1)}%` : '14.5%' },
-        { label: '% Boost Speed', value: dashboard ? `${(dashboard.movement.avgBoostSpeedPercent * 100).toFixed(1)}%` : '28.0%' },
-      ],
-    },
-    SHO: {
-      title: 'Finalizacao & Gols',
-      items: [
-        { label: 'Gols Recentes', value: `${stats.recentGoals || 0}` },
-        { label: 'Chutes Recentes', value: `${stats.recentShots || 0}` },
-        { label: 'Conversao em Gol', value: stats.recentShots > 0 ? `${((stats.recentGoals / stats.recentShots) * 100).toFixed(1)}%` : '0.0%' },
-      ],
-    },
-    PAS: {
-      title: 'Playmaking & Passes',
-      items: [
-        { label: 'Assistencias', value: `${stats.recentAssists || 0}` },
-        { label: 'Assists / Jogo', value: `${(stats.recentAssists / Math.max(matchCountDisplay, 1)).toFixed(2)}` },
-        { label: 'Participacao Total', value: `${(stats.recentGoals || 0) + (stats.recentAssists || 0)} gols` },
-      ],
-    },
-    DRI: {
-      title: 'Mecanica & Controle Aereo',
-      items: [
-        { label: '% Ar Alto (Aerials)', value: dashboard ? `${(dashboard.movement.avgHighAirPercent * 100).toFixed(1)}%` : '8.2%' },
-        { label: 'Powerslides / Jogo', value: dashboard ? `${dashboard.movement.avgPowerslideCount.toFixed(0)}` : '18' },
-        { label: '% Ar Baixo', value: dashboard ? `${(dashboard.movement.avgLowAirPercent * 100).toFixed(1)}%` : '19.4%' },
-      ],
-    },
-    DEF: {
-      title: 'Solidez Defensiva',
-      items: [
-        { label: 'Saves Realizados', value: `${stats.recentSaves || 0}` },
-        { label: 'Terco Defensivo', value: dashboard ? `${(dashboard.positioning.avgDefensiveThird * 100).toFixed(1)}%` : '46.5%' },
-        { label: 'Atras da Bola', value: dashboard ? `${(dashboard.positioning.avgBehindBall * 100).toFixed(1)}%` : '78.2%' },
-      ],
-    },
-    PHY: {
-      title: 'Fisicalidade & Pressao',
-      items: [
-        { label: 'BPM (Boost/min)', value: dashboard ? `${dashboard.boost.avgBpm.toFixed(0)}` : '385' },
-        { label: 'Boost Roubado / Jogo', value: dashboard ? `${dashboard.boost.avgStolenBig.toFixed(1)}` : '1.4' },
-        { label: 'Demos / Jogo', value: dashboard ? `${dashboard.demos.avgInflicted.toFixed(2)}` : '0.8' },
-      ],
-    },
-  };
-
   return (
     <div
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      className="relative w-[320px] sm:w-[340px] h-[570px] mx-auto select-none transition-transform duration-100 ease-out cursor-pointer group shrink-0"
+      className="relative w-[315px] sm:w-[335px] h-[525px] mx-auto select-none transition-transform duration-200 hover:-translate-y-1.5 cursor-pointer group shrink-0"
       style={{
-        transform: tilt.isHovered
-          ? `perspective(1000px) rotateX(${tilt.x.toFixed(2)}deg) rotateY(${tilt.y.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`
-          : 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
         filter: leaderStats?.ovr
           ? `drop-shadow(0 18px 32px rgba(245, 158, 11, 0.45)) drop-shadow(0 0 16px ${currentTierStyles.foilGlow || 'rgba(245, 158, 11, 0.35)'})`
           : `drop-shadow(0 18px 32px rgba(0, 0, 0, 0.8)) drop-shadow(0 0 16px ${currentTierStyles.foilGlow || 'rgba(255, 255, 255, 0.2)'})`,
-        transformStyle: 'preserve-3d',
       }}
     >
       {/* Outer Glow Halo Ring */}
@@ -270,24 +174,13 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
           >
             {/* Layer 4: Card Body Container with Generous Breathing Space */}
             <div
-              className={`relative w-full h-full flex flex-col justify-between overflow-hidden bg-gradient-to-b ${currentTierStyles.cardBg} px-5 sm:px-5.5 pt-4 pb-8 text-white backdrop-blur-xl`}
+              className={`relative w-full h-full flex flex-col justify-between overflow-hidden bg-gradient-to-b ${currentTierStyles.cardBg} px-5 sm:px-5.5 pt-4 pb-12 text-white backdrop-blur-xl`}
               style={{ clipPath: SHIELD_CLIP_PATH }}
             >
               {/* Subtle Tech Watermark Pattern */}
               <div
                 className="absolute inset-0 pointer-events-none opacity-[0.035] bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:12px_12px]"
               />
-
-              {/* Dynamic Holographic Specular Foil Sheen Layer */}
-              {tilt.isHovered && (
-                <div
-                  className="absolute inset-0 pointer-events-none z-30 mix-blend-color-dodge transition-opacity duration-150"
-                  style={{
-                    background: `radial-gradient(circle 220px at ${tilt.glareX}% ${tilt.glareY}%, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.12) 35%, transparent 75%), linear-gradient(${tilt.x * 12}deg, rgba(255, 0, 128, 0.12), rgba(0, 255, 255, 0.12), rgba(255, 215, 0, 0.12), transparent)`,
-                    opacity: 0.9,
-                  }}
-                />
-              )}
 
               {/* Top Metallic Header Ribbon (Generous top clearance, no edge touching) */}
               <div className="relative z-10 flex items-center justify-between border-b border-white/10 pb-1.5 h-7 shrink-0 mb-1">
@@ -372,7 +265,7 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
                     <div className="absolute inset-0 bg-gradient-to-t from-purple-700/25 via-purple-500/10 to-transparent pointer-events-none" />
 
                     {/* High-Resolution Minimalist Champion Rank Emblem */}
-                    <div className="w-full h-[78px] sm:h-[82px] flex items-center justify-center relative z-10 transition-transform duration-300 group-hover/badge:scale-105">
+                    <div className="w-full h-[78px] sm:h-[82px] flex items-center justify-center relative z-10">
                       <img
                         src={CHAMPION_MINIMALIST_BADGE.src}
                         alt="CHAMPION"
@@ -394,31 +287,27 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
                 </div>
               </div>
 
-              {/* Nameplate: EA FC Metallic Banner (Generous side breathing room) */}
-              <div className={`relative z-10 text-center py-1.5 px-3 rounded border ${currentTierStyles.nameplateBorder} h-12 flex flex-col justify-center items-center shrink-0 mb-1 shadow-sm`}>
+              {/* Nameplate: EA FC Clean Hero Nameplate (Zero text overlap, ample breathing room) */}
+              <div className={`relative z-10 text-center py-2 px-3 rounded border ${currentTierStyles.nameplateBorder} flex flex-col justify-center items-center shrink-0 mb-1 shadow-sm`}>
                 <h2
-                  className={`text-sm sm:text-base font-black tracking-[0.16em] uppercase truncate max-w-[240px] leading-tight ${
+                  className={`text-base sm:text-lg font-black tracking-[0.22em] uppercase truncate max-w-[250px] leading-none ${
                     teamTheme === 'blue' ? 'text-sky-100' : 'text-orange-100'
                   }`}
                 >
                   {playerName}
                 </h2>
-
-                <div className="mt-0.5 flex items-center justify-center gap-1.5">
-                  <span className={`inline-flex items-center gap-1 text-[8.5px] font-black px-2 py-0.5 rounded border uppercase tracking-wider ${currentTierStyles.editionBadge}`}>
-                    <Sparkles className="w-2.5 h-2.5" />
-                    {editionTitle || currentTierStyles.tierLabel}
-                  </span>
-                </div>
+                <span className="text-[8px] font-bold tracking-widest text-zinc-400 uppercase mt-1">
+                  {position === 'ATA' ? 'DUO STRIKER • 2V2' : 'DUO ANCHOR • 2V2'}
+                </span>
               </div>
 
-              {/* Official 2x3 EA FC Attributes Grid */}
-              <div className="relative z-10 grid grid-cols-2 gap-x-4 text-xs sm:text-sm py-1 h-[106px] shrink-0 mb-1">
+              {/* Official 2x3 EA FC Attributes Grid (Clean, static, crisp, no hover inspection popup) */}
+              <div className="relative z-10 grid grid-cols-2 gap-x-4 text-xs sm:text-sm py-1.5 h-[106px] shrink-0 mb-1">
                 {/* Center Vertical Divider */}
                 <div className="absolute top-0.5 bottom-0.5 left-1/2 -translate-x-1/2 w-[1px] bg-gradient-to-b from-transparent via-white/25 to-transparent" />
 
                 {/* Left Column: PAC, SHO, PAS */}
-                <div className="space-y-0.5 pr-1">
+                <div className="space-y-1 pr-1">
                   {[
                     { key: 'PAC', label: 'PAC', val: pac, isLeader: leaderStats?.pac },
                     { key: 'SHO', label: 'SHO', val: sho, isLeader: leaderStats?.sho },
@@ -426,12 +315,8 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
                   ].map((item) => (
                     <div
                       key={item.key}
-                      onMouseEnter={() => setInspectedStat(item.key)}
-                      onClick={() => setInspectedStat(inspectedStat === item.key ? null : item.key)}
-                      className={`flex items-center justify-between border-b border-white/5 pb-0.5 px-1.5 py-0.5 rounded cursor-pointer transition-all ${
-                        inspectedStat === item.key
-                          ? 'bg-white/15 border-white/30 scale-[1.02]'
-                          : item.isLeader
+                      className={`flex items-center justify-between border-b border-white/5 pb-0.5 px-2 py-0.5 rounded transition-all ${
+                        item.isLeader
                           ? 'bg-amber-400/10 border-amber-400/30'
                           : 'hover:bg-white/5'
                       }`}
@@ -439,9 +324,7 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
                       <div className="flex items-center gap-1">
                         <span
                           className={`text-[11px] sm:text-[12px] tracking-wider ${
-                            inspectedStat === item.key
-                              ? 'text-white font-black'
-                              : item.isLeader
+                            item.isLeader
                               ? 'text-amber-300 font-bold'
                               : currentTierStyles.statLabel
                           }`}
@@ -466,7 +349,7 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
                 </div>
 
                 {/* Right Column: DRI, DEF, PHY */}
-                <div className="space-y-0.5 pl-1">
+                <div className="space-y-1 pl-1">
                   {[
                     { key: 'DRI', label: 'DRI', val: dri, isLeader: leaderStats?.dri },
                     { key: 'DEF', label: 'DEF', val: def, isLeader: leaderStats?.def },
@@ -474,12 +357,8 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
                   ].map((item) => (
                     <div
                       key={item.key}
-                      onMouseEnter={() => setInspectedStat(item.key)}
-                      onClick={() => setInspectedStat(inspectedStat === item.key ? null : item.key)}
-                      className={`flex items-center justify-between border-b border-white/5 pb-0.5 px-1.5 py-0.5 rounded cursor-pointer transition-all ${
-                        inspectedStat === item.key
-                          ? 'bg-white/15 border-white/30 scale-[1.02]'
-                          : item.isLeader
+                      className={`flex items-center justify-between border-b border-white/5 pb-0.5 px-2 py-0.5 rounded transition-all ${
+                        item.isLeader
                           ? 'bg-amber-400/10 border-amber-400/30'
                           : 'hover:bg-white/5'
                       }`}
@@ -487,9 +366,7 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
                       <div className="flex items-center gap-1">
                         <span
                           className={`text-[11px] sm:text-[12px] tracking-wider ${
-                            inspectedStat === item.key
-                              ? 'text-white font-black'
-                              : item.isLeader
+                            item.isLeader
                               ? 'text-amber-300 font-bold'
                               : currentTierStyles.statLabel
                           }`}
@@ -514,50 +391,8 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
                 </div>
               </div>
 
-              {/* Inspection HUD Tray / Perks (Strictly locked 48px height) */}
-              <div className="relative z-10 h-12 flex flex-col justify-center shrink-0 overflow-hidden mb-1">
-                {inspectedStat && inspectionDetails[inspectedStat] ? (
-                  <div className="bg-black/75 border border-white/20 rounded p-1.5 animate-fadeIn shadow-sm">
-                    <div className="flex items-center justify-between pb-0.5 border-b border-white/10 mb-1">
-                      <span className="text-[8.5px] font-black uppercase text-amber-300 tracking-wider flex items-center gap-1">
-                        <Info className="w-2.5 h-2.5" />
-                        {inspectedStat} • {inspectionDetails[inspectedStat].title}
-                      </span>
-                      <span className="text-[7.5px] text-zinc-400">Ballchasing</span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-1 text-center">
-                      {inspectionDetails[inspectedStat].items.map((it, idx) => (
-                        <div key={idx} className="bg-white/5 rounded px-1 py-0.5 border border-white/5">
-                          <span className="text-[7px] text-zinc-400 block truncate">{it.label}</span>
-                          <span className="text-[9px] font-mono font-bold text-white block truncate">{it.value}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="w-full">
-                    {activePerks && activePerks.length > 0 ? (
-                      <div className="flex items-center justify-center gap-1.5 flex-nowrap overflow-hidden">
-                        {activePerks.slice(0, 3).map((perk, i) => (
-                          <span
-                            key={i}
-                            className={`text-[8px] font-black px-1.5 py-0.5 rounded border uppercase tracking-tight truncate max-w-[95px] ${perk.color}`}
-                          >
-                            {perk.label}: {perk.value}
-                          </span>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-1 text-[8px] font-mono text-zinc-400 tracking-wider">
-                        PASSE O MOUSE NOS ATRIBUTOS PARA INSPECIONAR
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Card Footer: Comfortably positioned above shield bottom taper */}
-              <div className="relative z-10 pt-1.5 border-t border-white/10 flex items-center justify-between text-[8px] sm:text-[9px] text-zinc-400 font-bold tracking-widest uppercase h-6 shrink-0">
+              {/* Card Footer: Positioned inside safe rectangular zone, ample breathing room above bottom shield tip */}
+              <div className="relative z-10 pt-2 border-t border-white/10 flex items-center justify-between text-[8px] sm:text-[9px] text-zinc-400 font-bold tracking-widest uppercase h-6 shrink-0">
                 <span>FORMA {matchCountDisplay} JOGOS</span>
                 <span className="font-mono text-zinc-300">{editionRarity ? `${editionRarity} • RLCS` : 'CHAMPION • PRO CARD'}</span>
               </div>
