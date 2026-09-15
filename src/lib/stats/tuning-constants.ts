@@ -135,3 +135,28 @@ export const MOMENTUM_CONFIG = {
   winRateHighBonus: 1.5, // WR >= 70%
   winRateLowPenalty: 1.5, // WR <= 30%
 };
+
+// Competitive Rank / MMR Anchor Configuration
+export const RANK_ANCHOR_CONFIG = {
+  statsWeight: 0.60,
+  rankWeight: 0.40,
+  minMatchesWithRank: 3,
+};
+
+export function getRankBaselineOvr(tierNumber?: number, division?: number): number {
+  if (!tierNumber || tierNumber <= 0) return 86;
+
+  if (tierNumber <= 3) return 52 + tierNumber * 2;
+  if (tierNumber <= 6) return 60 + (tierNumber - 3) * 2;
+  if (tierNumber <= 9) return 68 + (tierNumber - 6) * 2;
+  if (tierNumber <= 12) return 76 + (tierNumber - 9) * 1.5;
+  if (tierNumber <= 15) return 81 + (tierNumber - 12) * 1.5;
+  if (tierNumber === 16) return 87 + (division ? division * 0.3 : 0);
+  if (tierNumber === 17) return 89 + (division ? division * 0.3 : 0);
+  if (tierNumber === 18) return 91 + (division ? division * 0.3 : 0);
+  if (tierNumber === 19) return 93 + (division ? division * 0.3 : 0);
+  if (tierNumber === 20) return 96 + (division ? division * 0.3 : 0);
+  if (tierNumber >= 21) return 99;
+  return 86;
+}
+

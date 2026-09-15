@@ -65,3 +65,9 @@ export function inversePiecewiseLinearScale(val: number, bestVal: number, midVal
   const pct = (val - midVal) / (worstVal - midVal);
   return clamp(80.0 - pct * 30.0, 50.0, 80.0); // 80 down to 50
 }
+
+export function shrinkTowardPrior(sampleAvg: number, priorAvg: number, n: number, k: number = 10): number {
+  if (n <= 0) return priorAvg;
+  return (n / (n + k)) * sampleAvg + (k / (n + k)) * priorAvg;
+}
+

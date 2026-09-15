@@ -190,6 +190,9 @@ export interface FutCardStats {
   recentMvps: number;
   recentMvpStreak: number;
   recentAvgScore: number;
+  isProvisional?: boolean;
+  rankTierNumber?: number;
+  rankName?: string;
 }
 
 export interface AggregatedPlayerDashboard {

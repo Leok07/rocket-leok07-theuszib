@@ -1,4 +1,4 @@
-﻿import {
+import {
   SessionCoreSummary,
   SessionPositioningSummary,
   SessionBoostSummary,

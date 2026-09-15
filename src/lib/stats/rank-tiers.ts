@@ -1,4 +1,4 @@
-﻿export interface RankTierInfo {
+export interface RankTierInfo {
   tierNumber: number;
   name: string;
   tierName: string;

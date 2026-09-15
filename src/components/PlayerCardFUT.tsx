@@ -9,14 +9,7 @@ import {
   TrendingDown,
   Sparkles,
   Crown,
-  Shield,
   Zap,
-  Target,
-  Flame,
-  Gauge,
-  Swords,
-  Crosshair,
-  Compass,
   Info,
 } from 'lucide-react';
 
@@ -63,22 +56,22 @@ function getChemistryStyle(stats: FutCardStats): ChemistryStyle {
   const pair = [statList[0].key, statList[1].key].sort().join('+');
 
   if (pair === 'PAC+SHO') {
-    return { id: 'hunter', name: 'HUNTER', role: 'Caçador Ofensivo', boosted: '+PAC +SHO', color: 'text-rose-400', badgeBg: 'bg-rose-950/70 border-rose-500/50' };
+    return { id: 'hunter', name: 'HUNTER', role: 'Cacador Ofensivo', boosted: '+PAC +SHO', color: 'text-rose-400', badgeBg: 'bg-rose-950/70 border-rose-500/50' };
   }
   if (pair === 'DEF+PAC') {
     return { id: 'shadow', name: 'SHADOW', role: 'Sombra Defensiva', boosted: '+PAC +DEF', color: 'text-emerald-400', badgeBg: 'bg-emerald-950/70 border-emerald-500/50' };
   }
   if (pair === 'DRI+PAS') {
-    return { id: 'engine', name: 'ENGINE', role: 'Motor Tático', boosted: '+PAS +DRI', color: 'text-amber-400', badgeBg: 'bg-amber-950/70 border-amber-500/50' };
+    return { id: 'engine', name: 'ENGINE', role: 'Motor Tatico', boosted: '+PAS +DRI', color: 'text-amber-400', badgeBg: 'bg-amber-950/70 border-amber-500/50' };
   }
   if (pair === 'DEF+PHY') {
-    return { id: 'anchor', name: 'ANCHOR', role: 'Âncora Blindada', boosted: '+DEF +PHY', color: 'text-cyan-400', badgeBg: 'bg-cyan-950/70 border-cyan-500/50' };
+    return { id: 'anchor', name: 'ANCHOR', role: 'Ancora Blindada', boosted: '+DEF +PHY', color: 'text-cyan-400', badgeBg: 'bg-cyan-950/70 border-cyan-500/50' };
   }
   if (pair === 'PAS+SHO') {
     return { id: 'catalyst', name: 'CATALYST', role: 'Catalisador Ofensivo', boosted: '+SHO +PAS', color: 'text-yellow-400', badgeBg: 'bg-yellow-950/70 border-yellow-500/50' };
   }
   if (pair === 'DRI+PAC') {
-    return { id: 'hawk', name: 'HAWK', role: 'Falcão Mecânico', boosted: '+PAC +DRI', color: 'text-orange-400', badgeBg: 'bg-orange-950/70 border-orange-500/50' };
+    return { id: 'hawk', name: 'HAWK', role: 'Falcao Mecanico', boosted: '+PAC +DRI', color: 'text-orange-400', badgeBg: 'bg-orange-950/70 border-orange-500/50' };
   }
   if (pair === 'DEF+PAS') {
     return { id: 'gladiator', name: 'GLADIATOR', role: 'Gladiador de Campo', boosted: '+PAS +DEF', color: 'text-blue-400', badgeBg: 'bg-blue-950/70 border-blue-500/50' };
@@ -90,71 +83,33 @@ function getChemistryStyle(stats: FutCardStats): ChemistryStyle {
     return { id: 'finisher', name: 'FINISHER', role: 'Finalizador Letal', boosted: '+SHO +DRI', color: 'text-purple-400', badgeBg: 'bg-purple-950/70 border-purple-500/50' };
   }
   if (pair === 'PAC+PHY') {
-    return { id: 'powerhouse', name: 'POWERHOUSE', role: 'Força Bruta', boosted: '+PAC +PHY', color: 'text-teal-400', badgeBg: 'bg-teal-950/70 border-teal-500/50' };
+    return { id: 'powerhouse', name: 'POWERHOUSE', role: 'Forca Bruta', boosted: '+PAC +PHY', color: 'text-teal-400', badgeBg: 'bg-teal-950/70 border-teal-500/50' };
   }
   if (pair === 'DEF+DRI') {
-    return { id: 'sentinel', name: 'SENTINEL', role: 'Sentinela Aéreo', boosted: '+DRI +DEF', color: 'text-indigo-400', badgeBg: 'bg-indigo-950/70 border-indigo-500/50' };
+    return { id: 'sentinel', name: 'SENTINEL', role: 'Sentinela Aereo', boosted: '+DRI +DEF', color: 'text-indigo-400', badgeBg: 'bg-indigo-950/70 border-indigo-500/50' };
   }
   return { id: 'basic', name: 'BASIC', role: 'Equilibrado', boosted: 'ESTILO BASE', color: 'text-zinc-300', badgeBg: 'bg-zinc-800/70 border-zinc-600/50' };
 }
 
-// Vector Silhouette of the Legendary Octane
-function OctaneSilhouette({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 100 50" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <path d="M12 28 C6 27, 2 29, 0 31 C2 33, 7 32, 11 31 Z" fill="url(#octaneBoostGrad)" opacity="0.85" />
-      <path d="M10 29 C5 28.5, 3 30, 1 31 C3 32, 6 31.5, 9 30.5 Z" fill="#ffffff" opacity="0.9" />
-      <path d="M15 16 L26 12 L28 15 L17 18 Z" fill="currentColor" opacity="0.95" />
-      <path d="M21 15 L22 23 L24 23 L23 15 Z" fill="currentColor" opacity="0.75" />
-      <path d="M28 22 L38 15 L56 16 L65 24 L27 24 Z" fill="currentColor" opacity="0.4" />
-      <path
-        d="M14 26 L23 20 L40 18 L55 18 L70 23 L85 26 L94 28 L94 32 L88 34 L78 34 C76 30, 68 30, 66 34 L44 34 C42 30, 34 30, 32 34 L18 34 L14 30 Z"
-        fill="currentColor"
-      />
-      <path d="M48 16 L56 16 L53 19 L46 19 Z" fill="#ffffff" opacity="0.85" />
-      <polygon points="86,27 93,29 90,31 84,30" fill="#38bdf8" />
-      <circle cx="72" cy="34" r="7" fill="#0f172a" stroke="currentColor" strokeWidth="2" />
-      <circle cx="72" cy="34" r="3.5" fill="#38bdf8" opacity="0.85" />
-      <circle cx="38" cy="34" r="8" fill="#0f172a" stroke="currentColor" strokeWidth="2" />
-      <circle cx="38" cy="34" r="4" fill="#38bdf8" opacity="0.85" />
-      <defs>
-        <linearGradient id="octaneBoostGrad" x1="0" y1="30" x2="12" y2="30" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#0284c7" stopOpacity="0" />
-          <stop offset="0.5" stopColor="#38bdf8" />
-          <stop offset="1" stopColor="#ffffff" />
-        </linearGradient>
-      </defs>
-    </svg>
-  );
-}
-
-// Vector Silhouette of the Iconic Fennec
-function FennecSilhouette({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 100 50" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <path d="M12 29 C6 28, 2 30, 0 32 C2 34, 7 33, 11 32 Z" fill="url(#fennecBoostGrad)" opacity="0.85" />
-      <path d="M10 30 C5 29.5, 3 31, 1 32 C3 33, 6 32.5, 9 31.5 Z" fill="#ffffff" opacity="0.9" />
-      <path d="M16 19 L20 18 L32 18 L55 18 L68 23 L20 23 Z" fill="currentColor" opacity="0.4" />
-      <path d="M16 17 L22 17 L21 19 L15 19 Z" fill="currentColor" opacity="0.95" />
-      <path
-        d="M15 23 L20 19 L60 19 L72 24 L90 26 L94 28 L94 33 L88 34 L78 34 C76 30, 68 30, 66 34 L44 34 C42 30, 34 30, 32 34 L17 34 L15 28 Z"
-        fill="currentColor"
-      />
-      <polygon points="88,27 93,28 92,31 87,30" fill="#fb923c" />
-      <rect x="89" y="30" width="4" height="2" fill="#fed7aa" opacity="0.9" />
-      <circle cx="72" cy="34" r="7.5" fill="#0f172a" stroke="currentColor" strokeWidth="2" />
-      <circle cx="72" cy="34" r="3.5" fill="#fb923c" opacity="0.85" />
-      <circle cx="38" cy="34" r="7.5" fill="#0f172a" stroke="currentColor" strokeWidth="2" />
-      <circle cx="38" cy="34" r="3.5" fill="#fb923c" opacity="0.85" />
-      <defs>
-        <linearGradient id="fennecBoostGrad" x1="0" y1="31" x2="12" y2="31" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#c2410c" stopOpacity="0" />
-          <stop offset="0.5" stopColor="#fb923c" />
-          <stop offset="1" stopColor="#ffffff" />
-        </linearGradient>
-      </defs>
-    </svg>
-  );
+// Helper to determine the official Rocket League competitive rank badge asset
+function getRankBadgeInfo(tierNumber?: number, rankName?: string) {
+  const name = (rankName || '').toLowerCase();
+  if (tierNumber === 18 || name.includes('iii') || name.includes(' 3')) {
+    return {
+      src: '/images/ranks/champion_3.png',
+      label: 'CHAMPION III',
+    };
+  }
+  if (tierNumber === 17 || name.includes('ii') || name.includes(' 2')) {
+    return {
+      src: '/images/ranks/champion_2.png',
+      label: 'CHAMPION II',
+    };
+  }
+  return {
+    src: '/images/ranks/champion_1.png',
+    label: rankName ? rankName.toUpperCase() : 'CHAMPION I',
+  };
 }
 
 // Authentic EA FC Ultimate Team Shield Geometry
@@ -167,7 +122,6 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
   teamTheme,
   leaderStats,
   dashboard,
-  carModel,
 }: PlayerCardFUTProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState<{ x: number; y: number; glareX: number; glareY: number; isHovered: boolean }>({
@@ -195,19 +149,29 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
     recentMatchesCount,
     editionTitle,
     editionRarity,
-    isHybrid,
     activePerks = [],
     recentMvpStreak,
+    isProvisional,
+    rankTierNumber,
+    rankName,
   } = stats;
 
   const currentTierStyles = TIER_STYLES[tier] || TIER_STYLES.gold;
   const matchCountDisplay = recentMatchesCount || 10;
   const chemistryStyle = useMemo(() => getChemistryStyle(stats), [stats]);
+  const rankBadge = useMemo(() => getRankBadgeInfo(rankTierNumber, rankName), [rankTierNumber, rankName]);
 
-  // Car model selection (Leok07 defaults to Octane, Theuszrib to Fennec)
-  const resolvedCarModel = carModel || (playerName.toLowerCase().includes('leo') ? 'octane' : 'fennec');
+  // Clean, single-line platform formatting to prevent wrapping
+  const formattedPlatform = useMemo(() => {
+    const p = (platformLabel || '').toLowerCase();
+    if (p.includes('epic')) return 'EPIC (PC)';
+    if (p.includes('playstation') || p.includes('ps5') || p.includes('ps4')) return 'PS5';
+    if (p.includes('steam')) return 'STEAM';
+    if (p.includes('xbox')) return 'XBOX';
+    return platformLabel.toUpperCase();
+  }, [platformLabel]);
 
-  // Mouse move handler for smooth 3D parallax tilt & specular light
+  // Mouse move handler for 3D parallax tilt & specular sheen
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
@@ -234,29 +198,29 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
     PAC: {
       title: 'Ritmo & Velocidade',
       items: [
-        { label: 'Velocidade Média', value: dashboard ? `${dashboard.movement.avgSpeed.toLocaleString('pt-BR', { maximumFractionDigits: 0 })} km/h` : '1.410 km/h' },
-        { label: '% Supersônico', value: dashboard ? `${(dashboard.movement.avgSupersonicPercent * 100).toFixed(1)}%` : '14.5%' },
+        { label: 'Velocidade Media', value: dashboard ? `${dashboard.movement.avgSpeed.toLocaleString('pt-BR', { maximumFractionDigits: 0 })} uu/s` : '1.410 uu/s' },
+        { label: '% Supersonico', value: dashboard ? `${(dashboard.movement.avgSupersonicPercent * 100).toFixed(1)}%` : '14.5%' },
         { label: '% Boost Speed', value: dashboard ? `${(dashboard.movement.avgBoostSpeedPercent * 100).toFixed(1)}%` : '28.0%' },
       ],
     },
     SHO: {
-      title: 'Finalização & Gols',
+      title: 'Finalizacao & Gols',
       items: [
         { label: 'Gols Recentes', value: `${stats.recentGoals || 0}` },
         { label: 'Chutes Recentes', value: `${stats.recentShots || 0}` },
-        { label: 'Conversão em Gol', value: stats.recentShots > 0 ? `${((stats.recentGoals / stats.recentShots) * 100).toFixed(1)}%` : '0.0%' },
+        { label: 'Conversao em Gol', value: stats.recentShots > 0 ? `${((stats.recentGoals / stats.recentShots) * 100).toFixed(1)}%` : '0.0%' },
       ],
     },
     PAS: {
       title: 'Playmaking & Passes',
       items: [
-        { label: 'Assistências', value: `${stats.recentAssists || 0}` },
+        { label: 'Assistencias', value: `${stats.recentAssists || 0}` },
         { label: 'Assists / Jogo', value: `${(stats.recentAssists / Math.max(matchCountDisplay, 1)).toFixed(2)}` },
-        { label: 'Participação Total', value: `${(stats.recentGoals || 0) + (stats.recentAssists || 0)} gols` },
+        { label: 'Participacao Total', value: `${(stats.recentGoals || 0) + (stats.recentAssists || 0)} gols` },
       ],
     },
     DRI: {
-      title: 'Mecânica & Controle Aéreo',
+      title: 'Mecanica & Controle Aereo',
       items: [
         { label: '% Ar Alto (Aerials)', value: dashboard ? `${(dashboard.movement.avgHighAirPercent * 100).toFixed(1)}%` : '8.2%' },
         { label: 'Powerslides / Jogo', value: dashboard ? `${dashboard.movement.avgPowerslideCount.toFixed(0)}` : '18' },
@@ -267,12 +231,12 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
       title: 'Solidez Defensiva',
       items: [
         { label: 'Saves Realizados', value: `${stats.recentSaves || 0}` },
-        { label: 'Terço Defensivo', value: dashboard ? `${(dashboard.positioning.avgDefensiveThird * 100).toFixed(1)}%` : '46.5%' },
-        { label: 'Atrás da Bola', value: dashboard ? `${(dashboard.positioning.avgBehindBall * 100).toFixed(1)}%` : '78.2%' },
+        { label: 'Terco Defensivo', value: dashboard ? `${(dashboard.positioning.avgDefensiveThird * 100).toFixed(1)}%` : '46.5%' },
+        { label: 'Atras da Bola', value: dashboard ? `${(dashboard.positioning.avgBehindBall * 100).toFixed(1)}%` : '78.2%' },
       ],
     },
     PHY: {
-      title: 'Fisicalidade & Pressão',
+      title: 'Fisicalidade & Pressao',
       items: [
         { label: 'BPM (Boost/min)', value: dashboard ? `${dashboard.boost.avgBpm.toFixed(0)}` : '385' },
         { label: 'Boost Roubado / Jogo', value: dashboard ? `${dashboard.boost.avgStolenBig.toFixed(1)}` : '1.4' },
@@ -286,7 +250,7 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative w-full max-w-[305px] sm:max-w-[325px] mx-auto select-none transition-transform duration-100 ease-out cursor-pointer group"
+      className="relative w-[310px] sm:w-[330px] h-[550px] mx-auto select-none transition-transform duration-100 ease-out cursor-pointer group shrink-0"
       style={{
         transform: tilt.isHovered
           ? `perspective(1000px) rotateX(${tilt.x.toFixed(2)}deg) rotateY(${tilt.y.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`
@@ -297,16 +261,16 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
         transformStyle: 'preserve-3d',
       }}
     >
-      {/* Layer 1: Authentic EA FC Shield Chamfered Metallic Frame */}
+      {/* Layer 1: EA FC Shield Chamfered Metallic Frame */}
       <div
-        className={`relative p-[2.5px] bg-gradient-to-b ${
+        className={`relative w-full h-full p-[2.5px] bg-gradient-to-b ${
           currentTierStyles.shieldBorderGradient || 'from-amber-300 via-amber-500 to-amber-700'
         } transition-all duration-300`}
         style={{ clipPath: SHIELD_CLIP_PATH }}
       >
-        {/* Layer 2: Inner Shield Body Card Container */}
+        {/* Layer 2: Inner Shield Body Card Container with Rigid Fixed Height */}
         <div
-          className={`relative overflow-hidden bg-gradient-to-b ${currentTierStyles.cardBg} p-3.5 sm:p-4 text-white pb-7 backdrop-blur-xl`}
+          className={`relative w-full h-full flex flex-col justify-between overflow-hidden bg-gradient-to-b ${currentTierStyles.cardBg} px-3.5 sm:px-4 pt-3 pb-8 text-white backdrop-blur-xl`}
           style={{ clipPath: SHIELD_CLIP_PATH }}
         >
           {/* Layer 3: Dynamic Holographic Specular Foil Sheen Layer */}
@@ -320,27 +284,32 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
             />
           )}
 
-          {/* Top Metallic Header Ribbon */}
-          <div className="relative z-10 flex items-center justify-between border-b border-white/10 pb-2 mb-2">
-            <div className="flex items-center gap-1.5 bg-black/50 px-2 py-0.5 rounded border border-white/15">
+          {/* Top Metallic Header Ribbon (Single-line, locked height) */}
+          <div className="relative z-10 flex items-center justify-between border-b border-white/10 pb-1.5 h-7 shrink-0">
+            <div className="flex items-center gap-1.5 bg-black/50 px-2 py-0.5 rounded border border-white/15 shrink-0">
               <Award className={`w-3.5 h-3.5 ${currentTierStyles.headerIconColor}`} />
               <span className="text-[10px] font-black tracking-widest uppercase text-zinc-100">
                 {currentTierStyles.tierLabel}
               </span>
             </div>
 
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 shrink-0">
+              {isProvisional && (
+                <span className="text-[8.5px] font-black bg-amber-950/80 border border-amber-500/50 text-amber-300 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                  PROV
+                </span>
+              )}
               <span className="text-[9px] font-extrabold bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 px-1.5 py-0.5 rounded uppercase tracking-wider">
                 BR
               </span>
-              <span className="text-[9px] font-bold text-zinc-300 uppercase tracking-wider bg-black/50 px-2 py-0.5 rounded border border-white/15">
-                {platformLabel}
+              <span className="text-[9px] font-bold text-zinc-300 uppercase tracking-wider bg-black/50 px-2 py-0.5 rounded border border-white/15 whitespace-nowrap">
+                {formattedPlatform}
               </span>
             </div>
           </div>
 
-          {/* Dynamic Form / Streak Banner */}
-          <div className="relative z-10 mb-2 flex items-center justify-between text-[10px] bg-black/60 px-2.5 py-1 rounded border border-white/10">
+          {/* Dynamic Form / Streak Banner (Locked height) */}
+          <div className="relative z-10 flex items-center justify-between text-[10px] bg-black/60 px-2.5 py-1 rounded border border-white/10 h-7 shrink-0">
             <span className="text-zinc-400 font-medium">Forma Recente:</span>
             {recentMvpStreak && recentMvpStreak >= 3 ? (
               <span className="text-amber-300 flex items-center gap-1 font-black">
@@ -350,7 +319,7 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
             ) : streakType === 'win' && streakCount >= 1 ? (
               <span className="text-emerald-400 flex items-center gap-1 font-black">
                 <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
-                +{streakCount} Vitórias Seguidas
+                +{streakCount} Vitorias Seguidas
               </span>
             ) : streakType === 'loss' && streakCount >= 1 ? (
               <span className="text-rose-400 flex items-center gap-1 font-black">
@@ -362,9 +331,9 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
             )}
           </div>
 
-          {/* Upper Deck: Left OVR & Position Stack + Right Rocket League Vehicle Crest */}
-          <div className="relative z-10 flex items-center justify-between gap-2 px-1 py-1">
-            {/* Left OVR & Position Info Block */}
+          {/* Upper Deck: Left OVR & Position + Right Official Rocket League Rank Crest */}
+          <div className="relative z-10 flex items-center justify-between gap-2 px-1 py-1 h-[132px] shrink-0">
+            {/* Left OVR & Position Block */}
             <div className="flex flex-col items-center shrink-0 w-20 text-center">
               <span
                 className={`text-5xl sm:text-6xl font-black font-mono leading-none tracking-tight ${currentTierStyles.ovrText}`}
@@ -382,71 +351,69 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
               {/* EA FC Chemistry Style Mini Badge */}
               <div
                 className={`mt-1.5 px-1.5 py-0.5 rounded border text-[8px] font-black uppercase tracking-wider flex items-center gap-1 ${chemistryStyle.badgeBg} ${chemistryStyle.color}`}
-                title={`Estilo de Química: ${chemistryStyle.role} (${chemistryStyle.boosted})`}
+                title={`Estilo de Quimica: ${chemistryStyle.role} (${chemistryStyle.boosted})`}
               >
                 <Zap className="w-2.5 h-2.5" />
                 <span>{chemistryStyle.name}</span>
               </div>
             </div>
 
-            {/* Right Rocket League Vehicle Crest (Octane / Fennec Silhouette) */}
+            {/* Right Rocket League Competitive Rank Crest */}
             <div className="flex-1 flex flex-col items-center justify-center relative">
               <div
-                className={`w-28 h-24 sm:w-32 sm:h-26 rounded-xl flex flex-col items-center justify-center relative border ${currentTierStyles.crestBorder} bg-gradient-to-b ${currentTierStyles.crestBg} p-2 shadow-inner overflow-hidden`}
+                className={`w-32 h-28 sm:w-36 sm:h-[122px] rounded-xl flex flex-col items-center justify-between relative border ${currentTierStyles.crestBorder} bg-gradient-to-b ${currentTierStyles.crestBg} p-1.5 shadow-inner overflow-hidden group/badge`}
               >
-                {/* Vehicle Silhouette Vector */}
-                <div
-                  className={`w-full h-14 flex items-center justify-center ${
-                    teamTheme === 'blue'
-                      ? 'text-sky-300 drop-shadow-[0_0_10px_rgba(56,189,248,0.6)]'
-                      : 'text-orange-300 drop-shadow-[0_0_10px_rgba(251,146,60,0.6)]'
-                  }`}
-                >
-                  {resolvedCarModel === 'octane' ? (
-                    <OctaneSilhouette className="w-full h-full object-contain" />
-                  ) : (
-                    <FennecSilhouette className="w-full h-full object-contain" />
-                  )}
+                {/* Subtle radial aura behind rank badge */}
+                <div className="absolute inset-0 bg-gradient-to-t from-purple-700/25 via-purple-500/10 to-transparent pointer-events-none" />
+
+                {/* High-Resolution Transparent Rank Emblem */}
+                <div className="w-full h-[78px] sm:h-[82px] flex items-center justify-center relative z-10 transition-transform duration-300 group-hover/badge:scale-105">
+                  <img
+                    src={rankBadge.src}
+                    alt={rankBadge.label}
+                    className="w-full h-full object-contain filter drop-shadow-[0_4px_12px_rgba(168,85,247,0.5)]"
+                    loading="eager"
+                  />
                 </div>
 
-                {/* Car Model & League Crest Label */}
-                <div className="mt-1 flex items-center justify-between w-full px-1 border-t border-white/10 pt-1">
-                  <span className="text-[8px] font-mono font-black tracking-widest text-zinc-300 uppercase">
-                    {resolvedCarModel === 'octane' ? 'OCTANE RL' : 'FENNEC RL'}
+                {/* Rank Title & Tier Label */}
+                <div className="flex items-center justify-between w-full px-1.5 border-t border-white/10 pt-1 relative z-10 bg-black/40 rounded-b">
+                  <span className="text-[8px] sm:text-[8.5px] font-black tracking-wider text-purple-300 uppercase truncate">
+                    {rankBadge.label}
                   </span>
-                  <span className="text-[8px] font-mono font-bold text-amber-300 tracking-wider">
-                    CHAMP I
+                  <span className="text-[7.5px] sm:text-[8px] font-mono font-bold text-amber-300 tracking-wider shrink-0 ml-1">
+                    RL 2V2
                   </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Nameplate: Authentic EA FC Metallic Banner */}
-          <div className={`relative z-10 mt-2 text-center py-1.5 px-2 rounded border ${currentTierStyles.nameplateBorder}`}>
+          {/* Nameplate: EA FC Metallic Banner (Locked height) */}
+          <div className={`relative z-10 text-center py-1 px-2 rounded border ${currentTierStyles.nameplateBorder} h-12 flex flex-col justify-center items-center shrink-0`}>
             <h2
-              className={`text-sm sm:text-base font-black tracking-[0.16em] uppercase ${
+              className={`text-sm sm:text-base font-black tracking-[0.16em] uppercase truncate max-w-[240px] leading-tight ${
                 teamTheme === 'blue' ? 'text-sky-100' : 'text-orange-100'
               }`}
             >
               {playerName}
             </h2>
 
-            <div className="mt-0.5 flex items-center justify-center gap-1.5 flex-wrap">
-              <span className={`inline-flex items-center gap-1 text-[9px] font-black px-2 py-0.5 rounded border uppercase tracking-wider ${currentTierStyles.editionBadge}`}>
-                <Sparkles className="w-3 h-3" />
+            <div className="mt-0.5 flex items-center justify-center gap-1.5">
+              <span className={`inline-flex items-center gap-1 text-[8.5px] font-black px-2 py-0.5 rounded border uppercase tracking-wider ${currentTierStyles.editionBadge}`}>
+                <Sparkles className="w-2.5 h-2.5" />
                 {editionTitle || currentTierStyles.tierLabel}
               </span>
             </div>
           </div>
 
-          {/* Official 2x3 EA FC Attributes Grid with Metallic Hairline Divider */}
-          <div className="relative z-10 mt-2 grid grid-cols-2 gap-x-4 text-xs sm:text-sm py-1">
+          {/* Official 2x3 EA FC Attributes Grid (Locked height) */}
+          <div className="relative z-10 grid grid-cols-2 gap-x-4 text-xs sm:text-sm py-1 h-[105px] shrink-0">
             {/* Center Vertical Divider */}
             <div className="absolute top-0.5 bottom-0.5 left-1/2 -translate-x-1/2 w-[1px] bg-gradient-to-b from-transparent via-white/25 to-transparent" />
 
             {/* Left Column: PAC, SHO, PAS */}
-            <div className="space-y-1 pr-1">
+            <div className="space-y-0.5 pr-1">
               {[
                 { key: 'PAC', label: 'PAC', val: pac, isLeader: leaderStats?.pac },
                 { key: 'SHO', label: 'SHO', val: sho, isLeader: leaderStats?.sho },
@@ -494,7 +461,7 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
             </div>
 
             {/* Right Column: DRI, DEF, PHY */}
-            <div className="space-y-1 pl-1">
+            <div className="space-y-0.5 pl-1">
               {[
                 { key: 'DRI', label: 'DRI', val: dri, isLeader: leaderStats?.dri },
                 { key: 'DEF', label: 'DEF', val: def, isLeader: leaderStats?.def },
@@ -542,35 +509,34 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
             </div>
           </div>
 
-          {/* Interactive In-Card Inspection HUD Tray */}
-          <div className="relative z-10 mt-2 min-h-[50px]">
+          {/* Inspection HUD Tray / Perks (Strictly locked 48px height) */}
+          <div className="relative z-10 h-12 flex flex-col justify-center shrink-0 overflow-hidden">
             {inspectedStat && inspectionDetails[inspectedStat] ? (
-              <div className="bg-black/70 border border-white/20 rounded-lg p-2 animate-fadeIn transition-all">
-                <div className="flex items-center justify-between pb-1 border-b border-white/10 mb-1.5">
-                  <span className="text-[9px] font-black uppercase text-amber-300 tracking-wider flex items-center gap-1">
+              <div className="bg-black/75 border border-white/20 rounded p-1.5 animate-fadeIn">
+                <div className="flex items-center justify-between pb-0.5 border-b border-white/10 mb-1">
+                  <span className="text-[8.5px] font-black uppercase text-amber-300 tracking-wider flex items-center gap-1">
                     <Info className="w-2.5 h-2.5" />
                     {inspectedStat} • {inspectionDetails[inspectedStat].title}
                   </span>
-                  <span className="text-[8px] text-zinc-400">Ballchasing Real</span>
+                  <span className="text-[7.5px] text-zinc-400">Ballchasing</span>
                 </div>
                 <div className="grid grid-cols-3 gap-1 text-center">
                   {inspectionDetails[inspectedStat].items.map((it, idx) => (
                     <div key={idx} className="bg-white/5 rounded px-1 py-0.5 border border-white/5">
-                      <span className="text-[7.5px] text-zinc-400 block truncate">{it.label}</span>
-                      <span className="text-[10px] font-mono font-bold text-white block">{it.value}</span>
+                      <span className="text-[7px] text-zinc-400 block truncate">{it.label}</span>
+                      <span className="text-[9px] font-mono font-bold text-white block truncate">{it.value}</span>
                     </div>
                   ))}
                 </div>
               </div>
             ) : (
-              <div className="space-y-1">
-                {/* Active Performance Perks */}
+              <div className="w-full">
                 {activePerks && activePerks.length > 0 ? (
-                  <div className="flex items-center justify-center gap-1 flex-wrap">
+                  <div className="flex items-center justify-center gap-1.5 flex-nowrap overflow-hidden">
                     {activePerks.slice(0, 3).map((perk, i) => (
                       <span
                         key={i}
-                        className={`text-[8px] font-black px-1.5 py-0.5 rounded border uppercase tracking-tight ${perk.color}`}
+                        className={`text-[8px] font-black px-1.5 py-0.5 rounded border uppercase tracking-tight truncate max-w-[95px] ${perk.color}`}
                       >
                         {perk.label}: {perk.value}
                       </span>
@@ -585,8 +551,8 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
             )}
           </div>
 
-          {/* Card Footer: Clean, fully visible above shield bottom point */}
-          <div className="relative z-10 mt-2 pt-1.5 border-t border-white/10 flex items-center justify-between text-[8px] sm:text-[9px] text-zinc-400 font-bold tracking-widest uppercase">
+          {/* Card Footer: Comfortably positioned above shield bottom taper */}
+          <div className="relative z-10 pt-1 border-t border-white/10 flex items-center justify-between text-[8px] sm:text-[9px] text-zinc-400 font-bold tracking-widest uppercase h-6 shrink-0">
             <span>FORMA {matchCountDisplay} JOGOS</span>
             <span className="font-mono text-zinc-300">{editionRarity ? `${editionRarity} • RLCS` : 'CHAMPION I • PRO CARD'}</span>
           </div>
@@ -595,5 +561,3 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
     </div>
   );
 });
-
-

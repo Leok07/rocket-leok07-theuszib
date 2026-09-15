@@ -13,7 +13,6 @@ import { MatchHighlights } from '@/components/dashboard/MatchHighlights';
 import { MvpComparisonCard } from '@/components/dashboard/MvpComparisonCard';
 import { TeamContributionChart } from '@/components/dashboard/TeamContributionChart';
 import { RLRatingBox } from '@/components/dashboard/RLRatingBox';
-import { RankEvolutionChart } from '@/components/dashboard/RankEvolutionChart';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { createEmptyDashboard } from '@/lib/stats-calculator';
 import { PLAYER_1, PLAYER_2 } from '@/lib/constants';
@@ -222,14 +221,6 @@ export default function Home() {
               player1Dashboard={player1}
               player2Dashboard={player2}
               isLoading={isLoadingCareer}
-            />
-
-            {/* Evolucao de Ranking e MMR (2v2) */}
-            <RankEvolutionChart
-              careerData={careerData}
-              matches={sharedMatches}
-              player1Name={player1.playerName}
-              player2Name={player2.playerName}
             />
 
             {/* Desktop 2-Column Grid: Resumo Geral & MVP Card */}

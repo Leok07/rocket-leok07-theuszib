@@ -18,8 +18,11 @@ import {
   GC3_BENCHMARKS,
   MODIFIER_THRESHOLDS,
   MOMENTUM_CONFIG,
+  RANK_ANCHOR_CONFIG,
+  getRankBaselineOvr,
 } from './tuning-constants';
-import { clamp, safeDiv, piecewiseLinearScale, inversePiecewiseLinearScale } from '@/lib/utils';
+import { clamp, safeDiv, piecewiseLinearScale, inversePiecewiseLinearScale, shrinkTowardPrior } from '@/lib/utils';
+import { getBallchasingTierLabel } from './rank-tiers';
 
 export function calculateFutCardStats(
   matches: FoundPlayerInMatch[],
@@ -164,39 +167,68 @@ export function calculateFutCardStats(
   const mCnt = Math.max(movCount, 1);
   const bCnt = Math.max(boostCount, 1);
 
-  // Raw & Normalized 5-minute averages
-  const avgG = recentMatches.length > 0 ? recentGoals / N : fallbackSession.goalsPerMatch;
-  const avgSv = recentMatches.length > 0 ? recentSaves / N : fallbackSession.savesPerMatch;
-  const avgA = recentMatches.length > 0 ? recentAssists / N : fallbackSession.assistsPerMatch;
-  const avgSh = recentMatches.length > 0 ? recentShots / N : fallbackSession.shotsPerMatch;
+  // Extract rank signals from recent matches (Phase 3)
+  let rankMatchesCount = 0;
+  let rankTierSum = 0;
+  let rankDivSum = 0;
+  let detectedRankName = '';
 
-  const nGoals = recentMatches.length > 0 ? recentGoals5min / N : fallbackSession.goalsPerMatch;
-  const nSaves = recentMatches.length > 0 ? recentSaves5min / N : fallbackSession.savesPerMatch;
-  const nAssists = recentMatches.length > 0 ? recentAssists5min / N : fallbackSession.assistsPerMatch;
-  const nShots = recentMatches.length > 0 ? recentShots5min / N : fallbackSession.shotsPerMatch;
-  const nSmallPads = boostCount > 0 ? recentSmallPads5min / bCnt : (fallbackBoost.avgCollectedSmall || 40);
-  const nStolen = boostCount > 0 ? recentStolenBig5min / bCnt : (fallbackBoost.avgStolenBig || 2.0);
-  const nZeroB = boostCount > 0 ? recentZeroBoost5min / bCnt : 8.0;
+  recentMatches.forEach((m) => {
+    const r = m.player?.rank || m.replay?.min_rank || m.replay?.max_rank;
+    if (r && r.tier && r.tier > 0) {
+      rankMatchesCount++;
+      rankTierSum += r.tier;
+      rankDivSum += (r.division !== undefined && r.division !== null ? r.division : 1);
+      if (!detectedRankName && r.name) {
+        detectedRankName = r.name;
+      }
+    }
+  });
+
+  const effectiveRankTier = rankMatchesCount > 0 ? Math.round(rankTierSum / rankMatchesCount) : 16;
+  const effectiveRankDiv = rankMatchesCount > 0 ? Math.round(rankDivSum / rankMatchesCount) : 1;
+  const rankInfo = getBallchasingTierLabel(effectiveRankTier, effectiveRankDiv);
+  const finalRankName = rankInfo ? rankInfo.name : (detectedRankName || 'Campeão I');
+
+  // Statistical shrinkage toward career prior averages (Phase 4, k = 10)
+  const k = 10;
+  const rawGoals5min = recentGoals5min / N;
+  const rawSaves5min = recentSaves5min / N;
+  const rawAssists5min = recentAssists5min / N;
+  const rawShots5min = recentShots5min / N;
+
+  const avgG = recentMatches.length > 0 ? shrinkTowardPrior(recentGoals / N, fallbackSession.goalsPerMatch, N, k) : fallbackSession.goalsPerMatch;
+  const avgSv = recentMatches.length > 0 ? shrinkTowardPrior(recentSaves / N, fallbackSession.savesPerMatch, N, k) : fallbackSession.savesPerMatch;
+  const avgA = recentMatches.length > 0 ? shrinkTowardPrior(recentAssists / N, fallbackSession.assistsPerMatch, N, k) : fallbackSession.assistsPerMatch;
+  const avgSh = recentMatches.length > 0 ? shrinkTowardPrior(recentShots / N, fallbackSession.shotsPerMatch, N, k) : fallbackSession.shotsPerMatch;
+
+  const nGoals = recentMatches.length > 0 ? shrinkTowardPrior(rawGoals5min, fallbackSession.goalsPerMatch, N, k) : fallbackSession.goalsPerMatch;
+  const nSaves = recentMatches.length > 0 ? shrinkTowardPrior(rawSaves5min, fallbackSession.savesPerMatch, N, k) : fallbackSession.savesPerMatch;
+  const nAssists = recentMatches.length > 0 ? shrinkTowardPrior(rawAssists5min, fallbackSession.assistsPerMatch, N, k) : fallbackSession.assistsPerMatch;
+  const nShots = recentMatches.length > 0 ? shrinkTowardPrior(rawShots5min, fallbackSession.shotsPerMatch, N, k) : fallbackSession.shotsPerMatch;
+  const nSmallPads = boostCount > 0 ? shrinkTowardPrior(recentSmallPads5min / bCnt, fallbackBoost.avgCollectedSmall || 40, N, k) : (fallbackBoost.avgCollectedSmall || 40);
+  const nStolen = boostCount > 0 ? shrinkTowardPrior(recentStolenBig5min / bCnt, fallbackBoost.avgStolenBig || 2.0, N, k) : (fallbackBoost.avgStolenBig || 2.0);
+  const nZeroB = boostCount > 0 ? shrinkTowardPrior(recentZeroBoost5min / bCnt, 8.0, N, k) : 8.0;
 
   const rawAcc = recentShots > 0 ? (recentGoals / recentShots) * 100 : fallbackSession.shootingPercentage;
-  const shootAcc = clamp(rawAcc, 0, 100);
-  const avgScoreVal = recentMatches.length > 0 ? recentScore / N : fallbackSession.avgScore;
+  const shootAcc = clamp(recentMatches.length > 0 ? shrinkTowardPrior(rawAcc, fallbackSession.shootingPercentage, N, k) : fallbackSession.shootingPercentage, 0, 100);
+  const avgScoreVal = recentMatches.length > 0 ? shrinkTowardPrior(recentScore / N, fallbackSession.avgScore, N, k) : fallbackSession.avgScore;
 
-  const spd = movCount > 0 ? recentSpeed / mCnt : fallbackMov.avgSpeed;
-  const superPct = movCount > 0 ? recentSuperPct / mCnt : fallbackMov.avgSupersonicPercent;
-  const boostSpd = movCount > 0 ? recentBoostSpdPct / mCnt : fallbackMov.avgBoostSpeedPercent;
-  const slowSpeed = movCount > 0 ? recentSlowSpeedPct / mCnt : (fallbackMov.avgSlowSpeedPercent || 62);
-  const pSlides = movCount > 0 ? recentPowerslides / mCnt : fallbackMov.avgPowerslideCount;
-  const hAir = movCount > 0 ? recentHighAir / mCnt : fallbackMov.avgHighAirPercent;
-  const lAir = movCount > 0 ? recentLowAir / mCnt : (fallbackMov.avgLowAirPercent || 36);
+  const spd = movCount > 0 ? shrinkTowardPrior(recentSpeed / mCnt, fallbackMov.avgSpeed, N, k) : fallbackMov.avgSpeed;
+  const superPct = movCount > 0 ? shrinkTowardPrior(recentSuperPct / mCnt, fallbackMov.avgSupersonicPercent, N, k) : fallbackMov.avgSupersonicPercent;
+  const boostSpd = movCount > 0 ? shrinkTowardPrior(recentBoostSpdPct / mCnt, fallbackMov.avgBoostSpeedPercent, N, k) : fallbackMov.avgBoostSpeedPercent;
+  const slowSpeed = movCount > 0 ? shrinkTowardPrior(recentSlowSpeedPct / mCnt, fallbackMov.avgSlowSpeedPercent || 62, N, k) : (fallbackMov.avgSlowSpeedPercent || 62);
+  const pSlides = movCount > 0 ? shrinkTowardPrior(recentPowerslides / mCnt, fallbackMov.avgPowerslideCount, N, k) : fallbackMov.avgPowerslideCount;
+  const hAir = movCount > 0 ? shrinkTowardPrior(recentHighAir / mCnt, fallbackMov.avgHighAirPercent, N, k) : fallbackMov.avgHighAirPercent;
+  const lAir = movCount > 0 ? shrinkTowardPrior(recentLowAir / mCnt, fallbackMov.avgLowAirPercent || 36, N, k) : (fallbackMov.avgLowAirPercent || 36);
 
-  const bpm = boostCount > 0 ? recentBpm / bCnt : fallbackBoost.avgBpm;
-  const zeroB = boostCount > 0 ? recentZeroBoost / bCnt : fallbackBoost.avgZeroBoostPercent;
+  const bpm = boostCount > 0 ? shrinkTowardPrior(recentBpm / bCnt, fallbackBoost.avgBpm, N, k) : fallbackBoost.avgBpm;
+  const zeroB = boostCount > 0 ? shrinkTowardPrior(recentZeroBoost / bCnt, fallbackBoost.avgZeroBoostPercent, N, k) : fallbackBoost.avgZeroBoostPercent;
 
-  const behindB = posCount > 0 ? recentBehindBall / pCnt : fallbackPos.avgBehindBall;
-  const mostBack = posCount > 0 ? recentMostBack / pCnt : fallbackPos.avgMostBack;
+  const behindB = posCount > 0 ? shrinkTowardPrior(recentBehindBall / pCnt, fallbackPos.avgBehindBall, N, k) : fallbackPos.avgBehindBall;
+  const mostBack = posCount > 0 ? shrinkTowardPrior(recentMostBack / pCnt, fallbackPos.avgMostBack, N, k) : fallbackPos.avgMostBack;
 
-  const dInf = recentMatches.length > 0 ? recentDemos / N : fallbackDemos.avgInflicted;
+  const dInf = recentMatches.length > 0 ? shrinkTowardPrior(recentDemos / N, fallbackDemos.avgInflicted, N, k) : fallbackDemos.avgInflicted;
   const recentWinRate = recentMatches.length > 0 ? Number(((recentWins / N) * 100).toFixed(1)) : fallbackSession.winRate;
 
   // Streak Calculation (Hot / Cold streak from recent matches)
@@ -215,58 +247,44 @@ export function calculateFutCardStats(
     }
   }
 
-  // Momentum Multiplier
-  let momentumBonus = 0;
-  if (streakType === 'win') {
-    momentumBonus += Math.min(MOMENTUM_CONFIG.maxStreakModifier, streakCount * MOMENTUM_CONFIG.streakStep);
-  } else if (streakType === 'loss') {
-    momentumBonus -= Math.min(MOMENTUM_CONFIG.maxStreakModifier, streakCount * MOMENTUM_CONFIG.streakStep);
-  }
-
-  if (recentWinRate >= 70) momentumBonus += MOMENTUM_CONFIG.winRateHighBonus;
-  else if (recentWinRate <= 30) momentumBonus -= MOMENTUM_CONFIG.winRateLowPenalty;
-
-  const matchScoreBonus = Math.max(0, Math.min(2, (avgScoreVal - 330) / 60));
-  const mvpBonusStat = Math.min(2, (recentMvps / N) * 3);
-  momentumBonus += matchScoreBonus + mvpBonusStat;
-
   // --- 6 CHAMPION 1 PIECEWISE CALIBRATED PILARS (50 a 99) ---
+  // (Phase 1: Momentum term removed from pillars - only direct bonuses apply)
 
-  // 1. PAC (Pace / Ritmo: 50 - 99) - Speed, supersonic transitions & boost velocity
+  // 1. PAC (Pace / Ritmo: 50 - 99)
   const scoreSpeed = piecewiseLinearScale(spd, GC3_BENCHMARKS.pac.speed.min, GC3_BENCHMARKS.pac.speed.mid, GC3_BENCHMARKS.pac.speed.max);
   const scoreSupersonic = piecewiseLinearScale(superPct, GC3_BENCHMARKS.pac.supersonic.min, GC3_BENCHMARKS.pac.supersonic.mid, GC3_BENCHMARKS.pac.supersonic.max);
   const scoreBoostSpd = piecewiseLinearScale(boostSpd, GC3_BENCHMARKS.pac.boostSpeed.min, GC3_BENCHMARKS.pac.boostSpeed.mid, GC3_BENCHMARKS.pac.boostSpeed.max);
   const scoreSlow = inversePiecewiseLinearScale(slowSpeed, GC3_BENCHMARKS.pac.slowSpeed.best, GC3_BENCHMARKS.pac.slowSpeed.mid, GC3_BENCHMARKS.pac.slowSpeed.worst);
-  const pac = Math.round(clamp((scoreSpeed * 0.35) + (scoreSupersonic * 0.30) + (scoreBoostSpd * 0.20) + (scoreSlow * 0.15) + (momentumBonus * 0.20), 50, 99));
+  const pac = Math.round(clamp((scoreSpeed * 0.35) + (scoreSupersonic * 0.30) + (scoreBoostSpd * 0.20) + (scoreSlow * 0.15), 50, 99));
 
-  // 2. SHO (Shooting / Finalizacao: 50 - 99) - Gols, shots & accuracy (heavily rewarded for scoring difficulty)
+  // 2. SHO (Shooting / Finalizacao: 50 - 99)
   const scoreGoals = piecewiseLinearScale(nGoals, GC3_BENCHMARKS.sho.goals5min.min, GC3_BENCHMARKS.sho.goals5min.mid, GC3_BENCHMARKS.sho.goals5min.max);
   const scoreShots = piecewiseLinearScale(nShots, GC3_BENCHMARKS.sho.shots5min.min, GC3_BENCHMARKS.sho.shots5min.mid, GC3_BENCHMARKS.sho.shots5min.max);
   const scoreAcc = piecewiseLinearScale(shootAcc, GC3_BENCHMARKS.sho.accuracy.min, GC3_BENCHMARKS.sho.accuracy.mid, GC3_BENCHMARKS.sho.accuracy.max);
-  const sho = Math.round(clamp((scoreGoals * 0.50) + (scoreShots * 0.20) + (scoreAcc * 0.30) + (momentumBonus * 0.20), 50, 99));
+  const sho = Math.round(clamp((scoreGoals * 0.50) + (scoreShots * 0.20) + (scoreAcc * 0.30), 50, 99));
 
-  // 3. PAS (Passing / Criacao: 50 - 99) - Assists & supporting positioning
+  // 3. PAS (Passing / Criacao: 50 - 99)
   const scoreAssists = piecewiseLinearScale(nAssists, GC3_BENCHMARKS.pas.assists5min.min, GC3_BENCHMARKS.pas.assists5min.mid, GC3_BENCHMARKS.pas.assists5min.max);
   const scoreBehind = piecewiseLinearScale(behindB, GC3_BENCHMARKS.pas.behindBall.min, GC3_BENCHMARKS.pas.behindBall.mid, GC3_BENCHMARKS.pas.behindBall.max);
-  const pas = Math.round(clamp((scoreAssists * 0.65) + (scoreBehind * 0.35) + (momentumBonus * 0.20), 50, 99));
+  const pas = Math.round(clamp((scoreAssists * 0.65) + (scoreBehind * 0.35), 50, 99));
 
-  // 4. DRI (Mechanics / Jogo Aereo & Controle: 50 - 99) - High/Low air aerial recoveries & powerslides
+  // 4. DRI (Mechanics / Jogo Aereo & Controle: 50 - 99)
   const scoreHighAir = piecewiseLinearScale(hAir, GC3_BENCHMARKS.dri.highAir.min, GC3_BENCHMARKS.dri.highAir.mid, GC3_BENCHMARKS.dri.highAir.max);
   const scoreLowAir = piecewiseLinearScale(lAir, GC3_BENCHMARKS.dri.lowAir.min, GC3_BENCHMARKS.dri.lowAir.mid, GC3_BENCHMARKS.dri.lowAir.max);
   const scorePowerslides = piecewiseLinearScale(pSlides, GC3_BENCHMARKS.dri.powerslides5min.min, GC3_BENCHMARKS.dri.powerslides5min.mid, GC3_BENCHMARKS.dri.powerslides5min.max);
-  const dri = Math.round(clamp((scoreHighAir * 0.30) + (scoreLowAir * 0.40) + (scorePowerslides * 0.30) + (momentumBonus * 0.20), 50, 99));
+  const dri = Math.round(clamp((scoreHighAir * 0.30) + (scoreLowAir * 0.40) + (scorePowerslides * 0.30), 50, 99));
 
-  // 5. DEF (Defending / Defesa & Saves: 50 - 99) - Normalized 5-min saves & defensive third coverage
+  // 5. DEF (Defending / Defesa & Saves: 50 - 99)
   const scoreSaves = piecewiseLinearScale(nSaves, GC3_BENCHMARKS.def.saves5min.min, GC3_BENCHMARKS.def.saves5min.mid, GC3_BENCHMARKS.def.saves5min.max);
   const scoreDefBehind = piecewiseLinearScale(behindB, GC3_BENCHMARKS.def.behindBall.min, GC3_BENCHMARKS.def.behindBall.mid, GC3_BENCHMARKS.def.behindBall.max);
-  const def = Math.round(clamp((scoreSaves * 0.70) + (scoreDefBehind * 0.30) + (momentumBonus * 0.20), 50, 99));
+  const def = Math.round(clamp((scoreSaves * 0.70) + (scoreDefBehind * 0.30), 50, 99));
 
-  // 6. PHY (Physicality / Boost & Pressao: 50 - 99) - Small pad routing, BPM, boost steals & low zero boost
+  // 6. PHY (Physicality / Boost & Pressao: 50 - 99)
   const scoreSmallPads = piecewiseLinearScale(nSmallPads, GC3_BENCHMARKS.phy.smallPads5min.min, GC3_BENCHMARKS.phy.smallPads5min.mid, GC3_BENCHMARKS.phy.smallPads5min.max);
   const scoreBpm = piecewiseLinearScale(bpm, GC3_BENCHMARKS.phy.bpm.min, GC3_BENCHMARKS.phy.bpm.mid, GC3_BENCHMARKS.phy.bpm.max);
   const scoreStolen = piecewiseLinearScale(nStolen, GC3_BENCHMARKS.phy.stolenBig5min.min, GC3_BENCHMARKS.phy.stolenBig5min.mid, GC3_BENCHMARKS.phy.stolenBig5min.max);
   const scoreZeroB = inversePiecewiseLinearScale(zeroB, GC3_BENCHMARKS.phy.zeroBoostTime5min.best, GC3_BENCHMARKS.phy.zeroBoostTime5min.mid, GC3_BENCHMARKS.phy.zeroBoostTime5min.worst);
-  const phy = Math.round(clamp((scoreSmallPads * 0.35) + (scoreBpm * 0.30) + (scoreStolen * 0.20) + (scoreZeroB * 0.15) + (momentumBonus * 0.15), 50, 99));
+  const phy = Math.round(clamp((scoreSmallPads * 0.35) + (scoreBpm * 0.30) + (scoreStolen * 0.20) + (scoreZeroB * 0.15), 50, 99));
 
   // Purely Visual Position Assignment (Does NOT alter OVR formula)
   const visualAtkPower = (sho * DOMINANCE_WEIGHTS.cardAtk.sho) + (nGoals * DOMINANCE_WEIGHTS.matchAtk.goalsPerMatch) + (nShots * DOMINANCE_WEIGHTS.matchAtk.shotsPerMatch);
@@ -279,7 +297,7 @@ export function calculateFutCardStats(
     positionLabel = 'Defensor';
   }
 
-  // Unified, Position-Agnostic OVR Formula (SHO 33%, DEF 33%, PAS 17%, PAC 7%, DRI 5%, PHY 5%)
+  // Unified, Position-Agnostic OVR Formula (Phase 2: Use direct tactical weights)
   const statsBaseOvr =
     (sho * UNIFIED_OVR_WEIGHTS.sho) +
     (def * UNIFIED_OVR_WEIGHTS.def) +
@@ -288,14 +306,14 @@ export function calculateFutCardStats(
     (dri * UNIFIED_OVR_WEIGHTS.dri) +
     (phy * UNIFIED_OVR_WEIGHTS.phy);
 
-  // Compute the direct average of the 6 visible card stats
-  const simpleStatsAvg = (pac + sho + pas + dri + def + phy) / 6;
+  // Blend with Competitive Rank Baseline when rank signals exist (Phase 3)
+  const hasRankData = rankMatchesCount >= RANK_ANCHOR_CONFIG.minMatchesWithRank;
+  const rankBaseline = getRankBaselineOvr(effectiveRankTier, effectiveRankDiv);
+  const baseOvr = hasRankData
+    ? (statsBaseOvr * RANK_ANCHOR_CONFIG.statsWeight) + (rankBaseline * RANK_ANCHOR_CONFIG.rankWeight)
+    : statsBaseOvr;
 
-  // Blended Base OVR (75% tactical weights + 25% simple average)
-  // Keeps the OVR grounded to the visible card stats while honoring primary strengths
-  const blendedBaseOvr = (statsBaseOvr * 0.75) + (simpleStatsAvg * 0.25);
-
-  // Direct Match Performance Bonuses with strict cap
+  // Direct Match Performance Bonuses with strict cap (Phase 1)
   const mvpBonus = Math.min(MVP_BONUS.maxBonus, (recentMvps / N) * MVP_BONUS.multiplier);
   const scoreBonus = Math.max(0, Math.min(SCORE_BONUS.maxBonus, (avgScoreVal - SCORE_BONUS.baseline) / SCORE_BONUS.divisor));
   const winBonus = recentWinRate >= WIN_BONUS.highThreshold ? WIN_BONUS.highBonus : recentWinRate >= WIN_BONUS.midThreshold ? WIN_BONUS.midBonus : 0;
@@ -303,7 +321,7 @@ export function calculateFutCardStats(
 
   const rawBonuses = mvpBonus + scoreBonus + winBonus + passingBonus;
   const totalBonuses = Math.min(MAX_TOTAL_OVR_BONUS, rawBonuses);
-  let ovr = Math.round(clamp(blendedBaseOvr + totalBonuses, 50, 99));
+  let ovr = Math.round(clamp(baseOvr + totalBonuses, 50, 99));
 
   // 1. Check Modifiers (Performance Traits)
   const isTotw =
@@ -522,5 +540,8 @@ export function calculateFutCardStats(
     recentMvps,
     recentMvpStreak,
     recentAvgScore: Math.round(avgScoreVal),
+    isProvisional: N < 10,
+    rankTierNumber: effectiveRankTier,
+    rankName: finalRankName,
   };
 }
