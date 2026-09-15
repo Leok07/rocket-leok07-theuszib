@@ -170,7 +170,7 @@ export function FutCardsSection({ player1, player2, sharedMatches }: FutCardsSec
             {/* 3. Defesas / Saves Box */}
             <div className="bg-[#121520] border border-[#252b3d] rounded-xl p-3 flex flex-col justify-between">
               <div className="flex items-center justify-between pb-2 border-b border-white/5">
-                <span className="text-[11px] font-extrabold text-emerald-400 flex items-center gap-1.5">
+                <span className="text-[11px] font-extrabold text-sky-400 flex items-center gap-1.5">
                   <Shield className="w-3.5 h-3.5" /> DEFESAS REALIZADAS
                 </span>
                 <span className="text-[10px] text-zinc-400">Total (Média)</span>
@@ -214,7 +214,7 @@ export function FutCardsSection({ player1, player2, sharedMatches }: FutCardsSec
             </div>
             <div className="bg-[#141722] border border-[#232736]/60 rounded-lg p-2 flex items-center justify-between">
               <span className="text-zinc-400 flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-emerald-400" /> Chutes Totais
+                <Sparkles className="w-3 h-3 text-sky-400" /> Chutes Totais
               </span>
               <span className="font-mono font-bold">
                 <span className="text-sky-400">{p1Fut.recentShots}</span> / <span className="text-orange-400">{p2Fut.recentShots}</span>
@@ -248,7 +248,7 @@ export function FutCardsSection({ player1, player2, sharedMatches }: FutCardsSec
               <div className="p-2 rounded bg-gradient-to-r from-slate-900/70 via-indigo-950/80 to-amber-950/60 border border-yellow-400/50 text-yellow-200 font-bold text-center">
                 ICON ÉLITE (Icon 91+ & Modifier Ativo)
               </div>
-              <div className="p-2 rounded bg-gradient-to-r from-rose-950/60 via-stone-950/80 to-emerald-950/60 border border-emerald-400/50 text-emerald-300 font-bold text-center">
+              <div className="p-2 rounded bg-gradient-to-r from-rose-950/60 via-stone-950/80 to-blue-950/60 border border-sky-400/50 text-sky-200 font-bold text-center">
                 TWO-WAY TITAN (Striker + Guardian)
               </div>
               <div className="p-2 rounded bg-gradient-to-r from-purple-950/60 via-stone-950/80 to-orange-950/60 border border-orange-400/50 text-orange-300 font-bold text-center">
@@ -263,7 +263,7 @@ export function FutCardsSection({ player1, player2, sharedMatches }: FutCardsSec
               <div className="p-1.5 rounded bg-gradient-to-r from-yellow-950/50 to-rose-950/50 border border-rose-400/50 text-rose-300 font-bold text-center">
                 TOTW STRIKER
               </div>
-              <div className="p-1.5 rounded bg-gradient-to-r from-yellow-950/50 to-emerald-950/50 border border-emerald-400/50 text-emerald-300 font-bold text-center">
+              <div className="p-1.5 rounded bg-gradient-to-r from-yellow-950/50 to-blue-950/50 border border-sky-400/50 text-sky-200 font-bold text-center">
                 TOTW GUARDIAN
               </div>
               <div className="p-1.5 rounded bg-gradient-to-r from-yellow-950/50 to-cyan-950/50 border border-cyan-400/50 text-cyan-300 font-bold text-center">

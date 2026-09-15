@@ -94,37 +94,37 @@ export const GC3_BENCHMARKS = {
 // Backwards compatibility alias
 export const C1_BENCHMARKS = GC3_BENCHMARKS;
 
-// Modifiers / Perks thresholds (accessible across all skill levels)
+// Modifiers / Perks thresholds (Calibrated specifically for 2v2 dynamic role swapping)
 export const MODIFIER_THRESHOLDS = {
   totw: {
-    minWinStreak: 3,
-    minWinRate: 70,
-    minMvps: 2,
+    minWinStreak: 2,
+    minWinRate: 60,
+    minMvps: 1,
   },
   guardian: {
-    minSavesPerMatch: 1.8,
-    minDefScore: 84,
+    minSavesPerMatch: 1.7,
+    minDefScore: 85,
   },
   striker: {
-    minGoalsPerMatch: 1.3,
-    minAccuracy: 40.0,
-    minShoScore: 84,
+    minGoalsPerMatch: 0.85,
+    minAccuracy: 33.0,
+    minShoScore: 82,
   },
   playmaker: {
-    minAssistsPerMatch: 0.7,
-    minPasScore: 82,
+    minAssistsPerMatch: 0.40,
+    minPasScore: 80,
   },
   enforcer: {
-    minDemosPerMatch: 1.2,
-    minBpm: 300,
+    minDemosPerMatch: 0.6,
+    minBpm: 330,
   },
   speedster: {
-    minSupersonicPct: 7.5,
-    minSpeed: 1280,
+    minSupersonicPct: 5.5,
+    minSpeed: 1220,
   },
   goat: {
-    minOvr: 94,
-    mvpStreak: 3,
+    minOvr: 92,
+    mvpStreak: 2,
   },
 };
 

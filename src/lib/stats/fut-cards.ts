@@ -333,19 +333,19 @@ export function calculateFutCardStats(
     def >= MODIFIER_THRESHOLDS.guardian.minDefScore;
 
   const isStriker =
-    avgG >= MODIFIER_THRESHOLDS.striker.minGoalsPerMatch &&
+    avgG >= MODIFIER_THRESHOLDS.striker.minGoalsPerMatch ||
     sho >= MODIFIER_THRESHOLDS.striker.minShoScore;
 
   const isPlaymaker =
-    avgA >= MODIFIER_THRESHOLDS.playmaker.minAssistsPerMatch &&
+    avgA >= MODIFIER_THRESHOLDS.playmaker.minAssistsPerMatch ||
     pas >= MODIFIER_THRESHOLDS.playmaker.minPasScore;
 
   const isEnforcer =
-    dInf >= MODIFIER_THRESHOLDS.enforcer.minDemosPerMatch &&
+    dInf >= MODIFIER_THRESHOLDS.enforcer.minDemosPerMatch ||
     bpm >= MODIFIER_THRESHOLDS.enforcer.minBpm;
 
   const isSpeedster =
-    superPct >= MODIFIER_THRESHOLDS.speedster.minSupersonicPct &&
+    superPct >= MODIFIER_THRESHOLDS.speedster.minSupersonicPct ||
     spd >= MODIFIER_THRESHOLDS.speedster.minSpeed;
 
   const isGoat =
@@ -357,14 +357,14 @@ export function calculateFutCardStats(
   const isGold = ovr >= 76 && ovr <= 85;
   const isSilver = ovr >= 65 && ovr <= 75;
 
-  // 2. Build Active Perks
+  // 2. Build Active Perks (Cobalt Sapphire, Crimson, Cyan, Indigo, Orange, Gold - ZERO GREEN)
   const activePerks: Array<{ label: string; value: string; color: string }> = [];
 
   if (isGuardian) {
     activePerks.push({
       label: 'GUARDIÃO',
       value: `${avgSv.toFixed(1)} sv/j`,
-      color: 'text-emerald-400 bg-emerald-950/80 border-emerald-500/50',
+      color: 'text-sky-300 bg-sky-950/80 border-sky-500/50',
     });
   }
 
@@ -416,7 +416,31 @@ export function calculateFutCardStats(
     });
   }
 
-  // 3. Determine Tier, Edition Title, and Harmonious Hybrid Blends
+  // 3. Dynamic Relative Dominance Engine (Calculated specifically for 2v2 Role Alternation)
+  const roleScores = {
+    striker: Math.max(avgG / MODIFIER_THRESHOLDS.striker.minGoalsPerMatch, sho / MODIFIER_THRESHOLDS.striker.minShoScore),
+    playmaker: Math.max(avgA / MODIFIER_THRESHOLDS.playmaker.minAssistsPerMatch, pas / MODIFIER_THRESHOLDS.playmaker.minPasScore),
+    guardian: ((avgSv / MODIFIER_THRESHOLDS.guardian.minSavesPerMatch) + (def / MODIFIER_THRESHOLDS.guardian.minDefScore)) / 2,
+    enforcer: Math.max(dInf / MODIFIER_THRESHOLDS.enforcer.minDemosPerMatch, bpm / MODIFIER_THRESHOLDS.enforcer.minBpm),
+    speedster: Math.max(superPct / MODIFIER_THRESHOLDS.speedster.minSupersonicPct, spd / MODIFIER_THRESHOLDS.speedster.minSpeed),
+    totw: streakCount >= 2 ? (streakCount / 1.5) : (recentWinRate / 55),
+  };
+
+  const qualifiedRoles: Array<{ role: 'striker' | 'playmaker' | 'guardian' | 'enforcer' | 'speedster' | 'totw'; score: number }> = [];
+  if (isStriker) qualifiedRoles.push({ role: 'striker', score: roleScores.striker });
+  if (isPlaymaker) qualifiedRoles.push({ role: 'playmaker', score: roleScores.playmaker });
+  if (isGuardian) qualifiedRoles.push({ role: 'guardian', score: roleScores.guardian });
+  if (isEnforcer) qualifiedRoles.push({ role: 'enforcer', score: roleScores.enforcer });
+  if (isSpeedster) qualifiedRoles.push({ role: 'speedster', score: roleScores.speedster });
+  if (isTotw) qualifiedRoles.push({ role: 'totw', score: roleScores.totw });
+
+  qualifiedRoles.sort((a, b) => b.score - a.score);
+
+  const top1 = qualifiedRoles[0];
+  const top2 = qualifiedRoles[1];
+  const hasStrongDual = top1 && top2 && top1.score >= 1.05 && top2.score >= 1.0;
+
+  // Determine Tier, Edition Title, and Harmonious Hybrid Blends
   let tier: FutCardStats['tier'] = 'gold';
   let editionTitle = 'OURO RARO';
   let editionRarity = 'Raro';
@@ -427,7 +451,7 @@ export function calculateFutCardStats(
     editionTitle = 'G.O.A.T. SUPREMO';
     editionRarity = 'Mítico 24k';
     isHybrid = true;
-  } else if (isIcon && (isTotw || isStriker || isGuardian || isPlaymaker)) {
+  } else if (isIcon && qualifiedRoles.length > 0) {
     tier = 'icon_hybrid';
     editionTitle = 'ICON ÉLITE IN-FORM';
     editionRarity = 'Lendário Especial';
@@ -437,60 +461,58 @@ export function calculateFutCardStats(
     editionTitle = 'RLCS ICON LENDÁRIO';
     editionRarity = 'Lendário';
     isHybrid = false;
-  } else if (isTotw && isStriker) {
-    tier = 'totw_striker';
-    editionTitle = 'TOTW STRIKER';
-    editionRarity = 'Edição Especial';
-    isHybrid = true;
-  } else if (isTotw && isGuardian) {
-    tier = 'totw_guardian';
-    editionTitle = 'TOTW GUARDIAN';
-    editionRarity = 'Edição Especial';
-    isHybrid = true;
-  } else if (isTotw && isPlaymaker) {
-    tier = 'totw_playmaker';
-    editionTitle = 'TOTW PLAYMAKER';
-    editionRarity = 'Edição Especial';
-    isHybrid = true;
-  } else if (isStriker && isGuardian) {
+  } else if (hasStrongDual && ((top1.role === 'striker' && top2.role === 'guardian') || (top1.role === 'guardian' && top2.role === 'striker'))) {
     tier = 'two_way_titan';
     editionTitle = 'TWO-WAY TITAN';
     editionRarity = 'Titã Bivalente';
     isHybrid = true;
-  } else if (isSpeedster && isEnforcer) {
+  } else if (hasStrongDual && ((top1.role === 'speedster' && top2.role === 'enforcer') || (top1.role === 'enforcer' && top2.role === 'speedster'))) {
     tier = 'apex_predator';
     editionTitle = 'APEX PREDATOR';
     editionRarity = 'Predador do Ápice';
     isHybrid = true;
-  } else if (isTotw) {
-    tier = 'totw';
-    editionTitle = 'TEAM OF THE WEEK';
-    editionRarity = 'In-Form';
-    isHybrid = false;
-  } else if (isStriker) {
-    tier = 'striker';
-    editionTitle = 'ARTILHEIRO NATO';
-    editionRarity = 'Especialista';
-    isHybrid = false;
-  } else if (isGuardian) {
-    tier = 'guardian';
-    editionTitle = 'GUARDIÃO DEFENSIVO';
-    editionRarity = 'Especialista';
-    isHybrid = false;
-  } else if (isPlaymaker) {
-    tier = 'playmaker';
-    editionTitle = 'MAESTRO CRIADOR';
-    editionRarity = 'Especialista';
-    isHybrid = false;
-  } else if (isEnforcer) {
-    tier = 'enforcer';
-    editionTitle = 'DEMOLIDOR TÁTICO';
-    editionRarity = 'Especialista';
-    isHybrid = false;
-  } else if (isSpeedster) {
-    tier = 'speedster';
-    editionTitle = 'VELOZ SUPERSÔNICO';
-    editionRarity = 'Especialista';
+  } else if (hasStrongDual && ((top1.role === 'totw' && top2.role === 'striker') || (top1.role === 'striker' && top2.role === 'totw'))) {
+    tier = 'totw_striker';
+    editionTitle = 'TOTW STRIKER';
+    editionRarity = 'Edição Especial';
+    isHybrid = true;
+  } else if (hasStrongDual && ((top1.role === 'totw' && top2.role === 'guardian') || (top1.role === 'guardian' && top2.role === 'totw'))) {
+    tier = 'totw_guardian';
+    editionTitle = 'TOTW GUARDIAN';
+    editionRarity = 'Edição Especial';
+    isHybrid = true;
+  } else if (hasStrongDual && ((top1.role === 'totw' && top2.role === 'playmaker') || (top1.role === 'playmaker' && top2.role === 'totw'))) {
+    tier = 'totw_playmaker';
+    editionTitle = 'TOTW PLAYMAKER';
+    editionRarity = 'Edição Especial';
+    isHybrid = true;
+  } else if (top1) {
+    // Single dominant specialty takes the card visual theme
+    if (top1.role === 'striker') {
+      tier = 'striker';
+      editionTitle = 'ARTILHEIRO NATO';
+      editionRarity = 'Especialista';
+    } else if (top1.role === 'playmaker') {
+      tier = 'playmaker';
+      editionTitle = 'MAESTRO CRIADOR';
+      editionRarity = 'Especialista';
+    } else if (top1.role === 'guardian') {
+      tier = 'guardian';
+      editionTitle = 'GUARDIÃO DEFENSIVO';
+      editionRarity = 'Especialista';
+    } else if (top1.role === 'enforcer') {
+      tier = 'enforcer';
+      editionTitle = 'DEMOLIDOR TÁTICO';
+      editionRarity = 'Especialista';
+    } else if (top1.role === 'speedster') {
+      tier = 'speedster';
+      editionTitle = 'VELOZ SUPERSÔNICO';
+      editionRarity = 'Especialista';
+    } else if (top1.role === 'totw') {
+      tier = 'totw';
+      editionTitle = 'TEAM OF THE WEEK';
+      editionRarity = 'In-Form';
+    }
     isHybrid = false;
   } else if (isDiamond) {
     tier = 'diamond';
