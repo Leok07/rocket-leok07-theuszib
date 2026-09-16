@@ -4,6 +4,10 @@ import path from 'path';
 import { AiCoachAnalysis, AiCoachRequestBody, AiCoachApiResponse } from '@/types/ai-coach';
 import { GEMINI_CONFIG } from '@/lib/constants';
 
+// Eleva o teto de execução da function na Vercel (default é 10-15s dependendo do plano,
+// menor que o timeout interno abaixo — sem isso a plataforma mata a função antes do controller).
+export const maxDuration = 60;
+
 const CACHE_DIR = path.join(process.cwd(), '.cache');
 const CACHE_FILE = path.join(CACHE_DIR, 'ai-coach-cache.json');
 
@@ -271,7 +275,10 @@ DIRETRIZES FUNDAMENTAIS DE RESPOSTA:
     };
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 20000);
+    // 55s: deixa margem dentro do maxDuration=60 da function, mas dá tempo real
+    // para o Gemini gerar o JSON extenso com "thinking" habilitado (na prática
+    // esse payload passa fácil dos 20s antigos).
+    const timeoutId = setTimeout(() => controller.abort(), 55000);
 
     const response = await fetch(geminiUrl, {
       method: 'POST',
@@ -332,6 +339,20 @@ DIRETRIZES FUNDAMENTAIS DE RESPOSTA:
     });
   } catch (error: any) {
     console.error('Erro no processamento da rota AI Coach:', error);
+
+    // O abort do controller acima chega aqui como AbortError/"This operation was
+    // aborted" — tratar explicitamente em vez de vazar a mensagem técnica crua.
+    if (error?.name === 'AbortError') {
+      return NextResponse.json<AiCoachApiResponse>(
+        {
+          success: false,
+          cached: false,
+          error: 'A IA demorou mais que o esperado para responder. Tente novamente em instantes.'
+        },
+        { status: 504 }
+      );
+    }
+
     return NextResponse.json<AiCoachApiResponse>(
       {
         success: false,
