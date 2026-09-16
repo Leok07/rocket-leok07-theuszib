@@ -6,20 +6,19 @@ import {
   Sparkles,
   RefreshCw,
   ShieldAlert,
-  TrendingUp,
   Target,
   Shield,
   Zap,
   Crosshair,
   Flame,
   Award,
-  ChevronRight,
   Database,
   Cpu,
-  Layers
+  AlertCircle
 } from 'lucide-react';
 import { AggregatedPlayerDashboard, SharedMatchItem } from '@/types/dashboard';
 import { AiCoachAnalysis, AiCoachApiResponse, AiCoachRequestBody } from '@/types/ai-coach';
+import { TacticalPitchHeatmap } from './TacticalPitchHeatmap';
 
 interface AICoachSectionProps {
   player1: AggregatedPlayerDashboard;
@@ -27,21 +26,23 @@ interface AICoachSectionProps {
   sharedMatches: SharedMatchItem[];
 }
 
-const LOCAL_STORAGE_KEY = 'rl_duo_ai_coach_cache_v1';
+const LOCAL_STORAGE_KEY = 'rl_duo_ai_coach_cache_v2';
 
 export function AICoachSection({ player1, player2, sharedMatches }: AICoachSectionProps) {
   const [analysis, setAnalysis] = useState<AiCoachAnalysis | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'leaks' | 'roadmap' | 'gameplan'>('overview');
   const [lastSavedTimestamp, setLastSavedTimestamp] = useState<string | null>(null);
-  const [dataSource, setDataSource] = useState<'cache' | 'gemini' | 'heuristic' | null>(null);
+  const [dataSource, setDataSource] = useState<'cache' | 'gemini' | null>(null);
 
-  // Assinatura estrita das partidas: so muda se entrar partida nova
+  // Assinatura estrita das partidas: so muda se houver nova partida ou alteracao na lista
   const currentCacheKey = useMemo(() => {
     if (!sharedMatches || sharedMatches.length === 0) return 'no_matches';
-    const latestMatch = sharedMatches[0];
+    const firstMatch = sharedMatches[0];
+    const lastMatch = sharedMatches[sharedMatches.length - 1];
     const total = sharedMatches.length;
-    return `duo_${total}_${latestMatch.id}_${latestMatch.date}`;
+    return `duo_v2_${total}_${firstMatch.id}_${lastMatch.id}_${firstMatch.date}`;
   }, [sharedMatches]);
 
   const loadAnalysis = useCallback(
@@ -58,16 +59,18 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
               setAnalysis(parsed.data);
               setLastSavedTimestamp(parsed.data.metadata?.generatedAt || null);
               setDataSource('cache');
+              setError(null);
               return;
             }
           }
         } catch {
-          // Ignora erro de leitura do storage
+          // Ignora falha de leitura
         }
       }
 
-      // 2. Chamar o backend (que checa cache em disco antes de chamar a IA)
+      // 2. Chamar o backend (que consulta cache persistente ou Gemini se necessario)
       setIsLoading(true);
+      setError(null);
 
       const wins = sharedMatches.filter((m) => m.result === 'win').length;
       const losses = sharedMatches.length - wins;
@@ -113,28 +116,30 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
           body: JSON.stringify(requestBody)
         });
 
-        if (!response.ok) {
-          throw new Error(`Erro na API (${response.status})`);
-        }
-
         const json: AiCoachApiResponse = await response.json();
-        if (json.success && json.data) {
-          setAnalysis(json.data);
-          setLastSavedTimestamp(json.data.metadata?.generatedAt || new Date().toISOString());
-          setDataSource(json.cached ? 'cache' : json.data.metadata?.source || 'gemini');
 
-          // Salvar em localStorage para zero delay nas proximas visitas
-          try {
-            localStorage.setItem(
-              LOCAL_STORAGE_KEY,
-              JSON.stringify({ cacheKey: currentCacheKey, data: json.data })
-            );
-          } catch {
-            // Ignora falha de cota de storage
-          }
+        if (!response.ok || !json.success || !json.data) {
+          throw new Error(json.error || `Falha na comunicacao com o servidor (${response.status})`);
         }
-      } catch (err) {
+
+        setAnalysis(json.data);
+        // Preservar estritamente a data original de geracao pela IA
+        setLastSavedTimestamp(json.data.metadata?.generatedAt || null);
+        setDataSource(json.cached ? 'cache' : 'gemini');
+        setError(null);
+
+        // Gravar no localStorage para evitar chamadas de rede no refresh
+        try {
+          localStorage.setItem(
+            LOCAL_STORAGE_KEY,
+            JSON.stringify({ cacheKey: currentCacheKey, data: json.data })
+          );
+        } catch {
+          // Ignora falha de cota de storage
+        }
+      } catch (err: any) {
         console.error('Falha ao obter analise do AI Coach:', err);
+        setError(err.message || 'Nao foi possivel obter a analise de IA.');
       } finally {
         setIsLoading(false);
       }
@@ -154,7 +159,7 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
 
   return (
     <section className="relative w-full rounded-2xl bg-[#090b10] border border-cyan-950/60 p-5 sm:p-7 shadow-2xl overflow-hidden my-8">
-      {/* Background Cyber Tech Grid */}
+      {/* Background Cyber Grid */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#0c1322_1px,transparent_1px),linear-gradient(to_bottom,#0c1322_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-30 pointer-events-none" />
 
       {/* Top Header Command Bar */}
@@ -169,7 +174,7 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
                 Centro Tático de IA
               </h2>
               <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-cyan-950/80 text-cyan-300 border border-cyan-500/30">
-                Gemini 2.5 Pro Powered
+                Google Gemini 3.6 Flash
               </span>
             </div>
             <p className="text-xs text-slate-400 font-medium tracking-wide">
@@ -184,10 +189,10 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
             <Database className="w-3.5 h-3.5 text-cyan-400" />
             <span>
               {dataSource === 'cache'
-                ? 'Cache Persistente Ativo'
+                ? 'Análise em Cache'
                 : dataSource === 'gemini'
-                ? 'Analise Gerada via Gemini'
-                : 'Analise Tática Ativa'}
+                ? 'Gerada via Gemini'
+                : 'Aguardando Análise'}
             </span>
             <span className="text-slate-500 mx-1">•</span>
             <span className="text-slate-400 font-mono text-[11px]">
@@ -199,7 +204,7 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
             onClick={() => loadAnalysis(true)}
             disabled={isLoading}
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-cyan-950/50 hover:bg-cyan-900/60 border border-cyan-500/30 text-xs font-semibold text-cyan-200 transition-all active:scale-95 disabled:opacity-50"
-            title="Forcar nova analise detalhada com o Gemini"
+            title="Forcar nova analise com a IA"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-cyan-400' : ''}`} />
             <span>{isLoading ? 'Analisando...' : 'Reanalisar'}</span>
@@ -207,33 +212,56 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
         </div>
       </div>
 
-      {/* Info Notice about Cache Rule */}
+      {/* Info Notice about Strict Cache */}
       <div className="relative z-10 mt-3 px-3.5 py-2 rounded-lg bg-blue-950/30 border border-blue-900/40 flex items-center justify-between text-[11px] text-blue-300/80">
         <div className="flex items-center gap-2">
           <Cpu className="w-3.5 h-3.5 text-blue-400 shrink-0" />
           <span>
-            Analise sincronizada e fixada na serie atual. Novos calculos sao disparados apenas quando novas partidas forem detectadas no sistema.
+            Análise fixada na série atual. Novo processamento por IA ocorre exclusivamente quando novas partidas forem detectadas.
           </span>
         </div>
         {lastSavedTimestamp && (
           <span className="hidden sm:inline font-mono text-[10px] text-slate-400">
-            Atualizado: {new Date(lastSavedTimestamp).toLocaleDateString('pt-BR')} {new Date(lastSavedTimestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+            Gerado em: {new Date(lastSavedTimestamp).toLocaleDateString('pt-BR')} às {new Date(lastSavedTimestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
           </span>
         )}
       </div>
 
+      {/* Loading State */}
       {isLoading && !analysis && (
         <div className="relative z-10 py-16 flex flex-col items-center justify-center gap-3">
           <RefreshCw className="w-8 h-8 text-cyan-400 animate-spin" />
           <p className="text-sm font-semibold tracking-wider uppercase text-cyan-300">
-            Processando telemetria completa de 20 partidas...
+            A IA está analisando a telemetria e o campinho de 20 partidas...
           </p>
           <p className="text-xs text-slate-400">
-            Avaliando dinamica de rotacao, 50/50s, backboard e economia de boost
+            Avaliando dinâmicas espaciais de 1º e 2º homem, economia de boost e coberturas
           </p>
         </div>
       )}
 
+      {/* Honest Error State (Zero Presets) */}
+      {error && !analysis && !isLoading && (
+        <div className="relative z-10 my-6 py-10 px-6 rounded-xl bg-[#14080c] border border-rose-900/60 flex flex-col items-center justify-center gap-3 text-center">
+          <ShieldAlert className="w-9 h-9 text-rose-400" />
+          <h3 className="text-sm font-bold uppercase tracking-wider text-rose-200">
+            Análise de IA Indisponível no Momento
+          </h3>
+          <p className="text-xs text-rose-300/80 max-w-lg leading-relaxed">
+            {error}
+          </p>
+          <button
+            onClick={() => loadAnalysis(true)}
+            disabled={isLoading}
+            className="mt-2 flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-950/80 hover:bg-rose-900/80 border border-rose-500/40 text-xs font-bold text-rose-200 transition-all active:scale-95"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            <span>Tentar Novamente</span>
+          </button>
+        </div>
+      )}
+
+      {/* Analysis Content */}
       {analysis && (
         <div className="relative z-10 mt-6 space-y-6">
           {/* Top Row: Synergy Hero Card & Quick Metrics */}
@@ -242,7 +270,7 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
             <div className="lg:col-span-4 rounded-xl bg-gradient-to-br from-[#0e1626] to-[#0a0e1a] border border-cyan-500/30 p-5 flex flex-col justify-between shadow-lg relative overflow-hidden">
               <div className="flex items-center justify-between pb-3 border-b border-cyan-950/60">
                 <span className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">
-                  Indice de Sinergia
+                  Índice de Sinergia
                 </span>
                 <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
                   2v2 Rank
@@ -285,7 +313,7 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
                 <div className="flex items-center gap-2">
                   <Flame className="w-4 h-4 text-amber-400" />
                   <span className="text-xs font-black uppercase tracking-[0.18em] text-amber-300">
-                    Recorte Recente • Ultimas {analysis.recentFormMicro.matchCount} Partidas
+                    Recorte Recente • Últimas {analysis.recentFormMicro.matchCount} Partidas
                   </span>
                 </div>
                 <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-amber-500/10 text-amber-300 border border-amber-500/30">
@@ -323,7 +351,7 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
               </div>
 
               <div className="pt-2 text-[11px] text-slate-400 flex items-center justify-between">
-                <span>Taxa de Vitoria Geral na Amostra</span>
+                <span>Taxa de Vitória Geral na Amostra</span>
                 <span className="font-mono font-bold text-white">
                   {analysis.macroOverview.winRate}% ({analysis.macroOverview.matchCount} Jogos)
                 </span>
@@ -596,6 +624,13 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
               ))}
             </div>
           )}
+
+          {/* Campinho Tático 2D & Heatmap de Acertos e Erros da IA */}
+          <TacticalPitchHeatmap
+            player1={player1}
+            player2={player2}
+            pitchAnalysis={analysis.pitchAnalysis}
+          />
         </div>
       )}
     </section>

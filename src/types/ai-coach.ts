@@ -44,10 +44,41 @@ export interface AiCoachGameplanRule {
   action: string;
 }
 
+export interface AiCoachFieldMarker {
+  id: string;
+  type: 'acerto' | 'erro';
+  title: string;
+  zone: string;
+  description: string;
+  x: number; // 0 a 100 (%)
+  y: number; // 0 a 100 (%)
+  severity?: 'critica' | 'moderada' | 'leve';
+  player?: string;
+}
+
+export interface AiCoachPitchZone {
+  id: string;
+  name: string;
+  p1Presence: number;
+  p2Presence: number;
+  status: 'dominado' | 'equilibrado' | 'vulneravel' | 'vazio';
+  tacticalAdvice: string;
+}
+
+export interface AiCoachPitchAnalysis {
+  spatialVerdict: string;
+  p1SpatialSummary: string;
+  p2SpatialSummary: string;
+  tacticalSuccesses: AiCoachFieldMarker[];
+  tacticalErrors: AiCoachFieldMarker[];
+  zones: AiCoachPitchZone[];
+}
+
 export interface AiCoachAnalysis {
   synergy: AiCoachSynergy;
   macroOverview: AiCoachMacroOverview;
   recentFormMicro: AiCoachRecentMicro;
+  pitchAnalysis: AiCoachPitchAnalysis;
   leakageDiagnosis: AiCoachLeakage[];
   roadToGc: AiCoachRoadToGc[];
   gameplanRules: AiCoachGameplanRule[];
@@ -55,7 +86,7 @@ export interface AiCoachAnalysis {
     generatedAt: string;
     cacheKey: string;
     totalMatchesAnalyzed: number;
-    source: 'gemini' | 'cache' | 'heuristic';
+    source: 'gemini' | 'cache';
     modelUsed: string;
   };
 }
@@ -86,6 +117,6 @@ export interface AiCoachRequestBody {
 export interface AiCoachApiResponse {
   success: boolean;
   cached: boolean;
-  data: AiCoachAnalysis;
+  data?: AiCoachAnalysis;
   error?: string;
 }

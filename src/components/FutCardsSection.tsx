@@ -59,7 +59,7 @@ export function FutCardsSection({ player1, player2, sharedMatches }: FutCardsSec
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 w-full">
           <CardTitle className="text-xs sm:text-sm">
             <Trophy className="w-4 h-4 text-amber-400" />
-            <span>Cards EA FC Ultimate • Hero Deck da Dupla</span>
+            <span>Cartas Competitivas Rocket League • Deck Oficial da Dupla</span>
           </CardTitle>
 
           <span className="text-[10px] font-black uppercase tracking-widest bg-amber-950/40 text-amber-400 border border-amber-800/60 px-2.5 py-0.5 rounded-full shrink-0 self-start sm:self-auto">
@@ -67,7 +67,7 @@ export function FutCardsSection({ player1, player2, sharedMatches }: FutCardsSec
           </span>
         </div>
         <p className="text-[11px] text-zinc-400 mt-1">
-          Cards 3D interativos com formato oficial de escudo EA FC, brasão de ranking competitivo, selos de Química e inspeção tática em tempo real.
+          Cartas calibradas baseadas na patente competitiva real (Diamante para cima), com brasões oficiais da Psyonix e telemetria dos 6 pilares de gameplay.
         </p>
       </CardHeader>
 

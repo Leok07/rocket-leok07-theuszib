@@ -207,6 +207,9 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // Sort sharedMatches deterministically from newest to oldest
+    sharedMatches.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
     const replaysForDashboard = validSharedTeamReplays.length > 0 ? validSharedTeamReplays : detailedSharedReplays;
 
     // 4. Calculate aggregated comparison specifically for verified shared matches
