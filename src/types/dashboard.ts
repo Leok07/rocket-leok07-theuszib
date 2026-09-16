@@ -193,6 +193,7 @@ export interface FutCardStats {
   isProvisional?: boolean;
   rankTierNumber?: number;
   rankName?: string;
+  hasRankData?: boolean;
 }
 
 export interface AggregatedPlayerDashboard {

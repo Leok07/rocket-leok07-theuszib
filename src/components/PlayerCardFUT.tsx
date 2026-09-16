@@ -89,11 +89,45 @@ function getChemistryStyle(stats: FutCardStats): ChemistryStyle {
   return { id: 'basic', name: 'BASIC', role: 'Equilibrado', boosted: 'ESTILO BASE', color: 'text-zinc-300', badgeBg: 'bg-zinc-800/70 border-zinc-600/50' };
 }
 
-// Minimalist Rocket League Champion Badge Asset (No numbers, purely CHAMPION)
-const CHAMPION_MINIMALIST_BADGE = {
-  src: '/images/ranks/champion_minimalist.png',
-  label: 'CHAMPION',
-};
+// Official Rocket League Rank Badge Resolution (Authentic 1381x1381 Assets)
+interface RankBadgeAsset {
+  src: string;
+  label: string;
+}
+
+function getRankBadge(stats: FutCardStats): RankBadgeAsset {
+  // Se houver informacao de rank real confirmada na resposta da API
+  if (stats.hasRankData && stats.rankTierNumber) {
+    const tier = stats.rankTierNumber;
+    if (tier === 16) {
+      return { src: '/images/ranks/champion_1.png', label: 'CHAMPION I' };
+    }
+    if (tier === 17) {
+      return { src: '/images/ranks/champion_2.png', label: 'CHAMPION II' };
+    }
+    if (tier === 18) {
+      return { src: '/images/ranks/champion_3.png', label: 'CHAMPION III' };
+    }
+    if (tier >= 19) {
+      return { src: '/images/ranks/grand_champion.png', label: 'GRAND CHAMPION' };
+    }
+    if (tier === 15) {
+      return { src: '/images/ranks/diamond_3.png', label: 'DIAMOND III' };
+    }
+    if (tier === 14) {
+      return { src: '/images/ranks/diamond_2.png', label: 'DIAMOND II' };
+    }
+    if (tier <= 13) {
+      return { src: '/images/ranks/diamond_1.png', label: 'DIAMOND I' };
+    }
+  }
+
+  // Se nao houver rank especifico ou na ausencia de sinal, exibe o emblema oficial unificado de Champion
+  return {
+    src: '/images/ranks/champion_official.png',
+    label: 'CHAMPION',
+  };
+}
 
 // Authentic EA FC Ultimate Team Shield Geometry
 const SHIELD_CLIP_PATH = 'polygon(10% 0%, 90% 0%, 100% 6%, 100% 92%, 50% 100%, 0% 92%, 0% 6%)';
@@ -127,6 +161,7 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
   const currentTierStyles = TIER_STYLES[tier] || TIER_STYLES.gold;
   const matchCountDisplay = recentMatchesCount || 10;
   const chemistryStyle = useMemo(() => getChemistryStyle(stats), [stats]);
+  const rankBadge = useMemo(() => getRankBadge(stats), [stats]);
 
   // Clean, single-line platform formatting to prevent wrapping
   const formattedPlatform = useMemo(() => {
@@ -264,20 +299,20 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
                     {/* Subtle violet aura behind rank badge */}
                     <div className="absolute inset-0 bg-gradient-to-t from-purple-700/25 via-purple-500/10 to-transparent pointer-events-none" />
 
-                    {/* High-Resolution Minimalist Champion Rank Emblem */}
+                    {/* High-Resolution Authentic Rocket League Rank Emblem */}
                     <div className="w-full h-[78px] sm:h-[82px] flex items-center justify-center relative z-10">
                       <img
-                        src={CHAMPION_MINIMALIST_BADGE.src}
-                        alt="CHAMPION"
+                        src={rankBadge.src}
+                        alt={rankBadge.label}
                         className="w-full h-full object-contain filter drop-shadow-[0_4px_14px_rgba(168,85,247,0.55)]"
                         loading="eager"
                       />
                     </div>
 
-                    {/* Minimalist Rank Label: purely CHAMPION • RL 2V2 */}
+                    {/* Official Rank Label: CHAMPION (or specific tier if present) • RL 2V2 */}
                     <div className="flex items-center justify-between w-full px-2 border-t border-white/10 pt-1 relative z-10 bg-black/50 rounded-b">
                       <span className="text-[8.5px] font-black tracking-widest text-purple-300 uppercase truncate">
-                        CHAMPION
+                        {rankBadge.label}
                       </span>
                       <span className="text-[7.5px] font-mono font-bold text-amber-300 tracking-wider shrink-0 ml-1">
                         RL 2V2

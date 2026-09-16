@@ -565,5 +565,6 @@ export function calculateFutCardStats(
     isProvisional: N < 10,
     rankTierNumber: effectiveRankTier,
     rankName: finalRankName,
+    hasRankData: rankMatchesCount > 0,
   };
 }
