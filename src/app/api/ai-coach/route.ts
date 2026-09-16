@@ -33,6 +33,34 @@ async function writeCache(cacheKey: string, data: AiCoachAnalysis): Promise<void
   }
 }
 
+async function resolveApiKey(): Promise<string> {
+  const envKey = process.env.GEMINI_API_KEY;
+  if (envKey && envKey.trim()) {
+    return envKey.trim();
+  }
+
+  // Fallback seguro: ler do .env.local ou .env diretamente do disco no servidor
+  const envFiles = ['.env.local', '.env'];
+  for (const envFile of envFiles) {
+    try {
+      const filePath = path.join(process.cwd(), envFile);
+      const content = await fs.readFile(filePath, 'utf-8');
+      const match = content.match(/GEMINI_API_KEY\s*=\s*([^\r\n]+)/);
+      if (match && match[1]) {
+        const val = match[1].trim().replace(/^["']|["']$/g, '');
+        if (val) {
+          process.env.GEMINI_API_KEY = val;
+          return val;
+        }
+      }
+    } catch {
+      // Arquivo nao encontrado, tenta o proximo
+    }
+  }
+
+  return (GEMINI_CONFIG.apiKey || '').trim();
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body: AiCoachRequestBody = await req.json();
@@ -57,13 +85,13 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Validar presenca da chave de API
-    const apiKey = process.env.GEMINI_API_KEY || GEMINI_CONFIG.apiKey;
+    const apiKey = await resolveApiKey();
     if (!apiKey) {
       return NextResponse.json<AiCoachApiResponse>(
         {
           success: false,
           cached: false,
-          error: 'Chave GEMINI_API_KEY nao configurada no servidor. Nao ha presets alternativos.'
+          error: 'Chave GEMINI_API_KEY nao configurada no servidor (.env ou .env.local). Nao ha presets alternativos.'
         },
         { status: 500 }
       );

@@ -155,13 +155,10 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
     return (platformLabel || 'PC').toUpperCase();
   }, [platformLabel]);
 
-  const leftStats = [
+  const cardStats = [
     { label: 'PAC', val: pac },
     { label: 'SHO', val: sho },
     { label: 'PAS', val: pas },
-  ];
-
-  const rightStats = [
     { label: 'DRI', val: dri },
     { label: 'DEF', val: def },
     { label: 'PHY', val: phy },
@@ -329,42 +326,22 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
                 </span>
               </div>
 
-              {/* EA FC 26 Minimalist 6 Stats Grid */}
-              <div className="relative z-10 my-1 bg-black/40 px-3 py-2 rounded-lg border border-white/10 shadow-inner">
-                <div className="grid grid-cols-2 divide-x divide-white/10">
-                  {/* Left Column: PAC, SHO, PAS */}
-                  <div className="space-y-1.5 pr-2.5">
-                    {leftStats.map((st) => (
-                      <div
-                        key={st.label}
-                        className="flex items-baseline justify-center gap-2"
-                      >
-                        <span className={`font-mono font-black text-base sm:text-lg ${rankTheme.statNumberColor} leading-none`}>
-                          {st.val}
-                        </span>
-                        <span className={`text-[11px] sm:text-xs font-black tracking-wider ${rankTheme.statLabelColor} uppercase leading-none`}>
-                          {st.label}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Right Column: DRI, DEF, PHY */}
-                  <div className="space-y-1.5 pl-2.5">
-                    {rightStats.map((st) => (
-                      <div
-                        key={st.label}
-                        className="flex items-baseline justify-center gap-2"
-                      >
-                        <span className={`font-mono font-black text-base sm:text-lg ${rankTheme.statNumberColor} leading-none`}>
-                          {st.val}
-                        </span>
-                        <span className={`text-[11px] sm:text-xs font-black tracking-wider ${rankTheme.statLabelColor} uppercase leading-none`}>
-                          {st.label}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+              {/* EA FC 26 Horizontal 6 Stats Row (Uma do lado da outra) */}
+              <div className="relative z-10 my-1 bg-black/50 px-2 py-2 rounded-lg border border-white/10 shadow-inner">
+                <div className="grid grid-cols-6 divide-x divide-white/10 text-center">
+                  {cardStats.map((st) => (
+                    <div
+                      key={st.label}
+                      className="flex flex-col items-center justify-center px-0.5"
+                    >
+                      <span className={`font-mono font-black text-base sm:text-lg ${rankTheme.statNumberColor} leading-none tracking-tight`}>
+                        {st.val}
+                      </span>
+                      <span className={`text-[10px] sm:text-[11px] font-black tracking-wider ${rankTheme.statLabelColor} uppercase mt-1 leading-none`}>
+                        {st.label}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
 
