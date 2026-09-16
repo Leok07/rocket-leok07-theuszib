@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
 import { AiCoachAnalysis, AiCoachRequestBody, AiCoachApiResponse } from '@/types/ai-coach';
+import { GEMINI_CONFIG } from '@/lib/constants';
 
 const CACHE_DIR = path.join(process.cwd(), '.cache');
 const CACHE_FILE = path.join(CACHE_DIR, 'ai-coach-cache.json');
@@ -56,7 +57,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Validar presenca da chave de API
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY || GEMINI_CONFIG.apiKey;
     if (!apiKey) {
       return NextResponse.json<AiCoachApiResponse>(
         {

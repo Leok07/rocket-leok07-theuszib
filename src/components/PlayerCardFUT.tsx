@@ -9,9 +9,6 @@ import {
   TrendingDown,
   Crown,
   Zap,
-  Shield,
-  Target,
-  Sparkles
 } from 'lucide-react';
 
 export interface StatLeaderFlags {
@@ -158,13 +155,16 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
     return (platformLabel || 'PC').toUpperCase();
   }, [platformLabel]);
 
-  const statItems = [
-    { label: 'VEL', full: 'Velocidade', val: pac, isLeader: leaderStats?.pac },
-    { label: 'FIN', full: 'Finalizacao', val: sho, isLeader: leaderStats?.sho },
-    { label: 'PAS', full: 'Passe', val: pas, isLeader: leaderStats?.pas },
-    { label: 'AER', full: 'Aereo', val: dri, isLeader: leaderStats?.dri },
-    { label: 'DEF', full: 'Defesa', val: def, isLeader: leaderStats?.def },
-    { label: 'FIS', full: 'Fisico', val: phy, isLeader: leaderStats?.phy },
+  const leftStats = [
+    { label: 'PAC', val: pac },
+    { label: 'SHO', val: sho },
+    { label: 'PAS', val: pas },
+  ];
+
+  const rightStats = [
+    { label: 'DRI', val: dri },
+    { label: 'DEF', val: def },
+    { label: 'PHY', val: phy },
   ];
 
   return (
@@ -329,32 +329,42 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
                 </span>
               </div>
 
-              {/* Rocket League 6 Core Pillars Grid */}
-              <div className="relative z-10 my-1 bg-black/60 p-2.5 rounded-lg border border-white/10 shadow-inner">
-                <div className="grid grid-cols-2 gap-x-5 gap-y-1.5">
-                  {statItems.map((st) => (
-                    <div
-                      key={st.label}
-                      className="flex items-center justify-between text-xs py-0.5"
-                    >
-                      <div className="flex items-center gap-1.5">
-                        <span className={`font-black tracking-wider text-[11px] ${rankTheme.statLabelColor}`}>
-                          {st.label}
-                        </span>
-                        <span className="text-[9px] text-zinc-400 font-medium hidden sm:inline">
-                          {st.full}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span className={`font-mono font-black text-sm ${st.isLeader ? 'text-amber-300 font-extrabold' : rankTheme.statNumberColor}`}>
+              {/* EA FC 26 Minimalist 6 Stats Grid */}
+              <div className="relative z-10 my-1 bg-black/40 px-3 py-2 rounded-lg border border-white/10 shadow-inner">
+                <div className="grid grid-cols-2 divide-x divide-white/10">
+                  {/* Left Column: PAC, SHO, PAS */}
+                  <div className="space-y-1.5 pr-2.5">
+                    {leftStats.map((st) => (
+                      <div
+                        key={st.label}
+                        className="flex items-baseline justify-center gap-2"
+                      >
+                        <span className={`font-mono font-black text-base sm:text-lg ${rankTheme.statNumberColor} leading-none`}>
                           {st.val}
                         </span>
-                        {st.isLeader && (
-                          <Crown className="w-2.5 h-2.5 text-amber-400 shrink-0" />
-                        )}
+                        <span className={`text-[11px] sm:text-xs font-black tracking-wider ${rankTheme.statLabelColor} uppercase leading-none`}>
+                          {st.label}
+                        </span>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
+
+                  {/* Right Column: DRI, DEF, PHY */}
+                  <div className="space-y-1.5 pl-2.5">
+                    {rightStats.map((st) => (
+                      <div
+                        key={st.label}
+                        className="flex items-baseline justify-center gap-2"
+                      >
+                        <span className={`font-mono font-black text-base sm:text-lg ${rankTheme.statNumberColor} leading-none`}>
+                          {st.val}
+                        </span>
+                        <span className={`text-[11px] sm:text-xs font-black tracking-wider ${rankTheme.statLabelColor} uppercase leading-none`}>
+                          {st.label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 

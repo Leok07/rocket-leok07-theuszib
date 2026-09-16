@@ -32,3 +32,8 @@ export const RADAR_AXES = [
   { key: 'support', label: 'Suporte e Posicionamento' },
   { key: 'boostControl', label: 'Controle de Boost' },
 ] as const;
+
+export const GEMINI_CONFIG = {
+  apiKey: process.env.GEMINI_API_KEY || '',
+  model: 'gemini-3.6-flash',
+};
