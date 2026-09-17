@@ -3,35 +3,12 @@ import fs from 'fs/promises';
 import path from 'path';
 import { AiCoachAnalysis, AiCoachRequestBody, AiCoachApiResponse } from '@/types/ai-coach';
 import { GEMINI_CONFIG } from '@/lib/constants';
-
-const CACHE_DIR = path.join(process.cwd(), '.cache');
-const CACHE_FILE = path.join(CACHE_DIR, 'ai-coach-cache.json');
-
-async function readCache(cacheKey: string): Promise<AiCoachAnalysis | null> {
-  try {
-    const raw = await fs.readFile(CACHE_FILE, 'utf-8');
-    const parsed = JSON.parse(raw);
-    if (parsed && parsed.cacheKey === cacheKey && parsed.data) {
-      return parsed.data;
-    }
-  } catch {
-    // Cache miss or file doesn't exist yet
-  }
-  return null;
-}
-
-async function writeCache(cacheKey: string, data: AiCoachAnalysis): Promise<void> {
-  try {
-    await fs.mkdir(CACHE_DIR, { recursive: true });
-    await fs.writeFile(
-      CACHE_FILE,
-      JSON.stringify({ cacheKey, updatedAt: data.metadata.generatedAt, data }, null, 2),
-      'utf-8'
-    );
-  } catch (error) {
-    console.error('Falha ao gravar cache da IA em disco:', error);
-  }
-}
+import {
+  readAiCoachCache,
+  writeAiCoachCache,
+  getLastAnalyzedMatch,
+  setLastAnalyzedMatch
+} from '@/lib/ai-coach-storage';
 
 async function resolveApiKey(): Promise<string> {
   const envKey = process.env.GEMINI_API_KEY;
@@ -72,15 +49,36 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 1. Verificar cache persistente em disco (recupera analise anterior se as partidas forem as mesmas)
+    // 1. Verificar cache persistente (recupera analise anterior se as partidas forem as mesmas)
     if (!body.forceRefresh) {
-      const cachedData = await readCache(body.cacheKey);
+      const cachedData = await readAiCoachCache(body.cacheKey);
       if (cachedData) {
         return NextResponse.json<AiCoachApiResponse>({
           success: true,
           cached: true,
           data: cachedData
         });
+      }
+
+      // Fase 4: Trava extra do lado do servidor (defesa em profundidade por timestamp da partida)
+      const incomingLatestDate = body.sharedMatchesSummary?.latestMatchDate;
+      if (incomingLatestDate) {
+        const lastKnown = await getLastAnalyzedMatch();
+        if (lastKnown && lastKnown.matchDate) {
+          const incomingTime = new Date(incomingLatestDate).getTime();
+          const lastKnownTime = new Date(lastKnown.matchDate).getTime();
+          // Se a partida recebida nao for mais nova que a ultima conhecida, reutilizar cache se disponivel
+          if (!isNaN(incomingTime) && !isNaN(lastKnownTime) && incomingTime <= lastKnownTime) {
+            const fallback = await readAiCoachCache(body.cacheKey);
+            if (fallback) {
+              return NextResponse.json<AiCoachApiResponse>({
+                success: true,
+                cached: true,
+                data: fallback
+              });
+            }
+          }
+        }
       }
     }
 
@@ -322,8 +320,16 @@ DIRETRIZES FUNDAMENTAIS DE RESPOSTA:
       }
     };
 
-    // Gravar no cache em disco
-    await writeCache(body.cacheKey, finalAnalysis);
+    // Gravar no cache persistente (KV remoto ou fallback local)
+    await writeAiCoachCache(body.cacheKey, finalAnalysis);
+
+    // Fase 4: Atualizar metadados da ultima partida analisada
+    if (summary.matchIds && summary.matchIds.length > 0) {
+      await setLastAnalyzedMatch({
+        matchId: summary.matchIds[0],
+        matchDate: summary.latestMatchDate || finalAnalysis.metadata.generatedAt
+      });
+    }
 
     return NextResponse.json<AiCoachApiResponse>({
       success: true,

@@ -26,7 +26,7 @@ interface AICoachSectionProps {
   sharedMatches: SharedMatchItem[];
 }
 
-const LOCAL_STORAGE_KEY = 'rl_duo_ai_coach_cache_v2';
+const LOCAL_STORAGE_KEY = 'rl_duo_ai_coach_cache_v3';
 
 export function AICoachSection({ player1, player2, sharedMatches }: AICoachSectionProps) {
   const [analysis, setAnalysis] = useState<AiCoachAnalysis | null>(null);
@@ -36,13 +36,11 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
   const [lastSavedTimestamp, setLastSavedTimestamp] = useState<string | null>(null);
   const [dataSource, setDataSource] = useState<'cache' | 'gemini' | null>(null);
 
-  // Assinatura estrita das partidas: so muda se houver nova partida ou alteracao na lista
+  // Assinatura estrita: ancorada exclusivamente na partida mais recente da dupla
   const currentCacheKey = useMemo(() => {
     if (!sharedMatches || sharedMatches.length === 0) return 'no_matches';
-    const firstMatch = sharedMatches[0];
-    const lastMatch = sharedMatches[sharedMatches.length - 1];
-    const total = sharedMatches.length;
-    return `duo_v2_${total}_${firstMatch.id}_${lastMatch.id}_${firstMatch.date}`;
+    const latestMatch = sharedMatches[0];
+    return `duo_v3_${latestMatch.id}_${latestMatch.date}`;
   }, [sharedMatches]);
 
   const loadAnalysis = useCallback(

@@ -113,7 +113,7 @@ export async function GET(request: NextRequest) {
 
     const detailedSharedReplays = await fetchReplayDetailsWithPacing(client, topReplayIds, {
       noCache: forceRefresh,
-      delayMs: 300,
+      delayMs: 550,
       cache: replayDetailCache,
     });
 

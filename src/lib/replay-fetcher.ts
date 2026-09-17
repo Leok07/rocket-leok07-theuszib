@@ -16,7 +16,7 @@ export async function fetchReplayDetailsWithPacing(
   replayIds: string[],
   options: FetchPacingOptions = {}
 ): Promise<ReplaySummary[]> {
-  const { noCache = false, delayMs = 300, cache } = options;
+  const { noCache = false, delayMs = 550, cache } = options;
   const results: ReplaySummary[] = [];
 
   for (let i = 0; i < replayIds.length; i++) {
@@ -31,11 +31,17 @@ export async function fetchReplayDetailsWithPacing(
     try {
       detail = await client.getReplay(id, { noCache });
     } catch (err: any) {
-      if (err.message && (err.message.includes('429') || err.message.includes('Rate limit'))) {
-        // Wait and retry once on rate limit
-        await new Promise((r) => setTimeout(r, Math.max(delayMs * 2, 1200)));
-        detail = await client.getReplay(id, { noCache }).catch(() => null);
-      }
+      const isRateLimit = err.message && (err.message.includes('429') || err.message.includes('Rate limit'));
+      const waitMs = isRateLimit ? Math.max(delayMs * 2, 1200) : delayMs;
+      await new Promise((r) => setTimeout(r, waitMs));
+      detail = await client.getReplay(id, { noCache }).catch((err2) => {
+        console.warn(`[replay-fetcher] descartando replay ${id} apos retry: ${err2?.message}`);
+        return null;
+      });
+    }
+
+    if (!detail && cache?.has(id)) {
+      detail = cache.get(id)!;
     }
 
     if (detail && (detail.blue?.players?.length || detail.orange?.players?.length)) {
