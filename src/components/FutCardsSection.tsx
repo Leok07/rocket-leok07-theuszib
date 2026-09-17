@@ -53,9 +53,9 @@ export function FutCardsSection({ player1, player2, sharedMatches }: FutCardsSec
   };
 
   return (
-    <Card className="p-4 sm:p-5 border-[#2c3245] bg-[#0c0e14] shadow-2xl">
+    <Card className="p-4 sm:p-5 border-[#1e1e24] bg-[#09090b] shadow-2xl">
       {/* Section Header */}
-      <CardHeader className="pb-3 mb-4 border-b border-[#232736]/80">
+      <CardHeader className="pb-3 mb-4 border-b border-[#1e1e24]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 w-full">
           <CardTitle className="text-xs sm:text-sm">
             <Trophy className="w-4 h-4 text-amber-400" />
@@ -100,7 +100,7 @@ export function FutCardsSection({ player1, player2, sharedMatches }: FutCardsSec
         </div>
 
         {/* SEÇÃO SEPARADA: Box de Estatísticas (Gols, Assists, Defesas & MVPs) */}
-        <div className="mt-6 pt-4 border-t border-[#232736]/80">
+        <div className="mt-6 pt-4 border-t border-[#1e1e24]">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <Flame className="w-4 h-4 text-amber-400" />
@@ -108,7 +108,7 @@ export function FutCardsSection({ player1, player2, sharedMatches }: FutCardsSec
                 Estatísticas da Fase Recente (Últimos Jogos)
               </h3>
             </div>
-            <span className="text-[10px] font-bold text-zinc-400 bg-[#161a26] px-2 py-0.5 rounded border border-[#2c3245]">
+            <span className="text-[10px] font-bold text-zinc-400 bg-[#0c0c10] px-2 py-0.5 rounded border border-[#1e1e24]">
               Base: {Math.max(p1MatchesCount, p2MatchesCount)} partidas
             </span>
           </div>
@@ -116,7 +116,7 @@ export function FutCardsSection({ player1, player2, sharedMatches }: FutCardsSec
           {/* Stat Comparison Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-white">
             {/* 1. Gols Box */}
-            <div className="bg-[#121520] border border-[#252b3d] rounded-xl p-3 flex flex-col justify-between">
+            <div className="bg-[#0c0c10] border border-[#1e1e24] rounded-xl p-3 flex flex-col justify-between">
               <div className="flex items-center justify-between pb-2 border-b border-white/5">
                 <span className="text-[11px] font-extrabold text-amber-400 flex items-center gap-1.5">
                   <Target className="w-3.5 h-3.5" /> GOLS MARCADOS
@@ -142,7 +142,7 @@ export function FutCardsSection({ player1, player2, sharedMatches }: FutCardsSec
             </div>
 
             {/* 2. Assistências Box */}
-            <div className="bg-[#121520] border border-[#252b3d] rounded-xl p-3 flex flex-col justify-between">
+            <div className="bg-[#0c0c10] border border-[#1e1e24] rounded-xl p-3 flex flex-col justify-between">
               <div className="flex items-center justify-between pb-2 border-b border-white/5">
                 <span className="text-[11px] font-extrabold text-sky-400 flex items-center gap-1.5">
                   <Zap className="w-3.5 h-3.5" /> ASSISTÊNCIAS
@@ -168,7 +168,7 @@ export function FutCardsSection({ player1, player2, sharedMatches }: FutCardsSec
             </div>
 
             {/* 3. Defesas / Saves Box */}
-            <div className="bg-[#121520] border border-[#252b3d] rounded-xl p-3 flex flex-col justify-between">
+            <div className="bg-[#0c0c10] border border-[#1e1e24] rounded-xl p-3 flex flex-col justify-between">
               <div className="flex items-center justify-between pb-2 border-b border-white/5">
                 <span className="text-[11px] font-extrabold text-sky-400 flex items-center gap-1.5">
                   <Shield className="w-3.5 h-3.5" /> DEFESAS REALIZADAS
@@ -196,7 +196,7 @@ export function FutCardsSection({ player1, player2, sharedMatches }: FutCardsSec
 
           {/* Secondary stats row: MVPs & Score */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2.5 text-[11px]">
-            <div className="bg-[#141722] border border-[#232736]/60 rounded-lg p-2 flex items-center justify-between">
+            <div className="bg-[#0c0c10] border border-[#1e1e24] rounded-lg p-2 flex items-center justify-between">
               <span className="text-zinc-400 flex items-center gap-1">
                 <Crown className="w-3 h-3 text-amber-400" /> MVPs Recentes
               </span>
@@ -204,7 +204,7 @@ export function FutCardsSection({ player1, player2, sharedMatches }: FutCardsSec
                 <span className="text-sky-400">{p1Fut.recentMvps}</span> / <span className="text-orange-400">{p2Fut.recentMvps}</span>
               </span>
             </div>
-            <div className="bg-[#141722] border border-[#232736]/60 rounded-lg p-2 flex items-center justify-between">
+            <div className="bg-[#0c0c10] border border-[#1e1e24] rounded-lg p-2 flex items-center justify-between">
               <span className="text-zinc-400 flex items-center gap-1">
                 <Award className="w-3 h-3 text-purple-400" /> Pontuação Média
               </span>
@@ -212,7 +212,7 @@ export function FutCardsSection({ player1, player2, sharedMatches }: FutCardsSec
                 <span className="text-sky-400">{p1Fut.recentAvgScore}</span> / <span className="text-orange-400">{p2Fut.recentAvgScore}</span>
               </span>
             </div>
-            <div className="bg-[#141722] border border-[#232736]/60 rounded-lg p-2 flex items-center justify-between">
+            <div className="bg-[#0c0c10] border border-[#1e1e24] rounded-lg p-2 flex items-center justify-between">
               <span className="text-zinc-400 flex items-center gap-1">
                 <Sparkles className="w-3 h-3 text-sky-400" /> Chutes Totais
               </span>
@@ -220,7 +220,7 @@ export function FutCardsSection({ player1, player2, sharedMatches }: FutCardsSec
                 <span className="text-sky-400">{p1Fut.recentShots}</span> / <span className="text-orange-400">{p2Fut.recentShots}</span>
               </span>
             </div>
-            <div className="bg-[#141722] border border-[#232736]/60 rounded-lg p-2 flex items-center justify-between">
+            <div className="bg-[#0c0c10] border border-[#1e1e24] rounded-lg p-2 flex items-center justify-between">
               <span className="text-zinc-400">Streak de MVP</span>
               <span className="font-mono font-bold">
                 <span className="text-sky-400">{p1Fut.recentMvpStreak || 0}x</span> / <span className="text-orange-400">{p2Fut.recentMvpStreak || 0}x</span>
@@ -230,7 +230,7 @@ export function FutCardsSection({ player1, player2, sharedMatches }: FutCardsSec
         </div>
 
         {/* Rarities & Attribute Reference Guide */}
-        <div className="mt-6 pt-4 border-t border-[#232736]/70">
+        <div className="mt-6 pt-4 border-t border-[#1e1e24]">
           <div className="flex items-center gap-1.5 mb-2.5 text-zinc-400 text-xs font-bold">
             <HelpCircle className="w-3.5 h-3.5 text-sky-400" />
             <span>Guia de Raridades e Atributos FUT Rocket League:</span>
@@ -303,45 +303,45 @@ export function FutCardsSection({ player1, player2, sharedMatches }: FutCardsSec
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px]">
-            <div className="p-2 rounded-lg bg-[#141722] border border-[#232736]/60">
-              <span className="font-extrabold text-amber-400 block">SHO (Finalizacao)</span>
+            <div className="p-2 rounded-lg bg-[#0c0c10] border border-[#1e1e24]">
+              <span className="font-extrabold text-amber-400 block">SHO (Finalização)</span>
               <span className="text-zinc-400 text-[10px]">
-                Gols por partida e precisao no arremate. Representa 33% do OVR base.
+                Gols por partida e precisão no arremate. Representa 33% do OVR base.
               </span>
             </div>
 
-            <div className="p-2 rounded-lg bg-[#141722] border border-[#232736]/60">
+            <div className="p-2 rounded-lg bg-[#0c0c10] border border-[#1e1e24]">
               <span className="font-extrabold text-amber-400 block">DEF (Defesa)</span>
               <span className="text-zinc-400 text-[10px]">
-                Saves realizados e contencao no terco defensivo. Representa 33% do OVR base.
+                Saves realizados e contenção no terço defensivo. Representa 33% do OVR base.
               </span>
             </div>
 
-            <div className="p-2 rounded-lg bg-[#141722] border border-[#232736]/60">
+            <div className="p-2 rounded-lg bg-[#0c0c10] border border-[#1e1e24]">
               <span className="font-extrabold text-amber-400 block">PAS (Passe)</span>
               <span className="text-zinc-400 text-[10px]">
-                Assistencias por jogo e visao de jogo. Representa 17% do OVR base (+ bonus direto).
+                Assistências por jogo e visão de jogo. Representa 17% do OVR base (+ bônus direto).
               </span>
             </div>
 
-            <div className="p-2 rounded-lg bg-[#141722] border border-[#232736]/60">
+            <div className="p-2 rounded-lg bg-[#0c0c10] border border-[#1e1e24]">
               <span className="font-extrabold text-amber-400 block">PAC (Ritmo)</span>
               <span className="text-zinc-400 text-[10px]">
-                Velocidade media e % supersonico. Representa 7% do OVR base.
+                Velocidade média e % supersônico. Representa 7% do OVR base.
               </span>
             </div>
 
-            <div className="p-2 rounded-lg bg-[#141722] border border-[#232736]/60">
-              <span className="font-extrabold text-amber-400 block">DRI (Mecanica)</span>
+            <div className="p-2 rounded-lg bg-[#0c0c10] border border-[#1e1e24]">
+              <span className="font-extrabold text-amber-400 block">DRI (Mecânica)</span>
               <span className="text-zinc-400 text-[10px]">
-                Controle aereo, powerslides e recuperacao. Representa 5% do OVR base.
+                Controle aéreo, powerslides e recuperação. Representa 5% do OVR base.
               </span>
             </div>
 
-            <div className="p-2 rounded-lg bg-[#141722] border border-[#232736]/60">
-              <span className="font-extrabold text-amber-400 block">PHY (Fisico)</span>
+            <div className="p-2 rounded-lg bg-[#0c0c10] border border-[#1e1e24]">
+              <span className="font-extrabold text-amber-400 block">PHY (Físico)</span>
               <span className="text-zinc-400 text-[10px]">
-                Roubo de boost adversario, BPM e demolicoes. Representa 5% do OVR base.
+                Roubo de boost adversário, BPM e demolições. Representa 5% do OVR base.
               </span>
             </div>
           </div>

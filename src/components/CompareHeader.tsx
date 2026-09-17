@@ -18,11 +18,11 @@ export function CompareHeader({
   p2Matches,
 }: CompareHeaderProps) {
   return (
-    <header className="sticky top-0 z-50 bg-[#090a0f]/95 backdrop-blur-md border-b border-[#232736] px-4 sm:px-8 py-3 shadow-2xl">
+    <header className="sticky top-0 z-50 bg-[#030304]/95 backdrop-blur-md border-b border-[#1e1e24] px-4 sm:px-8 py-3 shadow-2xl">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         {/* Player 1 (Leok07 - Blue) */}
         <div className="flex-1 flex items-center gap-2 sm:gap-3">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-sky-950 border border-sky-600/60 flex items-center justify-center text-sky-400 font-black text-xs sm:text-sm shadow-[0_0_12px_rgba(2,132,199,0.3)] shrink-0">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-[#0d1829] border border-sky-600/60 flex items-center justify-center text-sky-400 font-black text-xs sm:text-sm shadow-[0_0_12px_rgba(2,132,199,0.3)] shrink-0">
             {PLAYER_1.name.charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0">
@@ -42,17 +42,17 @@ export function CompareHeader({
         {/* Central Controls / VS / Total Badge */}
         <div className="flex flex-col items-center justify-center shrink-0 px-2">
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded bg-[#181a24] border border-[#2c3245] text-[10px] sm:text-xs font-black tracking-widest text-zinc-300">
+            <span className="px-2 py-0.5 rounded bg-[#0f0f13] border border-[#1e1e24] text-[10px] sm:text-xs font-black tracking-widest text-zinc-300">
               VS
             </span>
 
             <button
               onClick={onRefresh}
               disabled={isLoading}
-              title="Atualizar Estatisticas"
-              aria-label="Atualizar estatisticas"
+              title="Atualizar Estatísticas"
+              aria-label="Atualizar estatísticas"
               aria-busy={isLoading}
-              className="p-1.5 rounded-md bg-[#181a24] hover:bg-[#232736] border border-[#2c3245] text-zinc-300 hover:text-white transition-colors disabled:opacity-50"
+              className="p-1.5 rounded-md bg-[#0f0f13] hover:bg-[#18181f] border border-[#1e1e24] text-zinc-300 hover:text-white transition-colors disabled:opacity-50"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-sky-400' : ''}`} />
             </button>

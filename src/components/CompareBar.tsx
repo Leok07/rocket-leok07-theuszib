@@ -47,7 +47,7 @@ export const CompareBar = React.memo(function CompareBar({
   const p2Ratio = 100 - p1Ratio;
 
   return (
-    <div className="py-2 px-3 rounded-lg bg-[#141722]/90 border border-[#232736]/70 hover:border-zinc-700 transition-colors">
+    <div className="py-2 px-3 rounded-lg bg-[#0c0c10] border border-[#1e1e24] hover:border-zinc-700 transition-colors">
       {/* Values & Label Line */}
       <div className="flex items-center justify-between gap-2 text-xs">
         {/* Player 1 (Leok07) Value */}

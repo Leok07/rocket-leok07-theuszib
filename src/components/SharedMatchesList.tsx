@@ -19,7 +19,7 @@ export function SharedMatchesList({ matches }: SharedMatchesListProps) {
   }
 
   return (
-    <Card className="p-3.5 sm:p-4 border-sky-950/70 bg-[#11131a]">
+    <Card className="p-3.5 sm:p-4 border-[#1e1e24] bg-[#09090b]">
       {/* Header / Toggle */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -29,7 +29,7 @@ export function SharedMatchesList({ matches }: SharedMatchesListProps) {
               Partidas Jogadas Juntos ({matches.length})
             </h2>
             <span className="text-[10px] text-zinc-500 font-medium block">
-              Historico cronologico das partidas compartilhadas
+              Histórico cronológico das partidas compartilhadas
             </span>
           </div>
         </div>
@@ -37,9 +37,9 @@ export function SharedMatchesList({ matches }: SharedMatchesListProps) {
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           aria-expanded={isExpanded}
-          aria-label={isExpanded ? 'Recolher historico de partidas' : 'Expandir historico de partidas'}
-          className="p-1 rounded-md bg-[#181a24] hover:bg-[#202433] text-zinc-400 hover:text-white transition-colors"
-          title={isExpanded ? 'Recolher historico' : 'Expandir historico'}
+          aria-label={isExpanded ? 'Recolher histórico de partidas' : 'Expandir histórico de partidas'}
+          className="p-1 rounded-md bg-[#121216] hover:bg-[#1a1a20] text-zinc-400 hover:text-white transition-colors"
+          title={isExpanded ? 'Recolher histórico' : 'Expandir histórico'}
         >
           {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </button>
@@ -54,7 +54,7 @@ export function SharedMatchesList({ matches }: SharedMatchesListProps) {
             return (
               <div
                 key={m.id || idx}
-                className="p-2.5 sm:p-3 rounded-lg bg-[#141722] border border-[#232736] hover:border-zinc-700 transition-colors"
+                className="p-2.5 sm:p-3 rounded-lg bg-[#0c0c0f] border border-[#1e1e24] hover:border-zinc-700 transition-colors"
               >
                 {/* Line 1: Date, Map, Result & Placar */}
                 <div className="flex items-center justify-between gap-2 text-xs">
@@ -69,7 +69,7 @@ export function SharedMatchesList({ matches }: SharedMatchesListProps) {
 
                   <div className="flex items-center gap-1.5 shrink-0">
                     <span className="font-mono font-bold text-white text-xs sm:text-sm">
-                      <span className={isWin ? 'text-emerald-400' : 'text-zinc-300'}>
+                      <span className={isWin ? 'text-cyan-400' : 'text-zinc-300'}>
                         {m.teamGoals}
                       </span>
                       <span className="text-zinc-600 mx-1">x</span>
@@ -79,7 +79,7 @@ export function SharedMatchesList({ matches }: SharedMatchesListProps) {
                     </span>
 
                     <Badge variant={isWin ? 'win' : 'loss'} className="text-[10px] py-0 px-1.5">
-                      {isWin ? 'Vitoria' : 'Derrota'}
+                      {isWin ? 'Vitória' : 'Derrota'}
                     </Badge>
 
                     {m.isOvertime && (
@@ -91,7 +91,7 @@ export function SharedMatchesList({ matches }: SharedMatchesListProps) {
                 </div>
 
                 {/* Line 2: Mobile Date + Individual performance split */}
-                <div className="mt-1.5 pt-1.5 border-t border-[#1e2230] flex items-center justify-between text-[10px] sm:text-xs text-zinc-400">
+                <div className="mt-1.5 pt-1.5 border-t border-[#18181c] flex items-center justify-between text-[10px] sm:text-xs text-zinc-400">
                   <div className="flex items-center gap-1 text-[10px] text-zinc-500 sm:hidden">
                     <Clock className="w-3 h-3" />
                     <span>{displayDate}</span>

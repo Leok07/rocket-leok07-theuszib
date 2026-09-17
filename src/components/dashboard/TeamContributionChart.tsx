@@ -39,8 +39,8 @@ const ContributionDonut: React.FC<ContributionItemProps> = ({
   ];
 
   return (
-    <div className="p-3 rounded-xl bg-[#181a24] border border-[#232736] flex flex-col justify-between space-y-2">
-      <div className="flex items-center justify-between border-b border-[#232736]/60 pb-1.5">
+    <div className="p-3 rounded-xl bg-[#0c0c10] border border-[#1e1e24] flex flex-col justify-between space-y-2">
+      <div className="flex items-center justify-between border-b border-[#1e1e24] pb-1.5">
         <div className="flex items-center gap-1.5">
           <Icon className={`w-3.5 h-3.5 ${iconColor}`} />
           <span className="text-xs font-bold text-zinc-200 uppercase tracking-wider">{title}</span>
@@ -63,7 +63,7 @@ const ContributionDonut: React.FC<ContributionItemProps> = ({
                 outerRadius={36}
                 paddingAngle={4}
                 dataKey="value"
-                stroke="#181a24"
+                stroke="#0c0c10"
                 strokeWidth={2}
               >
                 <Cell fill="#38bdf8" />
@@ -75,7 +75,7 @@ const ContributionDonut: React.FC<ContributionItemProps> = ({
                     const item = payload[0];
                     const realVal = (item.payload as any)?.realValue ?? (item.value === 0.001 ? 0 : item.value);
                     return (
-                      <div className="bg-[#11131a] border border-[#232736] px-2 py-1 rounded text-[11px] text-white shadow-lg">
+                      <div className="bg-[#0c0c10] border border-[#1e1e24] px-2 py-1 rounded text-[11px] text-white shadow-lg">
                         <span className="font-bold">{item.name}: </span>
                         <span>{realVal} ({Math.round(((realVal as number) / (total || 1)) * 100)}%)</span>
                       </div>
@@ -143,19 +143,19 @@ export const TeamContributionChart: React.FC<TeamContributionChartProps> = ({
   const p2Demos = Math.round(player2.demos.avgInflicted * (player2.session.totalMatches || 1));
 
   return (
-    <div className="rounded-xl bg-[#11131a] border border-[#232736] p-3 sm:p-4 space-y-3">
+    <div className="rounded-xl bg-[#09090b] border border-[#1e1e24] p-3 sm:p-4 space-y-3">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#232736]/60 pb-2.5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#1e1e24] pb-2.5">
         <div className="flex items-center gap-2">
           <div className="p-1.5 rounded-lg bg-cyan-950/60 border border-cyan-800/50 text-cyan-400">
             <PieIcon className="w-4 h-4" />
           </div>
           <div>
             <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-100">
-              Contribuicao Proporcional do Time
+              Contribuição Proporcional do Time
             </h4>
             <p className="text-[10px] text-zinc-400">
-              Divisao percentual das acoes ofensivas, defensivas e fisicas da dupla
+              Divisão percentual das ações ofensivas, defensivas e físicas da dupla
             </p>
           </div>
         </div>
@@ -166,7 +166,7 @@ export const TeamContributionChart: React.FC<TeamContributionChartProps> = ({
         <ContributionDonut
           title="Gols Marcados"
           icon={Crosshair}
-          iconColor="text-emerald-400"
+          iconColor="text-amber-400"
           p1Value={Math.round(p1Goals)}
           p2Value={Math.round(p2Goals)}
           p1Name={player1.playerName}
@@ -175,7 +175,7 @@ export const TeamContributionChart: React.FC<TeamContributionChartProps> = ({
         />
 
         <ContributionDonut
-          title="Assistencias"
+          title="Assistências"
           icon={Activity}
           iconColor="text-cyan-400"
           p1Value={Math.round(p1Assists)}
@@ -197,7 +197,7 @@ export const TeamContributionChart: React.FC<TeamContributionChartProps> = ({
         />
 
         <ContributionDonut
-          title="Demolicoes Infligidas"
+          title="Demolições Infligidas"
           icon={Flame}
           iconColor="text-rose-400"
           p1Value={p1Demos}

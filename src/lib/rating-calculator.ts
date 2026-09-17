@@ -91,7 +91,7 @@ export function calculateRLRating(player: AggregatedPlayerDashboard): RLRatingRe
   ).toFixed(2));
 
   // Tier Classification
-  let tierLabel = 'Solido';
+  let tierLabel = 'Sólido';
   let tierColor = 'text-sky-400 bg-sky-950/80 border-sky-700/60';
 
   if (overall >= 1.30) {
@@ -99,15 +99,15 @@ export function calculateRLRating(player: AggregatedPlayerDashboard): RLRatingRe
     tierColor = 'text-amber-300 bg-amber-950/80 border-amber-600/70';
   } else if (overall >= 1.15) {
     tierLabel = 'Alto Impacto';
-    tierColor = 'text-emerald-300 bg-emerald-950/80 border-emerald-700/60';
+    tierColor = 'text-cyan-300 bg-cyan-950/80 border-cyan-700/60';
   } else if (overall >= 1.00) {
-    tierLabel = 'Solido (Na Media)';
+    tierLabel = 'Sólido (Na Média)';
     tierColor = 'text-sky-300 bg-sky-950/80 border-sky-700/60';
   } else if (overall >= 0.85) {
-    tierLabel = 'Abaixo da Media';
+    tierLabel = 'Abaixo da Média';
     tierColor = 'text-orange-300 bg-orange-950/80 border-orange-700/60';
   } else {
-    tierLabel = 'Critico';
+    tierLabel = 'Crítico';
     tierColor = 'text-rose-300 bg-rose-950/80 border-rose-700/60';
   }
 

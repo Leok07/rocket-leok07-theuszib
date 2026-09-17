@@ -51,7 +51,7 @@ export default function Home() {
       const url = forceRefresh ? '/api/compare?refresh=true' : '/api/compare';
       const res = await fetch(url);
       if (!res.ok) {
-        throw new Error(`Erro na comunicacao com o servidor (${res.status})`);
+        throw new Error(`Erro na comunicação com o servidor (${res.status})`);
       }
       const result = await res.json();
       if (result.success && result.data) {
@@ -99,9 +99,9 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#090a0f] text-white">
+    <div className="min-h-screen flex flex-col bg-[#030304] text-white">
       {/* Accessible h1 for WCAG compliance */}
-      <h1 className="sr-only">Tracker Rocket - Estatisticas e Comparativo 2v2</h1>
+      <h1 className="sr-only">Tracker Rocket - Estatísticas e Comparativo 2v2</h1>
 
       {/* Desktop Widescreen Header */}
       <CompareHeader
@@ -132,22 +132,22 @@ export default function Home() {
         )}
 
         {/* Top Summary Banner - Desktop Optimized */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-[#11131a] border border-[#232736] flex flex-col md:flex-row items-center justify-between gap-4 shadow-lg">
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#09090b] border border-[#1e1e24] flex flex-col md:flex-row items-center justify-between gap-4 shadow-lg">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-sky-950/70 border border-sky-800/60 text-sky-400 shrink-0">
               <Layers className="w-5 h-5" />
             </div>
             <div>
               <span className="text-sm font-bold uppercase tracking-wider text-zinc-100 block">
-                Partidas Jogadas em Conjunto (Sessao 2v2)
+                Partidas Jogadas em Conjunto (Sessão 2v2)
               </span>
               <span className="text-xs text-zinc-400 font-medium">
-                {lastUpdated ? `Sincronizado as ${lastUpdated}` : 'Conectando ao Ballchasing...'}
+                {lastUpdated ? `Sincronizado às ${lastUpdated}` : 'Conectando ao Ballchasing...'}
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-6 text-sm font-semibold w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 border-[#232736]/60 pt-3 md:pt-0">
+          <div className="flex items-center gap-6 text-sm font-semibold w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 border-[#1e1e24] pt-3 md:pt-0">
             <div className="text-left md:text-right">
               <span className="text-sky-400 font-bold block text-base">{player1.playerName}</span>
               <span className="text-zinc-300 text-xs">
@@ -188,7 +188,7 @@ export default function Home() {
         {/* Loading Skeleton */}
         {isLoading && (
           <div className="space-y-6">
-            <div className="p-6 rounded-2xl bg-[#11131a] border border-[#232736] space-y-4">
+            <div className="p-6 rounded-2xl bg-[#09090b] border border-[#1e1e24] space-y-4">
               <Skeleton className="h-7 w-64 rounded-md" />
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Skeleton className="h-24 rounded-xl" />
@@ -198,8 +198,8 @@ export default function Home() {
               </div>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Skeleton className="h-80 w-full rounded-2xl bg-[#11131a] border border-[#232736]" />
-              <Skeleton className="h-80 w-full rounded-2xl bg-[#11131a] border border-[#232736]" />
+              <Skeleton className="h-80 w-full rounded-2xl bg-[#09090b] border border-[#1e1e24]" />
+              <Skeleton className="h-80 w-full rounded-2xl bg-[#09090b] border border-[#1e1e24]" />
             </div>
           </div>
         )}
@@ -213,17 +213,17 @@ export default function Home() {
               sharedMatches={sharedMatches}
             />
 
-            {/* Centro Tatico de Inteligencia Artificial (Analise Persistente) */}
+            {/* Centro Tático de Inteligência Artificial (Análise Persistente) */}
             <AICoachSection
               player1={player1}
               player2={player2}
               sharedMatches={sharedMatches}
             />
 
-            {/* RLRating 3.0 Indice Composto de Performance */}
+            {/* RLRating 3.0 Índice Composto de Performance */}
             <RLRatingBox player1={player1} player2={player2} />
 
-            {/* 0. Carreira Historica & Estatisticas Vitalicias (Ballchasing Desktop Widescreen) */}
+            {/* 0. Carreira Histórica & Estatísticas Vitalícias (Ballchasing Desktop Widescreen) */}
             <CareerStatsBox
               careerData={careerData}
               player1Dashboard={player1}
@@ -237,7 +237,7 @@ export default function Home() {
               <CompareSection
                 title="Resumo Geral de Partidas"
                 icon={Trophy}
-                iconColor="text-emerald-400"
+                iconColor="text-amber-400"
                 badgeText="Desempenho Core"
                 metrics={[
                   {
@@ -249,7 +249,7 @@ export default function Home() {
                     higherIsBetter: true,
                   },
                   {
-                    label: 'Taxa de Vitoria',
+                    label: 'Taxa de Vitória',
                     p1Value: player1.session.winRate,
                     p2Value: player2.session.winRate,
                     p1Formatted: formatPercentage(player1.session.winRate),
@@ -257,7 +257,7 @@ export default function Home() {
                     higherIsBetter: true,
                   },
                   {
-                    label: 'Total de Vitorias',
+                    label: 'Total de Vitórias',
                     p1Value: player1.session.wins,
                     p2Value: player2.session.wins,
                     p1Formatted: `${player1.session.wins}V (${player1.session.losses}D)`,
@@ -297,7 +297,7 @@ export default function Home() {
                     higherIsBetter: true,
                   },
                   {
-                    label: 'Precisao de Chute',
+                    label: 'Precisão de Chute',
                     p1Value: player1.session.shootingPercentage,
                     p2Value: player2.session.shootingPercentage,
                     p1Formatted: formatPercentage(player1.session.shootingPercentage),
@@ -305,7 +305,7 @@ export default function Home() {
                     higherIsBetter: true,
                   },
                   {
-                    label: 'Pontuacao Media',
+                    label: 'Pontuação Média',
                     p1Value: player1.session.avgScore,
                     p2Value: player2.session.avgScore,
                     p1Formatted: formatNumber(player1.session.avgScore, 0),
@@ -339,9 +339,9 @@ export default function Home() {
 
             {/* Desktop 2-Column Grid: Boost & Posicionamento */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-              {/* Gestao e Economia de Boost */}
+              {/* Gestão e Economia de Boost */}
               <CompareSection
-                title="Gestao & Economia de Boost"
+                title="Gestão & Economia de Boost"
                 icon={Zap}
                 iconColor="text-amber-400"
                 badgeText="Controle de Energia"
@@ -363,7 +363,7 @@ export default function Home() {
                     higherIsBetter: true,
                   },
                   {
-                    label: 'Boost Medio no Tanque',
+                    label: 'Boost Médio no Tanque',
                     p1Value: player1.boost.avgAmount,
                     p2Value: player2.boost.avgAmount,
                     p1Formatted: formatPercentage(player1.boost.avgAmount),
@@ -387,7 +387,7 @@ export default function Home() {
                     higherIsBetter: true,
                   },
                   {
-                    label: 'Desperdicio Supersonico',
+                    label: 'Desperdício Hypersônico',
                     p1Value: player1.boost.avgSupersonicWaste,
                     p2Value: player2.boost.avgSupersonicWaste,
                     p1Formatted: formatNumber(player1.boost.avgSupersonicWaste, 0),
@@ -411,7 +411,7 @@ export default function Home() {
                     higherIsBetter: true,
                   },
                   {
-                    label: 'Overfill Medio de Boost',
+                    label: 'Overfill Médio de Boost',
                     p1Value: player1.boost.avgOverfill,
                     p2Value: player2.boost.avgOverfill,
                     p1Formatted: formatNumber(player1.boost.avgOverfill, 0),
@@ -429,15 +429,15 @@ export default function Home() {
                 ]}
               />
 
-              {/* Posicionamento & Rotacao (2v2) */}
+              {/* Posicionamento & Rotação (2v2) */}
               <CompareSection
-                title="Posicionamento & Rotacao (2v2)"
+                title="Posicionamento & Rotação (2v2)"
                 icon={Compass}
                 iconColor="text-cyan-400"
                 badgeText="Espacial"
                 metrics={[
                   {
-                    label: '% Terco Defensivo',
+                    label: '% Terço Defensivo',
                     p1Value: player1.positioning.avgDefensiveThird,
                     p2Value: player2.positioning.avgDefensiveThird,
                     p1Formatted: formatPercentage(player1.positioning.avgDefensiveThird),
@@ -445,7 +445,7 @@ export default function Home() {
                     higherIsBetter: true,
                   },
                   {
-                    label: '% Terco Ofensivo',
+                    label: '% Terço Ofensivo',
                     p1Value: player1.positioning.avgOffensiveThird,
                     p2Value: player2.positioning.avgOffensiveThird,
                     p1Formatted: formatPercentage(player1.positioning.avgOffensiveThird),
@@ -461,7 +461,7 @@ export default function Home() {
                     higherIsBetter: true,
                   },
                   {
-                    label: '% Atras da Bola (Goal-Side)',
+                    label: '% Atrás da Bola (Goal-Side)',
                     p1Value: player1.positioning.avgBehindBall,
                     p2Value: player2.positioning.avgBehindBall,
                     p1Formatted: formatPercentage(player1.positioning.avgBehindBall),
@@ -469,7 +469,7 @@ export default function Home() {
                     higherIsBetter: true,
                   },
                   {
-                    label: '% A Frente da Bola',
+                    label: '% À Frente da Bola',
                     p1Value: player1.positioning.avgInfrontBall,
                     p2Value: player2.positioning.avgInfrontBall,
                     p1Formatted: formatPercentage(player1.positioning.avgInfrontBall),
@@ -477,7 +477,7 @@ export default function Home() {
                     higherIsBetter: false,
                   },
                   {
-                    label: 'Espacamento c/ Parceiro',
+                    label: 'Espaçamento c/ Parceiro',
                     p1Value: player1.positioning.avgDistanceToTeammate,
                     p2Value: player2.positioning.avgDistanceToTeammate,
                     p1Formatted: `${formatNumber(player1.positioning.avgDistanceToTeammate, 0)} uu`,
@@ -485,7 +485,7 @@ export default function Home() {
                     higherIsBetter: true,
                   },
                   {
-                    label: '% Ultimo Homem (Last Man)',
+                    label: '% Último Homem (Last Man)',
                     p1Value: player1.positioning.avgMostBack,
                     p2Value: player2.positioning.avgMostBack,
                     p1Formatted: formatPercentage(player1.positioning.avgMostBack),
@@ -504,17 +504,17 @@ export default function Home() {
               />
             </div>
 
-            {/* Desktop 2-Column Grid: Mecanica & Fisicalidade */}
+            {/* Desktop 2-Column Grid: Mecânica & Fisicalidade */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-              {/* Mecanica & Velocidade */}
+              {/* Mecânica & Movimentação */}
               <CompareSection
-                title="Mecanica & Movimentacao"
+                title="Mecânica & Movimentação"
                 icon={Gauge}
                 iconColor="text-purple-400"
                 badgeText="Agilidade & Ar"
                 metrics={[
                   {
-                    label: 'Velocidade Media',
+                    label: 'Velocidade Média',
                     p1Value: player1.movement.avgSpeed,
                     p2Value: player2.movement.avgSpeed,
                     p1Formatted: `${formatNumber(player1.movement.avgSpeed, 0)} uu/s`,
@@ -522,7 +522,7 @@ export default function Home() {
                     higherIsBetter: true,
                   },
                   {
-                    label: '% Tempo Supersonico',
+                    label: '% Tempo Hypersônico',
                     p1Value: player1.movement.avgSupersonicPercent,
                     p2Value: player2.movement.avgSupersonicPercent,
                     p1Formatted: formatPercentage(player1.movement.avgSupersonicPercent),
@@ -538,7 +538,7 @@ export default function Home() {
                     higherIsBetter: true,
                   },
                   {
-                    label: '% Tempo no Chao / Parede',
+                    label: '% Tempo no Chão / Parede',
                     p1Value: player1.movement.avgGroundPercent,
                     p2Value: player2.movement.avgGroundPercent,
                     p1Formatted: formatPercentage(player1.movement.avgGroundPercent),
@@ -572,15 +572,15 @@ export default function Home() {
                 ]}
               />
 
-              {/* Fisicalidade & Demolicoes */}
+              {/* Fisicalidade & Demolições */}
               <CompareSection
-                title="Fisicalidade & Demolicoes"
+                title="Fisicalidade & Demolições"
                 icon={Swords}
                 iconColor="text-rose-500"
-                badgeText="Contato Fisico"
+                badgeText="Contato Físico"
                 metrics={[
                   {
-                    label: 'Demos Infligidos / Jogo',
+                    label: 'Demos Infligidas / Jogo',
                     p1Value: player1.demos.avgInflicted,
                     p2Value: player2.demos.avgInflicted,
                     p1Formatted: formatNumber(player1.demos.avgInflicted, 2),
@@ -588,7 +588,7 @@ export default function Home() {
                     higherIsBetter: true,
                   },
                   {
-                    label: 'Demos Sofridos / Jogo',
+                    label: 'Demos Sofridas / Jogo',
                     p1Value: player1.demos.avgTaken,
                     p2Value: player2.demos.avgTaken,
                     p1Formatted: formatNumber(player1.demos.avgTaken, 2),
@@ -607,10 +607,10 @@ export default function Home() {
               />
             </div>
 
-            {/* Contribuicao Proporcional do Time (Graficos Donut Widescreen) */}
+            {/* Contribuição Proporcional do Time (Gráficos Donut Widescreen) */}
             <TeamContributionChart player1={player1} player2={player2} />
 
-            {/* Evolucao Temporal & Tendencias (Widescreen PC) */}
+            {/* Evolução Temporal & Tendências (Widescreen PC) */}
             <TrendChart
               player1History={player1.matchHistory}
               player2History={player2.matchHistory}
@@ -623,10 +623,10 @@ export default function Home() {
       </main>
 
       {/* Simple Footer */}
-      <footer className="border-t border-[#232736] bg-[#090a0f] py-6 text-center text-xs text-zinc-500 space-y-1.5">
+      <footer className="border-t border-[#1e1e24] bg-[#030304] py-6 text-center text-xs text-zinc-500 space-y-1.5">
         <p className="font-semibold text-zinc-300">Leok07 (Epic) vs Theuszrib (PS5)</p>
         <p className="text-xs text-zinc-500">Telemetria & Comparativo 2v2 • Ballchasing API</p>
-        <p className="text-[11px] text-zinc-600 font-mono">versao 1.5.0 • Desktop Edition</p>
+        <p className="text-[11px] text-zinc-600 font-mono">versão 1.5.0 • Desktop Edition</p>
       </footer>
     </div>
   );

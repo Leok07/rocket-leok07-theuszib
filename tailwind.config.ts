@@ -10,10 +10,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#090a0f",
-        surface: "#11131a",
-        "surface-raised": "#181a24",
-        "surface-border": "#232736",
+        background: "#030304",
+        surface: "#09090b",
+        "surface-raised": "#121215",
+        "surface-border": "#1e1e24",
         primary: {
           50: "#f0f7ff",
           100: "#e0effe",
@@ -34,7 +34,7 @@ const config: Config = {
           "orange-glow": "#fb923c",
         },
         stat: {
-          win: "#10b981",
+          win: "#06b6d4",
           loss: "#ef4444",
           boost: "#f59e0b",
           speed: "#8b5cf6",

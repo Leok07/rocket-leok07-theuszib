@@ -78,7 +78,7 @@ export function PlaystyleRadar({
         <div className="h-[260px] sm:h-[300px] w-full -my-2">
           <ResponsiveContainer width="100%" height="100%">
             <RadarChart data={chartData} margin={{ top: 10, right: 20, bottom: 10, left: 20 }}>
-              <PolarGrid stroke="#232736" />
+              <PolarGrid stroke="#1e1e24" />
               <PolarAngleAxis
                 dataKey="axis"
                 tick={{ fill: '#a1a1aa', fontSize: 10, fontWeight: 600 }}
@@ -86,13 +86,13 @@ export function PlaystyleRadar({
               <PolarRadiusAxis
                 angle={30}
                 domain={[0, 100]}
-                stroke="#232736"
+                stroke="#1e1e24"
                 tick={{ fill: '#71717a', fontSize: 8 }}
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#11131a',
-                  borderColor: '#232736',
+                  backgroundColor: '#0c0c10',
+                  borderColor: '#1e1e24',
                   borderRadius: '8px',
                   color: '#fff',
                   fontSize: '11px',
@@ -122,9 +122,9 @@ export function PlaystyleRadar({
         </div>
 
         {/* Value Comparison grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 text-center text-[10px] sm:text-xs pt-2 border-t border-[#232736]/60">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 text-center text-[10px] sm:text-xs pt-2 border-t border-[#1e1e24]">
           {chartData.map((item) => (
-            <div key={item.axis} className="p-1.5 rounded bg-[#141722] border border-[#232736]/60">
+            <div key={item.axis} className="p-1.5 rounded bg-[#0c0c10] border border-[#1e1e24]">
               <span className="text-zinc-400 font-medium block truncate text-[9px] sm:text-[10px]">
                 {item.axis}
               </span>

@@ -22,10 +22,10 @@ export function StatCard({
   className,
 }: StatCardProps) {
   const colorMap = {
-    default: 'text-zinc-100 border-[#232736] bg-[#11131a]',
+    default: 'text-zinc-100 border-[#1e1e24] bg-[#09090b]',
     blue: 'text-sky-400 border-sky-950/60 bg-sky-950/20',
     orange: 'text-orange-400 border-orange-950/60 bg-orange-950/20',
-    green: 'text-emerald-400 border-emerald-950/60 bg-emerald-950/20',
+    green: 'text-cyan-400 border-cyan-950/60 bg-cyan-950/20',
     red: 'text-rose-400 border-rose-950/60 bg-rose-950/20',
     purple: 'text-purple-400 border-purple-950/60 bg-purple-950/20',
     amber: 'text-amber-400 border-amber-950/60 bg-amber-950/20',
@@ -35,7 +35,7 @@ export function StatCard({
     default: 'text-zinc-400',
     blue: 'text-sky-400',
     orange: 'text-orange-400',
-    green: 'text-emerald-400',
+    green: 'text-cyan-400',
     red: 'text-rose-400',
     purple: 'text-purple-400',
     amber: 'text-amber-400',

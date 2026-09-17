@@ -58,15 +58,15 @@ export const MatchHighlights: React.FC<MatchHighlightsProps> = ({
       : winningMatches.find((m) => m.teamGoals - m.opponentGoals === 1) || winningMatches[0];
 
   return (
-    <div className="rounded-xl bg-[#11131a] border border-[#232736] p-3 sm:p-4 space-y-3">
+    <div className="rounded-xl bg-[#09090b] border border-[#1e1e24] p-3 sm:p-4 space-y-3">
       {/* Header */}
-      <div className="flex items-center gap-2 border-b border-[#232736]/60 pb-2.5">
+      <div className="flex items-center gap-2 border-b border-[#1e1e24] pb-2.5">
         <div className="p-1.5 rounded-lg bg-amber-950/60 border border-amber-800/50 text-amber-400">
           <Sparkles className="w-4 h-4" />
         </div>
         <div>
           <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-100">
-            Destaques & Recordes da Sessao
+            Destaques & Recordes da Sessão
           </h4>
           <p className="text-[10px] text-zinc-400">
             Principais feitos coletivos e individuais registrados nos replays
@@ -78,10 +78,10 @@ export const MatchHighlights: React.FC<MatchHighlightsProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
         {/* Card 1: Maior Goleada */}
         {biggestWin && (
-          <div className="p-3 rounded-xl bg-[#181a24] border border-[#232736] flex flex-col justify-between space-y-2">
+          <div className="p-3 rounded-xl bg-[#0c0c10] border border-[#1e1e24] flex flex-col justify-between space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-                <Trophy className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
+                <Trophy className="w-3.5 h-3.5 text-cyan-400" />
                 Maior Goleada
               </span>
               <span className="text-[10px] text-zinc-500">{biggestWin.formattedDate}</span>
@@ -101,7 +101,7 @@ export const MatchHighlights: React.FC<MatchHighlightsProps> = ({
               </span>
             </div>
 
-            <div className="text-[10px] text-zinc-400 border-t border-[#232736]/60 pt-1.5 flex justify-between">
+            <div className="text-[10px] text-zinc-400 border-t border-[#1e1e24] pt-1.5 flex justify-between">
               <span>{player1Name}: {biggestWin.p1Goals}G / {biggestWin.p1Assists}A</span>
               <span>{player2Name}: {biggestWin.p2Goals}G / {biggestWin.p2Assists}A</span>
             </div>
@@ -110,11 +110,11 @@ export const MatchHighlights: React.FC<MatchHighlightsProps> = ({
 
         {/* Card 2: Recorde Individual P1 */}
         {topP1Match && (
-          <div className="p-3 rounded-xl bg-[#181a24] border border-[#232736] flex flex-col justify-between space-y-2">
+          <div className="p-3 rounded-xl bg-[#0c0c10] border border-[#1e1e24] flex flex-col justify-between space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1.5">
                 <Target className="w-3.5 h-3.5 text-sky-400" />
-                Pico de Pontuacao ({player1Name})
+                Pico de Pontuação ({player1Name})
               </span>
               <span className="text-[10px] text-zinc-500">{topP1Match.formattedDate}</span>
             </div>
@@ -131,15 +131,15 @@ export const MatchHighlights: React.FC<MatchHighlightsProps> = ({
               <span
                 className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
                   topP1Match.result === 'win'
-                    ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                    ? 'bg-cyan-950 text-cyan-300 border border-cyan-800'
                     : 'bg-rose-950 text-rose-300 border border-rose-800'
                 }`}
               >
-                {topP1Match.result === 'win' ? 'Vitoria' : 'Derrota'}
+                {topP1Match.result === 'win' ? 'Vitória' : 'Derrota'}
               </span>
             </div>
 
-            <div className="text-[10px] text-zinc-400 border-t border-[#232736]/60 pt-1.5 flex justify-between">
+            <div className="text-[10px] text-zinc-400 border-t border-[#1e1e24] pt-1.5 flex justify-between">
               <span>BPM: {topP1Match.p1Bpm}</span>
               <span className="truncate max-w-[120px]">{topP1Match.mapName}</span>
             </div>
@@ -148,11 +148,11 @@ export const MatchHighlights: React.FC<MatchHighlightsProps> = ({
 
         {/* Card 3: Recorde Individual P2 */}
         {topP2Match && (
-          <div className="p-3 rounded-xl bg-[#181a24] border border-[#232736] flex flex-col justify-between space-y-2">
+          <div className="p-3 rounded-xl bg-[#0c0c10] border border-[#1e1e24] flex flex-col justify-between space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-bold uppercase tracking-wider text-orange-400 flex items-center gap-1.5">
                 <Target className="w-3.5 h-3.5 text-orange-400" />
-                Pico de Pontuacao ({player2Name})
+                Pico de Pontuação ({player2Name})
               </span>
               <span className="text-[10px] text-zinc-500">{topP2Match.formattedDate}</span>
             </div>
@@ -169,15 +169,15 @@ export const MatchHighlights: React.FC<MatchHighlightsProps> = ({
               <span
                 className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
                   topP2Match.result === 'win'
-                    ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                    ? 'bg-cyan-950 text-cyan-300 border border-cyan-800'
                     : 'bg-rose-950 text-rose-300 border border-rose-800'
                 }`}
               >
-                {topP2Match.result === 'win' ? 'Vitoria' : 'Derrota'}
+                {topP2Match.result === 'win' ? 'Vitória' : 'Derrota'}
               </span>
             </div>
 
-            <div className="text-[10px] text-zinc-400 border-t border-[#232736]/60 pt-1.5 flex justify-between">
+            <div className="text-[10px] text-zinc-400 border-t border-[#1e1e24] pt-1.5 flex justify-between">
               <span>BPM: {topP2Match.p2Bpm}</span>
               <span className="truncate max-w-[120px]">{topP2Match.mapName}</span>
             </div>
@@ -186,11 +186,11 @@ export const MatchHighlights: React.FC<MatchHighlightsProps> = ({
 
         {/* Card 4: Jogo Mais Clutch / Overtime */}
         {clutchMatch && (
-          <div className="p-3 rounded-xl bg-[#181a24] border border-[#232736] flex flex-col justify-between space-y-2 sm:col-span-2 lg:col-span-3">
+          <div className="p-3 rounded-xl bg-[#0c0c10] border border-[#1e1e24] flex flex-col justify-between space-y-2 sm:col-span-2 lg:col-span-3">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-bold uppercase tracking-wider text-purple-400 flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-purple-400" />
-                Vitoria Mais Acirrada (Clutch)
+                Vitória Mais Acirrada (Clutch)
               </span>
               <span className="text-[10px] text-zinc-500">{clutchMatch.formattedDate}</span>
             </div>
@@ -201,7 +201,7 @@ export const MatchHighlights: React.FC<MatchHighlightsProps> = ({
                   {clutchMatch.teamGoals} x {clutchMatch.opponentGoals}
                 </span>
                 <span className="text-[11px] text-zinc-400">
-                  {clutchMatch.isOvertime ? 'Vitoria na Prorrogacao (Overtime)' : 'Vitoria por 1 gol de diferenca'}
+                  {clutchMatch.isOvertime ? 'Vitória na Prorrogação (Overtime)' : 'Vitória por 1 gol de diferença'}
                 </span>
               </div>
               <span className="text-xs font-semibold text-zinc-400">

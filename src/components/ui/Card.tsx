@@ -2,10 +2,10 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 
 const variantStyles = {
-  default: 'bg-[#11131a] border-[#232736]',
-  raised: 'bg-[#181a24] border-[#2c3245]',
-  'glow-blue': 'bg-[#11131a] border-[#0284c7]/40 shadow-[0_0_15px_rgba(2,132,199,0.15)]',
-  'glow-orange': 'bg-[#11131a] border-[#ea580c]/40 shadow-[0_0_15px_rgba(234,88,12,0.15)]',
+  default: 'bg-[#09090b] border-[#1e1e24]',
+  raised: 'bg-[#121215] border-[#27272a]',
+  'glow-blue': 'bg-[#09090b] border-[#0284c7]/40 shadow-[0_0_15px_rgba(2,132,199,0.15)]',
+  'glow-orange': 'bg-[#09090b] border-[#ea580c]/40 shadow-[0_0_15px_rgba(234,88,12,0.15)]',
 };
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -38,7 +38,7 @@ export function CardHeader({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn('flex items-center justify-between pb-4 border-b border-[#232736] mb-4', className)} {...props}>
+    <div className={cn('flex items-center justify-between pb-4 border-b border-[#1e1e24] mb-4', className)} {...props}>
       {children}
     </div>
   );

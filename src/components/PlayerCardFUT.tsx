@@ -237,7 +237,7 @@ export const PlayerCardFUT = React.memo(function PlayerCardFUT({
                 ) : streakType === 'win' && streakCount >= 1 ? (
                   <span className="text-sky-300 flex items-center gap-1 font-black">
                     <TrendingUp className="w-3.5 h-3.5 text-sky-400" />
-                    +{streakCount} Vitorias
+                    +{streakCount} Vitórias
                   </span>
                 ) : streakType === 'loss' && streakCount >= 1 ? (
                   <span className="text-rose-400 flex items-center gap-1 font-black">

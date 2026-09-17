@@ -285,7 +285,7 @@ export const MOCK_THEUSZRIB: AggregatedPlayerDashboard = {
     recentWinRate: 100,
     recentMatchesCount: 2,
     activePerks: [
-      { label: 'GUARDIÃO', value: '2.5 sv/j', color: 'text-emerald-400 bg-emerald-950/80 border-emerald-500/50' },
+      { label: 'GUARDIÃO', value: '2.5 sv/j', color: 'text-cyan-400 bg-cyan-950/80 border-cyan-500/50' },
       { label: 'MAESTRO', value: '1.5 ast/j', color: 'text-cyan-400 bg-cyan-950/80 border-cyan-500/50' },
     ],
     recentGoals: 2,

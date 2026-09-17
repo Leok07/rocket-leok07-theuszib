@@ -26,7 +26,7 @@ export const CompareSection = React.memo(function CompareSection({
           <span>{title}</span>
         </CardTitle>
         {badgeText && (
-          <span className="text-[10px] sm:text-xs font-semibold text-zinc-400 uppercase tracking-wider bg-[#181a24] px-2 py-0.5 rounded border border-[#2c3245]">
+          <span className="text-[10px] sm:text-xs font-semibold text-zinc-400 uppercase tracking-wider bg-[#0c0c10] px-2 py-0.5 rounded border border-[#1e1e24]">
             {badgeText}
           </span>
         )}

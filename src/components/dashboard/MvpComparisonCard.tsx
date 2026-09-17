@@ -24,26 +24,26 @@ export const MvpComparisonCard: React.FC<MvpComparisonCardProps> = ({ player1, p
   const mvpLeader = p1Mvp > p2Mvp ? player1.playerName : p2Mvp > p1Mvp ? player2.playerName : 'Empate';
 
   return (
-    <div className="rounded-xl bg-[#11131a] border border-[#232736] p-3 sm:p-4 space-y-4">
+    <div className="rounded-xl bg-[#09090b] border border-[#1e1e24] p-3 sm:p-4 space-y-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#232736]/60 pb-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#1e1e24] pb-3">
         <div className="flex items-center gap-2">
           <div className="p-1.5 rounded-lg bg-amber-950/60 border border-amber-800/50 text-amber-400">
             <Crown className="w-4 h-4" />
           </div>
           <div>
             <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-100">
-              Impacto Individual & Estatistica de MVP
+              Impacto Individual & Estatística de MVP
             </h4>
             <p className="text-[10px] text-zinc-400">
-              Contagem de condecoracoes de Melhor da Partida nas vitorias conjuntas
+              Contagem de condecorações de Melhor da Partida nas vitórias conjuntas
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-amber-950/80 border border-amber-700/50 text-amber-300">
-            Lider: {mvpLeader}
+            Líder: {mvpLeader}
           </span>
         </div>
       </div>
@@ -55,7 +55,7 @@ export const MvpComparisonCard: React.FC<MvpComparisonCardProps> = ({ player1, p
           className={`p-3.5 rounded-xl border relative overflow-hidden flex flex-col justify-between space-y-2 transition-all ${
             p1Mvp >= p2Mvp
               ? 'bg-sky-950/30 border-sky-600/50 shadow-[0_0_15px_rgba(56,189,248,0.08)]'
-              : 'bg-[#181a24] border-[#232736]'
+              : 'bg-[#0c0c10] border-[#1e1e24]'
           }`}
         >
           <div className="flex items-center justify-between">
@@ -68,13 +68,13 @@ export const MvpComparisonCard: React.FC<MvpComparisonCardProps> = ({ player1, p
             <span className="text-[11px] text-zinc-400 font-medium ml-1.5">MVPs</span>
           </div>
 
-          <div className="space-y-1 border-t border-[#232736]/60 pt-2 text-[11px]">
+          <div className="space-y-1 border-t border-[#1e1e24] pt-2 text-[11px]">
             <div className="flex justify-between text-zinc-400">
-              <span>Taxa nas Vitorias:</span>
+              <span>Taxa nas Vitórias:</span>
               <span className="font-bold text-zinc-200">{p1MvpRateOnWins}%</span>
             </div>
             <div className="flex justify-between text-zinc-400">
-              <span>Media p/ Jogo:</span>
+              <span>Média p/ Jogo:</span>
               <span className="font-bold text-zinc-200">
                 {(p1Mvp / (player1.session.totalMatches || 1)).toFixed(2)}
               </span>
@@ -87,7 +87,7 @@ export const MvpComparisonCard: React.FC<MvpComparisonCardProps> = ({ player1, p
           className={`p-3.5 rounded-xl border relative overflow-hidden flex flex-col justify-between space-y-2 transition-all ${
             p2Mvp >= p1Mvp
               ? 'bg-orange-950/30 border-orange-600/50 shadow-[0_0_15px_rgba(251,146,60,0.08)]'
-              : 'bg-[#181a24] border-[#232736]'
+              : 'bg-[#0c0c10] border-[#1e1e24]'
           }`}
         >
           <div className="flex items-center justify-between">
@@ -100,13 +100,13 @@ export const MvpComparisonCard: React.FC<MvpComparisonCardProps> = ({ player1, p
             <span className="text-[11px] text-zinc-400 font-medium ml-1.5">MVPs</span>
           </div>
 
-          <div className="space-y-1 border-t border-[#232736]/60 pt-2 text-[11px]">
+          <div className="space-y-1 border-t border-[#1e1e24] pt-2 text-[11px]">
             <div className="flex justify-between text-zinc-400">
-              <span>Taxa nas Vitorias:</span>
+              <span>Taxa nas Vitórias:</span>
               <span className="font-bold text-zinc-200">{p2MvpRateOnWins}%</span>
             </div>
             <div className="flex justify-between text-zinc-400">
-              <span>Media p/ Jogo:</span>
+              <span>Média p/ Jogo:</span>
               <span className="font-bold text-zinc-200">
                 {(p2Mvp / (player2.session.totalMatches || 1)).toFixed(2)}
               </span>
@@ -119,7 +119,7 @@ export const MvpComparisonCard: React.FC<MvpComparisonCardProps> = ({ player1, p
       <div className="space-y-1.5">
         <div className="flex justify-between text-[11px] font-semibold text-zinc-400">
           <span className="text-sky-400">{player1.playerName}: {p1PercentageOfTotal}%</span>
-          <span className="text-zinc-500 uppercase text-[10px]">Divisao de MVPs na Dupla</span>
+          <span className="text-zinc-500 uppercase text-[10px]">Divisão de MVPs na Dupla</span>
           <span className="text-orange-400">{player2.playerName}: {p2PercentageOfTotal}%</span>
         </div>
 

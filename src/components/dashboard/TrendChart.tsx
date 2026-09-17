@@ -98,11 +98,11 @@ export function TrendChart({
   const IconComponent = currentConfig.icon;
 
   return (
-    <div className="rounded-xl bg-[#11131a] border border-[#232736] p-3.5 sm:p-4 space-y-3.5">
+    <div className="rounded-xl bg-[#09090b] border border-[#1e1e24] p-3.5 sm:p-4 space-y-3.5">
       {/* Header with Title and Metric Selector Tabs */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#232736]/60 pb-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#1e1e24] pb-3">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-emerald-950/60 border border-emerald-800/50 text-emerald-400">
+          <div className="p-1.5 rounded-lg bg-cyan-950/60 border border-cyan-800/50 text-cyan-400">
             <TrendingUp className="w-4 h-4" />
           </div>
           <div>
@@ -116,7 +116,7 @@ export function TrendChart({
         </div>
 
         {/* Tab Buttons */}
-        <div className="flex items-center gap-1 bg-[#181a24] p-1 rounded-lg border border-[#232736] self-start sm:self-auto overflow-x-auto max-w-full">
+        <div className="flex items-center gap-1 bg-[#0c0c10] p-1 rounded-lg border border-[#1e1e24] self-start sm:self-auto overflow-x-auto max-w-full">
           {METRICS.map((m) => {
             const MIcon = m.icon;
             const isActive = activeMetric === m.key;
@@ -127,7 +127,7 @@ export function TrendChart({
                 className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${
                   isActive
                     ? 'bg-sky-500 text-white shadow-sm'
-                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#232736]/50'
+                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#1e1e24]'
                 }`}
               >
                 <MIcon className="w-3 h-3" />
@@ -160,25 +160,25 @@ export function TrendChart({
       <div className="w-full h-52 sm:h-60 pt-1">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#232736" opacity={0.7} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#1e1e24" opacity={0.7} />
             <XAxis
               dataKey="game"
               stroke="#71717a"
               fontSize={11}
               tickLine={false}
-              axisLine={{ stroke: '#232736' }}
+              axisLine={{ stroke: '#1e1e24' }}
             />
             <YAxis
               stroke="#71717a"
               fontSize={11}
               tickLine={false}
-              axisLine={{ stroke: '#232736' }}
+              axisLine={{ stroke: '#1e1e24' }}
               width={36}
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: '#11131a',
-                borderColor: '#232736',
+                backgroundColor: '#0c0c10',
+                borderColor: '#1e1e24',
                 borderRadius: '8px',
                 fontSize: '12px',
                 boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)',
@@ -192,7 +192,7 @@ export function TrendChart({
               stroke="#38bdf8"
               strokeWidth={2.5}
               dot={{ r: 3.5, fill: '#38bdf8', strokeWidth: 0 }}
-              activeDot={{ r: 5.5, stroke: '#38bdf8', strokeWidth: 2, fill: '#090a0f' }}
+              activeDot={{ r: 5.5, stroke: '#38bdf8', strokeWidth: 2, fill: '#030304' }}
             />
             <Line
               type="monotone"
@@ -200,7 +200,7 @@ export function TrendChart({
               stroke="#fb923c"
               strokeWidth={2.5}
               dot={{ r: 3.5, fill: '#fb923c', strokeWidth: 0 }}
-              activeDot={{ r: 5.5, stroke: '#fb923c', strokeWidth: 2, fill: '#090a0f' }}
+              activeDot={{ r: 5.5, stroke: '#fb923c', strokeWidth: 2, fill: '#030304' }}
             />
           </LineChart>
         </ResponsiveContainer>

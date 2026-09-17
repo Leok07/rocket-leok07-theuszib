@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 
 const variantStyles = {
   default: 'bg-zinc-800 text-zinc-300 border-zinc-700',
-  win: 'bg-emerald-950/70 text-emerald-300 border-emerald-800/80',
+  win: 'bg-cyan-950/70 text-cyan-300 border-cyan-800/80',
   loss: 'bg-rose-950/70 text-rose-300 border-rose-800/80',
   blue: 'bg-sky-950/70 text-sky-300 border-sky-800/80',
   orange: 'bg-orange-950/70 text-orange-300 border-orange-800/80',

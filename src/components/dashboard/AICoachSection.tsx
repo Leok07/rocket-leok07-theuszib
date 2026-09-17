@@ -136,8 +136,8 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
           // Ignora falha de cota de storage
         }
       } catch (err: any) {
-        console.error('Falha ao obter analise do AI Coach:', err);
-        setError(err.message || 'Nao foi possivel obter a analise de IA.');
+        console.error('Falha ao obter análise do AI Coach:', err);
+        setError(err.message || 'Não foi possível obter a análise de IA.');
       } finally {
         setIsLoading(false);
       }
@@ -156,14 +156,14 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
   }
 
   return (
-    <section className="relative w-full rounded-2xl bg-[#090b10] border border-cyan-950/60 p-5 sm:p-7 shadow-2xl overflow-hidden my-8">
-      {/* Background Cyber Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#0c1322_1px,transparent_1px),linear-gradient(to_bottom,#0c1322_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-30 pointer-events-none" />
+    <section className="relative w-full rounded-2xl bg-[#070709] border border-[#1e1e24] p-5 sm:p-7 shadow-2xl overflow-hidden my-8">
+      {/* Background Subtle Noir Grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#141418_1px,transparent_1px),linear-gradient(to_bottom,#141418_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-25 pointer-events-none" />
 
       {/* Top Header Command Bar */}
-      <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-cyan-950/80">
+      <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#1e1e24]">
         <div className="flex items-center gap-3.5">
-          <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-cyan-950/60 border border-cyan-500/40 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.25)]">
+          <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-[#121216] border border-cyan-500/40 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
             <Bot className="w-6 h-6" />
           </div>
           <div>
@@ -171,11 +171,11 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
               <h2 className="text-lg sm:text-xl font-black uppercase tracking-[0.2em] text-white">
                 Centro Tático de IA
               </h2>
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-cyan-950/80 text-cyan-300 border border-cyan-500/30">
+              <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-[#121216] text-cyan-300 border border-cyan-500/30">
                 Google Gemini 3.6 Flash
               </span>
             </div>
-            <p className="text-xs text-slate-400 font-medium tracking-wide">
+            <p className="text-xs text-zinc-400 font-medium tracking-wide">
               Inteligência tática competitiva exclusiva para a dupla {player1.playerName} & {player2.playerName}
             </p>
           </div>
@@ -183,7 +183,7 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
 
         {/* Status and Action Buttons */}
         <div className="flex items-center flex-wrap gap-2.5">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900/80 border border-slate-800 text-xs text-slate-300">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0e0e12] border border-[#1e1e24] text-xs text-zinc-300">
             <Database className="w-3.5 h-3.5 text-cyan-400" />
             <span>
               {dataSource === 'cache'
@@ -192,8 +192,8 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
                 ? 'Gerada via Gemini'
                 : 'Aguardando Análise'}
             </span>
-            <span className="text-slate-500 mx-1">•</span>
-            <span className="text-slate-400 font-mono text-[11px]">
+            <span className="text-zinc-600 mx-1">•</span>
+            <span className="text-zinc-400 font-mono text-[11px]">
               {sharedMatches.length} jogos
             </span>
           </div>
@@ -201,8 +201,8 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
           <button
             onClick={() => loadAnalysis(true)}
             disabled={isLoading}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-cyan-950/50 hover:bg-cyan-900/60 border border-cyan-500/30 text-xs font-semibold text-cyan-200 transition-all active:scale-95 disabled:opacity-50"
-            title="Forcar nova analise com a IA"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#141418] hover:bg-[#1a1a22] border border-cyan-500/30 text-xs font-semibold text-cyan-200 transition-all active:scale-95 disabled:opacity-50"
+            title="Forçar nova análise com a IA"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-cyan-400' : ''}`} />
             <span>{isLoading ? 'Analisando...' : 'Reanalisar'}</span>
@@ -211,15 +211,15 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
       </div>
 
       {/* Info Notice about Strict Cache */}
-      <div className="relative z-10 mt-3 px-3.5 py-2 rounded-lg bg-blue-950/30 border border-blue-900/40 flex items-center justify-between text-[11px] text-blue-300/80">
+      <div className="relative z-10 mt-3 px-3.5 py-2 rounded-lg bg-[#0c0c10] border border-[#1e1e24] flex items-center justify-between text-[11px] text-zinc-400">
         <div className="flex items-center gap-2">
-          <Cpu className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+          <Cpu className="w-3.5 h-3.5 text-sky-400 shrink-0" />
           <span>
             Análise fixada na série atual. Novo processamento por IA ocorre exclusivamente quando novas partidas forem detectadas.
           </span>
         </div>
         {lastSavedTimestamp && (
-          <span className="hidden sm:inline font-mono text-[10px] text-slate-400">
+          <span className="hidden sm:inline font-mono text-[10px] text-zinc-400">
             Gerado em: {new Date(lastSavedTimestamp).toLocaleDateString('pt-BR')} às {new Date(lastSavedTimestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
           </span>
         )}
@@ -265,8 +265,8 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
           {/* Top Row: Synergy Hero Card & Quick Metrics */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
             {/* Sinergia Card (4 colunas) */}
-            <div className="lg:col-span-4 rounded-xl bg-gradient-to-br from-[#0e1626] to-[#0a0e1a] border border-cyan-500/30 p-5 flex flex-col justify-between shadow-lg relative overflow-hidden">
-              <div className="flex items-center justify-between pb-3 border-b border-cyan-950/60">
+            <div className="lg:col-span-4 rounded-xl bg-gradient-to-br from-[#0e0e12] to-[#070709] border border-cyan-500/30 p-5 flex flex-col justify-between shadow-lg relative overflow-hidden">
+              <div className="flex items-center justify-between pb-3 border-b border-[#1e1e24]">
                 <span className="text-xs font-black uppercase tracking-[0.18em] text-cyan-300">
                   Índice de Sinergia
                 </span>
@@ -276,7 +276,7 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
               </div>
 
               <div className="py-4 flex items-center gap-5">
-                <div className="relative flex items-center justify-center w-24 h-24 rounded-full bg-[#060a12] border-2 border-cyan-500/40 shadow-[0_0_25px_rgba(6,182,212,0.2)]">
+                <div className="relative flex items-center justify-center w-24 h-24 rounded-full bg-[#040405] border-2 border-cyan-500/40 shadow-[0_0_25px_rgba(6,182,212,0.2)]">
                   <div className="flex flex-col items-center justify-center">
                     <span className="text-3xl font-black tracking-tight text-white">
                       {analysis.synergy.score}
@@ -291,23 +291,23 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
                   <div className="text-sm font-black uppercase tracking-wider text-white">
                     {analysis.synergy.verdict}
                   </div>
-                  <p className="text-xs text-slate-400 leading-relaxed">
+                  <p className="text-xs text-zinc-400 leading-relaxed">
                     {analysis.synergy.summary}
                   </p>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-cyan-950/60 flex items-center justify-between text-xs text-slate-400">
+              <div className="pt-3 border-t border-[#1e1e24] flex items-center justify-between text-xs text-zinc-400">
                 <span>Forma Atual</span>
                 <span className="font-bold text-cyan-300 uppercase tracking-wider">
-                  {analysis.recentFormMicro.trend === 'alta' ? 'Em Ascensao' : 'Consolidada'}
+                  {analysis.recentFormMicro.trend === 'alta' ? 'Em Ascensão' : 'Consolidada'}
                 </span>
               </div>
             </div>
 
             {/* Recorte Recente / Hot Zone (8 colunas) */}
-            <div className="lg:col-span-8 rounded-xl bg-gradient-to-br from-[#10131d] to-[#0a0d14] border border-slate-800 p-5 flex flex-col justify-between shadow-lg">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+            <div className="lg:col-span-8 rounded-xl bg-gradient-to-br from-[#0e0e12] to-[#070709] border border-[#1e1e24] p-5 flex flex-col justify-between shadow-lg">
+              <div className="flex items-center justify-between pb-3 border-b border-[#1e1e24]">
                 <div className="flex items-center gap-2">
                   <Flame className="w-4 h-4 text-amber-400" />
                   <span className="text-xs font-black uppercase tracking-[0.18em] text-amber-300">
@@ -320,25 +320,25 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-4">
-                <div className="p-3 rounded-lg bg-[#07090e] border border-slate-800/80 space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                <div className="p-3 rounded-lg bg-[#040405] border border-[#1e1e24] space-y-1">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
                     Ajuste Tático Notado
                   </span>
-                  <p className="text-xs text-slate-200 font-medium leading-relaxed">
+                  <p className="text-xs text-zinc-200 font-medium leading-relaxed">
                     {analysis.recentFormMicro.keyShift}
                   </p>
                 </div>
 
-                <div className="p-3 rounded-lg bg-[#07090e] border border-slate-800/80 space-y-1">
+                <div className="p-3 rounded-lg bg-[#040405] border border-[#1e1e24] space-y-1">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400">
                     Destaque da Rodada
                   </span>
-                  <p className="text-xs text-slate-200 font-medium leading-relaxed">
+                  <p className="text-xs text-zinc-200 font-medium leading-relaxed">
                     {analysis.recentFormMicro.hotPlayer}
                   </p>
                 </div>
 
-                <div className="p-3 rounded-lg bg-[#07090e] border border-rose-950/50 space-y-1">
+                <div className="p-3 rounded-lg bg-[#040405] border border-rose-950/50 space-y-1">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-rose-400">
                     Aviso Crítico Imediato
                   </span>
@@ -348,7 +348,7 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
                 </div>
               </div>
 
-              <div className="pt-2 text-[11px] text-slate-400 flex items-center justify-between">
+              <div className="pt-2 text-[11px] text-zinc-400 flex items-center justify-between">
                 <span>Taxa de Vitória Geral na Amostra</span>
                 <span className="font-mono font-bold text-white">
                   {analysis.macroOverview.winRate}% ({analysis.macroOverview.matchCount} Jogos)
@@ -358,13 +358,13 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
           </div>
 
           {/* Tactical Tabs Navigation */}
-          <div className="flex items-center gap-2 border-b border-slate-800 pb-3 overflow-x-auto">
+          <div className="flex items-center gap-2 border-b border-[#1e1e24] pb-3 overflow-x-auto">
             <button
               onClick={() => setActiveTab('overview')}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
                 activeTab === 'overview'
-                  ? 'bg-cyan-950/80 text-cyan-300 border border-cyan-500/40 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+                  ? 'bg-[#141418] text-cyan-300 border border-cyan-500/40 shadow-sm'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#0e0e12]'
               }`}
             >
               <Target className="w-3.5 h-3.5" />
@@ -375,8 +375,8 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
               onClick={() => setActiveTab('leaks')}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
                 activeTab === 'leaks'
-                  ? 'bg-rose-950/80 text-rose-300 border border-rose-500/40 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+                  ? 'bg-[#141418] text-rose-300 border border-rose-500/40 shadow-sm'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#0e0e12]'
               }`}
             >
               <ShieldAlert className="w-3.5 h-3.5" />
@@ -387,8 +387,8 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
               onClick={() => setActiveTab('roadmap')}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
                 activeTab === 'roadmap'
-                  ? 'bg-amber-950/80 text-amber-300 border border-amber-500/40 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+                  ? 'bg-[#141418] text-amber-300 border border-amber-500/40 shadow-sm'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#0e0e12]'
               }`}
             >
               <Award className="w-3.5 h-3.5" />
@@ -399,8 +399,8 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
               onClick={() => setActiveTab('gameplan')}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
                 activeTab === 'gameplan'
-                  ? 'bg-indigo-950/80 text-indigo-300 border border-indigo-500/40 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+                  ? 'bg-[#141418] text-indigo-300 border border-indigo-500/40 shadow-sm'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#0e0e12]'
               }`}
             >
               <Crosshair className="w-3.5 h-3.5" />
@@ -412,32 +412,32 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
           {activeTab === 'overview' && (
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-4 rounded-xl bg-[#0c0f17] border border-slate-800 space-y-2">
+                <div className="p-4 rounded-xl bg-[#09090c] border border-[#1e1e24] space-y-2">
                   <div className="flex items-center gap-2 text-cyan-400">
                     <Target className="w-4 h-4" />
                     <h3 className="text-xs font-bold uppercase tracking-wider">Dinâmica Ofensiva</h3>
                   </div>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-zinc-300 leading-relaxed">
                     {analysis.macroOverview.offensiveDynamics}
                   </p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-[#0c0f17] border border-slate-800 space-y-2">
-                  <div className="flex items-center gap-2 text-blue-400">
+                <div className="p-4 rounded-xl bg-[#09090c] border border-[#1e1e24] space-y-2">
+                  <div className="flex items-center gap-2 text-sky-400">
                     <Shield className="w-4 h-4" />
                     <h3 className="text-xs font-bold uppercase tracking-wider">Âncora Defensiva</h3>
                   </div>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-zinc-300 leading-relaxed">
                     {analysis.macroOverview.defensiveAnchor}
                   </p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-[#0c0f17] border border-slate-800 space-y-2">
+                <div className="p-4 rounded-xl bg-[#09090c] border border-[#1e1e24] space-y-2">
                   <div className="flex items-center gap-2 text-amber-400">
                     <Zap className="w-4 h-4" />
                     <h3 className="text-xs font-bold uppercase tracking-wider">Economia de Boost</h3>
                   </div>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-zinc-300 leading-relaxed">
                     {analysis.macroOverview.boostEconomy}
                   </p>
                 </div>
@@ -445,14 +445,14 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
 
               {/* Strengths & Bottlenecks */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                <div className="p-4 rounded-xl bg-[#0c121e] border border-cyan-900/50 space-y-3">
+                <div className="p-4 rounded-xl bg-[#09090c] border border-cyan-900/40 space-y-3">
                   <span className="text-xs font-black uppercase tracking-wider text-cyan-400 flex items-center gap-2">
                     <Sparkles className="w-4 h-4" />
                     Pontos Fortes Consolidados (20 Jogos)
                   </span>
                   <ul className="space-y-2">
                     {analysis.macroOverview.keyStrengths.map((st, i) => (
-                      <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
+                      <li key={i} className="flex items-start gap-2 text-xs text-zinc-300">
                         <span className="text-cyan-400 font-mono font-bold">{i + 1}.</span>
                         <span>{st}</span>
                       </li>
@@ -460,14 +460,14 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
                   </ul>
                 </div>
 
-                <div className="p-4 rounded-xl bg-[#180e14] border border-rose-900/50 space-y-3">
+                <div className="p-4 rounded-xl bg-[#12080c] border border-rose-900/40 space-y-3">
                   <span className="text-xs font-black uppercase tracking-wider text-rose-400 flex items-center gap-2">
                     <ShieldAlert className="w-4 h-4" />
                     Gargalos Críticos a Serem Eliminados
                   </span>
                   <ul className="space-y-2">
                     {analysis.macroOverview.bottlenecks.map((bn, i) => (
-                      <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
+                      <li key={i} className="flex items-start gap-2 text-xs text-zinc-300">
                         <span className="text-rose-400 font-mono font-bold">{i + 1}.</span>
                         <span>{bn}</span>
                       </li>
@@ -478,7 +478,7 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
             </div>
           )}
 
-          {/* TAB 2: Diagnostico de Vazamentos Taticos */}
+          {/* TAB 2: Diagnóstico de Vazamentos Táticos */}
           {activeTab === 'leaks' && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {analysis.leakageDiagnosis.map((leak, idx) => {
@@ -489,15 +489,15 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
                     key={idx}
                     className={`p-4 rounded-xl flex flex-col justify-between border ${
                       isCrit
-                        ? 'bg-[#180d14] border-rose-900/70 shadow-[0_0_15px_rgba(244,63,94,0.1)]'
+                        ? 'bg-[#14080c] border-rose-900/70 shadow-[0_0_15px_rgba(244,63,94,0.1)]'
                         : isMod
-                        ? 'bg-[#18140c] border-amber-900/70'
-                        : 'bg-[#0f141f] border-blue-900/70'
+                        ? 'bg-[#141008] border-amber-900/70'
+                        : 'bg-[#090d14] border-sky-900/70'
                     }`}
                   >
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-slate-300">
+                        <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-[#070709] border border-[#1e1e24] text-zinc-300">
                           Vazamento #{idx + 1}
                         </span>
                         <span
@@ -506,7 +506,7 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
                               ? 'bg-rose-950 text-rose-300 border border-rose-800'
                               : isMod
                               ? 'bg-amber-950 text-amber-300 border border-amber-800'
-                              : 'bg-blue-950 text-blue-300 border border-blue-800'
+                              : 'bg-sky-950 text-sky-300 border border-sky-800'
                           }`}
                         >
                           Gravidade {leak.severity}
@@ -516,16 +516,16 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
                       <h4 className="text-sm font-bold text-white pt-1">{leak.title}</h4>
 
                       <div className="space-y-1.5 text-xs">
-                        <p className="text-slate-400">
-                          <span className="font-semibold text-slate-300">Gatilho:</span> {leak.metricTrigger}
+                        <p className="text-zinc-400">
+                          <span className="font-semibold text-zinc-300">Gatilho:</span> {leak.metricTrigger}
                         </p>
-                        <p className="text-slate-400">
-                          <span className="font-semibold text-slate-300">Impacto:</span> {leak.impact}
+                        <p className="text-zinc-400">
+                          <span className="font-semibold text-zinc-300">Impacto:</span> {leak.impact}
                         </p>
                       </div>
                     </div>
 
-                    <div className="mt-4 pt-3 border-t border-slate-800/80">
+                    <div className="mt-4 pt-3 border-t border-[#1e1e24]">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400 block mb-1">
                         Correção Prática:
                       </span>
@@ -545,11 +545,11 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
               {analysis.roadToGc.map((road, idx) => (
                 <div
                   key={idx}
-                  className="p-5 rounded-xl bg-gradient-to-r from-[#0d1320] via-[#090e18] to-[#070a12] border border-cyan-900/60 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-md"
+                  className="p-5 rounded-xl bg-gradient-to-r from-[#0d0d12] via-[#09090c] to-[#050507] border border-[#1e1e24] flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-md"
                 >
                   <div className="space-y-2 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-cyan-950 border border-cyan-500/40 text-cyan-300">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-[#141418] border border-cyan-500/40 text-cyan-300">
                         Passo {idx + 1}
                       </span>
                       <h4 className="text-sm font-bold text-white">{road.step}</h4>
@@ -557,21 +557,21 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-1">
                       <div>
-                        <span className="text-slate-400 block text-[11px]">Prioridade Tática:</span>
-                        <span className="text-slate-200 font-medium">{road.priority}</span>
+                        <span className="text-zinc-400 block text-[11px]">Prioridade Tática:</span>
+                        <span className="text-zinc-200 font-medium">{road.priority}</span>
                       </div>
                       <div>
-                        <span className="text-slate-400 block text-[11px]">Treino Recomendado:</span>
+                        <span className="text-zinc-400 block text-[11px]">Treino Recomendado:</span>
                         <span className="text-amber-300 font-medium">{road.drill}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="md:w-64 p-3 rounded-lg bg-[#06080e] border border-slate-800 shrink-0">
+                  <div className="md:w-64 p-3 rounded-lg bg-[#040405] border border-[#1e1e24] shrink-0">
                     <span className="text-[10px] uppercase font-bold tracking-wider text-cyan-400 block">
                       Métrica Alvo Ballchasing:
                     </span>
-                    <span className="text-xs font-mono font-semibold text-slate-200 mt-0.5 block">
+                    <span className="text-xs font-mono font-semibold text-zinc-200 mt-0.5 block">
                       {road.targetMetric}
                     </span>
                   </div>
@@ -586,11 +586,11 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
               {analysis.gameplanRules.map((gp) => (
                 <div
                   key={gp.number}
-                  className="p-5 rounded-xl bg-gradient-to-b from-[#111420] to-[#090c14] border border-indigo-900/50 flex flex-col justify-between shadow-md"
+                  className="p-5 rounded-xl bg-gradient-to-b from-[#0d0d12] to-[#070709] border border-indigo-900/40 flex flex-col justify-between shadow-md"
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="flex items-center justify-center w-7 h-7 rounded-full bg-indigo-950 border border-indigo-500/40 font-mono font-bold text-xs text-indigo-300">
+                      <span className="flex items-center justify-center w-7 h-7 rounded-full bg-[#121216] border border-indigo-500/40 font-mono font-bold text-xs text-indigo-300">
                         {gp.number}
                       </span>
                       <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">
@@ -600,17 +600,17 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
 
                     <h4 className="text-sm font-bold text-white">{gp.title}</h4>
 
-                    <div className="p-2.5 rounded-lg bg-[#070910] border border-slate-800/80 space-y-1">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                    <div className="p-2.5 rounded-lg bg-[#040405] border border-[#1e1e24] space-y-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block">
                         Gatilho em Jogo:
                       </span>
-                      <p className="text-xs text-slate-300 leading-relaxed">
+                      <p className="text-xs text-zinc-300 leading-relaxed">
                         {gp.trigger}
                       </p>
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-indigo-950/80">
+                  <div className="mt-4 pt-3 border-t border-[#1e1e24]">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 block mb-1">
                       Ação Obrigatória:
                     </span>
@@ -628,6 +628,7 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
             player1={player1}
             player2={player2}
             pitchAnalysis={analysis.pitchAnalysis}
+            sharedMatches={sharedMatches}
           />
         </div>
       )}

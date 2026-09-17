@@ -43,8 +43,8 @@ export function calculateRadarStats(
 
   return [
     { axis: 'Agressividade', value: aggressiveness ?? 50, fullMark: 100 },
-    { axis: 'Contencao Defensiva', value: defense ?? 50, fullMark: 100 },
-    { axis: 'Eficiencia Mecanica', value: mechanics ?? 50, fullMark: 100 },
+    { axis: 'Contenção Defensiva', value: defense ?? 50, fullMark: 100 },
+    { axis: 'Eficiência Mecânica', value: mechanics ?? 50, fullMark: 100 },
     { axis: 'Suporte e Posicionamento', value: support ?? 50, fullMark: 100 },
     { axis: 'Controle de Boost', value: boostControl ?? 50, fullMark: 100 },
   ];
