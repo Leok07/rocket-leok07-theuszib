@@ -98,6 +98,7 @@ export async function writeAiCoachCache(cacheKey: string, data: AiCoachAnalysis)
       if (client) {
         // Cache indefinitely or 30 days
         await client.set(`ai-coach:${cacheKey}`, data);
+        await client.set('ai-coach:latest', data);
       }
     } catch (err: any) {
       console.warn('[ai-coach-storage] Falha ao gravar no KV/Redis remoto:', err?.message);
@@ -117,6 +118,40 @@ export async function writeAiCoachCache(cacheKey: string, data: AiCoachAnalysis)
     // Graceful warning for read-only filesystem environments
     console.warn('[ai-coach-storage] Nao foi possivel persistir cache no disco local:', err?.message);
   }
+}
+
+/**
+ * Retrieve the most recent valid AI Coach analysis from cache (regardless of cacheKey)
+ * Used as a high-availability fallback when Gemini API is temporarily unavailable (503/500)
+ */
+export async function getAnyLatestAiCoachCache(): Promise<AiCoachAnalysis | null> {
+  // 1. Try remote KV/Redis
+  if (hasRemoteKvConfig()) {
+    try {
+      const client = await getRemoteKvClient();
+      if (client) {
+        const latest = await client.get<AiCoachAnalysis>('ai-coach:latest');
+        if (latest) {
+          return latest;
+        }
+      }
+    } catch (err: any) {
+      console.warn('[ai-coach-storage] Falha ao ler ai-coach:latest do KV remoto:', err?.message);
+    }
+  }
+
+  // 2. Local filesystem fallback
+  try {
+    const raw = await fs.readFile(getLocalCacheFile(), 'utf-8');
+    const parsed = JSON.parse(raw);
+    if (parsed && parsed.data) {
+      return parsed.data;
+    }
+  } catch {
+    // Cache miss or file doesn't exist
+  }
+
+  return null;
 }
 
 /**

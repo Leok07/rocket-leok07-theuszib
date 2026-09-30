@@ -7,7 +7,8 @@ import {
   readAiCoachCache,
   writeAiCoachCache,
   getLastAnalyzedMatch,
-  setLastAnalyzedMatch
+  setLastAnalyzedMatch,
+  getAnyLatestAiCoachCache
 } from '@/lib/ai-coach-storage';
 
 // Eleva o teto de execucao da function na Vercel (default e 10-15s dependendo do plano)
@@ -47,12 +48,12 @@ export async function POST(req: NextRequest) {
 
     if (!body || !body.cacheKey) {
       return NextResponse.json(
-        { success: false, error: 'Chave de cache obrigatoria ausente.' },
+        { success: false, error: 'Chave de cache obrigatória ausente.' },
         { status: 400 }
       );
     }
 
-    // 1. Verificar cache persistente (recupera analise anterior se as partidas forem as mesmas)
+    // 1. Verificar cache persistente (recupera análise anterior se as partidas forem as mesmas)
     if (!body.forceRefresh) {
       const cachedData = await readAiCoachCache(body.cacheKey);
       if (cachedData) {
@@ -70,7 +71,7 @@ export async function POST(req: NextRequest) {
         if (lastKnown && lastKnown.matchDate) {
           const incomingTime = new Date(incomingLatestDate).getTime();
           const lastKnownTime = new Date(lastKnown.matchDate).getTime();
-          // Se a partida recebida nao for mais nova que a ultima conhecida, reutilizar cache se disponivel
+          // Se a partida recebida não for mais nova que a última conhecida, reutilizar cache se disponível
           if (!isNaN(incomingTime) && !isNaN(lastKnownTime) && incomingTime <= lastKnownTime) {
             const fallback = await readAiCoachCache(body.cacheKey);
             if (fallback) {
@@ -85,14 +86,14 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 2. Validar presenca da chave de API
+    // 2. Validar presença da chave de API
     const apiKey = await resolveApiKey();
     if (!apiKey) {
       return NextResponse.json<AiCoachApiResponse>(
         {
           success: false,
           cached: false,
-          error: 'Chave GEMINI_API_KEY nao configurada no servidor (.env ou .env.local). Nao ha presets alternativos.'
+          error: 'Chave GEMINI_API_KEY não configurada no servidor (.env ou .env.local). Não há presets alternativos.'
         },
         { status: 500 }
       );
@@ -257,7 +258,12 @@ DIRETRIZES FUNDAMENTAIS DE RESPOSTA:
   ]
 }`;
 
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
+    const CANDIDATE_MODELS = [
+      'gemini-3.6-flash',
+      'gemini-3.5-flash',
+      'gemini-3.7-flash',
+      'gemini-3.8-flash'
+    ];
 
     const geminiPayload = {
       contents: [
@@ -271,65 +277,145 @@ DIRETRIZES FUNDAMENTAIS DE RESPOSTA:
       }
     };
 
-    const controller = new AbortController();
-    // 55s: deixa margem dentro do maxDuration=60 da function, mas dá tempo real
-    // para o Gemini gerar o JSON extenso com "thinking" habilitado (na prática
-    // esse payload passa fácil dos 20s antigos).
-    const timeoutId = setTimeout(() => controller.abort(), 55000);
+    const startTime = Date.now();
+    let generatedData: any = null;
+    let modelSuccessName = 'gemini-3.6-flash';
+    let lastGeminiStatus: number | null = null;
+    let lastGeminiErrorText = '';
 
-    const response = await fetch(geminiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(geminiPayload),
-      signal: controller.signal
-    });
-    clearTimeout(timeoutId);
+    for (const model of CANDIDATE_MODELS) {
+      // Deixa margem de tempo para responder dentro de maxDuration=60
+      if (Date.now() - startTime > 45000) {
+        console.warn('[ai-coach] Limite de tempo de segurança atingido (45s), interrompendo novas tentativas de modelo.');
+        break;
+      }
 
-    if (!response.ok) {
-      const errText = await response.text();
-      console.error('Google Gemini API error:', response.status, errText);
+      const maxAttempts = 2;
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        if (Date.now() - startTime > 48000) break;
+
+        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        const controller = new AbortController();
+        const remainingTime = Math.max(5000, 50000 - (Date.now() - startTime));
+        const attemptTimeoutMs = Math.min(25000, remainingTime);
+        const timeoutId = setTimeout(() => controller.abort(), attemptTimeoutMs);
+
+        try {
+          const response = await fetch(geminiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(geminiPayload),
+            signal: controller.signal
+          });
+          clearTimeout(timeoutId);
+
+          if (response.ok) {
+            const jsonResponse = await response.json();
+            const generatedText = jsonResponse.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (generatedText) {
+              try {
+                generatedData = JSON.parse(generatedText);
+                modelSuccessName = model;
+                break;
+              } catch (parseErr) {
+                console.warn(`[ai-coach] Falha ao fazer parse do JSON retornado por ${model}:`, parseErr);
+              }
+            }
+          } else {
+            lastGeminiStatus = response.status;
+            lastGeminiErrorText = await response.text().catch(() => '');
+            console.warn(`[ai-coach] Modelo ${model} falhou com status ${response.status} (tentativa ${attempt}/${maxAttempts}):`, lastGeminiErrorText.substring(0, 160));
+
+            // Se for erro transitório de sobrecarga (503), rate limit (429) ou servidor (500/504), aguarda backoff
+            if ([503, 429, 500, 504].includes(response.status)) {
+              if (attempt < maxAttempts) {
+                const waitMs = attempt * 1200;
+                await new Promise((r) => setTimeout(r, waitMs));
+                continue;
+              }
+            } else {
+              // Erro definitivo (404/400) para este modelo: pula direto para o próximo modelo candidato
+              break;
+            }
+          }
+        } catch (fetchErr: any) {
+          clearTimeout(timeoutId);
+          console.warn(`[ai-coach] Exceção de rede ou timeout no modelo ${model} (tentativa ${attempt}):`, fetchErr?.message);
+          if (attempt < maxAttempts && Date.now() - startTime < 45000) {
+            await new Promise((r) => setTimeout(r, 1000));
+          }
+        }
+      }
+
+      if (generatedData) {
+        break;
+      }
+    }
+
+    // Se nenhum modelo conseguiu gerar agora (ex.: indisponibilidade generalizada de rede ou 503)
+    if (!generatedData) {
+      console.warn(`[ai-coach] Todos os modelos do Gemini falharam (último status: ${lastGeminiStatus}). Iniciando resgate de cache...`);
+
+      // 1. Tentar ler cache da chave atual
+      let fallbackData = await readAiCoachCache(body.cacheKey);
+
+      // 2. Se não houver, tentar ler o último cache global de análise da dupla
+      if (!fallbackData) {
+        fallbackData = await getAnyLatestAiCoachCache();
+      }
+
+      // Se conseguimos resgatar alguma análise anterior, entregamos com sucesso e aviso amigável
+      if (fallbackData) {
+        console.log('[ai-coach] Análise prévia resgatada com sucesso para evitar bloqueio ao usuário.');
+        return NextResponse.json<AiCoachApiResponse>({
+          success: true,
+          cached: true,
+          data: fallbackData,
+          warning: 'Os servidores do Google Gemini estão temporariamente sobrecarregados (Status 503). Exibindo a última análise tática gerada.'
+        });
+      }
+
+      // Se realmente não há nenhum cache prévio em disco/KV e a IA deu 503
+      const is503 = lastGeminiStatus === 503;
+      const userMessage = is503
+        ? 'Os servidores do Google Gemini estão temporariamente sobrecarregados (Status 503). Por favor, clique em Reanalisar em alguns instantes.'
+        : `Falha na conexão com a IA do Google Gemini (Status ${lastGeminiStatus || 502}). Por favor, tente novamente em instantes.`;
+
       return NextResponse.json<AiCoachApiResponse>(
         {
           success: false,
           cached: false,
-          error: `Falha na conexao com a IA do Google Gemini (Status ${response.status}). Nao ha dados substitutos.`
+          error: userMessage
         },
-        { status: 502 }
+        { status: is503 ? 503 : 502 }
       );
     }
 
-    const jsonResponse = await response.json();
-    const generatedText = jsonResponse.candidates?.[0]?.content?.parts?.[0]?.text;
+    // Formatar nome amigável do modelo utilizado
+    const friendlyModelName = modelSuccessName.includes('3.8')
+      ? 'Google Gemini 3.8 Flash'
+      : modelSuccessName.includes('3.7')
+      ? 'Google Gemini 3.7 Flash'
+      : modelSuccessName.includes('3.5')
+      ? 'Google Gemini 3.5 Flash'
+      : 'Google Gemini 3.6 Flash';
 
-    if (!generatedText) {
-      return NextResponse.json<AiCoachApiResponse>(
-        {
-          success: false,
-          cached: false,
-          error: 'A IA nao retornou conteudo textual valido. Tente novamente.'
-        },
-        { status: 502 }
-      );
-    }
-
-    const parsedData = JSON.parse(generatedText);
-
-    // Salvar data estrita de geracao (congelada no tempo)
+    // Salvar data estrita de geração (congelada no tempo)
     const finalAnalysis: AiCoachAnalysis = {
-      ...parsedData,
+      ...generatedData,
       metadata: {
         generatedAt: new Date().toISOString(),
         cacheKey: body.cacheKey,
         totalMatchesAnalyzed: summary.totalMatches,
         source: 'gemini',
-        modelUsed: 'Google Gemini 3.6 Flash'
+        modelUsed: friendlyModelName
       }
     };
 
     // Gravar no cache persistente (KV remoto ou fallback local)
     await writeAiCoachCache(body.cacheKey, finalAnalysis);
 
-    // Fase 4: Atualizar metadados da ultima partida analisada
+    // Fase 4: Atualizar metadados da última partida analisada
     if (summary.matchIds && summary.matchIds.length > 0) {
       await setLastAnalyzedMatch({
         matchId: summary.matchIds[0],
@@ -362,7 +448,7 @@ DIRETRIZES FUNDAMENTAIS DE RESPOSTA:
       {
         success: false,
         cached: false,
-        error: error?.message || 'Erro interno ao processar a analise de IA.'
+        error: error?.message || 'Erro interno ao processar a análise de IA.'
       },
       { status: 500 }
     );

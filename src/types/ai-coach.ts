@@ -119,4 +119,5 @@ export interface AiCoachApiResponse {
   cached: boolean;
   data?: AiCoachAnalysis;
   error?: string;
+  warning?: string;
 }

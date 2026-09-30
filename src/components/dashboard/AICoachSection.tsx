@@ -32,6 +32,7 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
   const [analysis, setAnalysis] = useState<AiCoachAnalysis | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [warning, setWarning] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'leaks' | 'roadmap' | 'gameplan'>('overview');
   const [lastSavedTimestamp, setLastSavedTimestamp] = useState<string | null>(null);
   const [dataSource, setDataSource] = useState<'cache' | 'gemini' | null>(null);
@@ -47,7 +48,7 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
     async (force = false) => {
       if (!sharedMatches || sharedMatches.length === 0) return;
 
-      // 1. Tentar ler do localStorage do cliente se nao for forceRefresh
+      // 1. Tentar ler do localStorage do cliente se não for forceRefresh
       if (!force) {
         try {
           const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -58,6 +59,7 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
               setLastSavedTimestamp(parsed.data.metadata?.generatedAt || null);
               setDataSource('cache');
               setError(null);
+              setWarning(null);
               return;
             }
           }
@@ -66,7 +68,7 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
         }
       }
 
-      // 2. Chamar o backend (que consulta cache persistente ou Gemini se necessario)
+      // 2. Chamar o backend (que consulta cache persistente ou Gemini se necessário)
       setIsLoading(true);
       setError(null);
 
@@ -117,14 +119,19 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
         const json: AiCoachApiResponse = await response.json();
 
         if (!response.ok || !json.success || !json.data) {
-          throw new Error(json.error || `Falha na comunicacao com o servidor (${response.status})`);
+          throw new Error(json.error || `Falha na comunicação com o servidor (${response.status})`);
         }
 
         setAnalysis(json.data);
-        // Preservar estritamente a data original de geracao pela IA
+        // Preservar estritamente a data original de geração pela IA
         setLastSavedTimestamp(json.data.metadata?.generatedAt || null);
         setDataSource(json.cached ? 'cache' : 'gemini');
         setError(null);
+        if (json.warning) {
+          setWarning(json.warning);
+        } else {
+          setWarning(null);
+        }
 
         // Gravar no localStorage para evitar chamadas de rede no refresh
         try {
@@ -137,7 +144,32 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
         }
       } catch (err: any) {
         console.error('Falha ao obter análise do AI Coach:', err);
-        setError(err.message || 'Não foi possível obter a análise de IA.');
+        // Se a análise já existia ou pode ser resgatada do storage, preserva a interface visível
+        let rescued = false;
+        try {
+          const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed?.data) {
+              setAnalysis(parsed.data);
+              setLastSavedTimestamp(parsed.data.metadata?.generatedAt || null);
+              setDataSource('cache');
+              setWarning(
+                err.message?.includes('503')
+                  ? 'Os servidores do Google Gemini estão sobrecarregados (503). Mantendo a última análise salva no dispositivo.'
+                  : 'Instabilidade temporária na IA. Exibindo a última análise salva no dispositivo.'
+              );
+              setError(null);
+              rescued = true;
+            }
+          }
+        } catch {
+          // Ignora
+        }
+
+        if (!rescued) {
+          setError(err.message || 'Não foi possível obter a análise de IA.');
+        }
       } finally {
         setIsLoading(false);
       }
@@ -172,7 +204,7 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
                 Centro Tático de IA
               </h2>
               <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-[#121216] text-cyan-300 border border-cyan-500/30">
-                Google Gemini 3.6 Flash
+                {analysis?.metadata?.modelUsed || 'Google Gemini Flash'}
               </span>
             </div>
             <p className="text-xs text-zinc-400 font-medium tracking-wide">
@@ -224,6 +256,22 @@ export function AICoachSection({ player1, player2, sharedMatches }: AICoachSecti
           </span>
         )}
       </div>
+
+      {/* Warning Notice if Gemini 503 fallback occurred */}
+      {warning && (
+        <div className="relative z-10 mt-3 px-3.5 py-2 rounded-lg bg-amber-950/40 border border-amber-500/40 flex items-center justify-between text-[11px] text-amber-200">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <span>{warning}</span>
+          </div>
+          <button
+            onClick={() => setWarning(null)}
+            className="text-[10px] text-amber-400 hover:text-white font-bold ml-2 transition-colors"
+          >
+            Fechar
+          </button>
+        </div>
+      )}
 
       {/* Loading State */}
       {isLoading && !analysis && (
